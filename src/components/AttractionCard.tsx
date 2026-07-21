@@ -5,6 +5,7 @@ type AttractionCardProps = {
   selected?: boolean
   bairro?: string
   onClick?: () => void
+  onInfoClick?: () => void
 }
 
 const categoryEmoji: Record<string, string> = {
@@ -26,17 +27,34 @@ export function AttractionCard({
   selected = false,
   bairro,
   onClick,
+  onInfoClick,
 }: AttractionCardProps) {
   return (
-    <button
-      type="button"
+    <div
+      role="button"
+      tabIndex={0}
       onClick={onClick}
-      className={`flex w-40 shrink-0 flex-col overflow-hidden rounded-2xl border-2 text-left transition sm:w-48 lg:w-56 ${
+      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') onClick?.() }}
+      className={`relative flex w-40 shrink-0 flex-col overflow-hidden rounded-2xl border-2 text-left transition sm:w-48 lg:w-56 ${
         selected
           ? 'border-pink shadow-lg shadow-pink/20'
           : 'border-slate-200 hover:border-slate-300 hover:shadow-md'
       }`}
     >
+      {/* Botão info */}
+      {onInfoClick && (
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation()
+            onInfoClick()
+          }}
+          className="absolute top-2 right-2 z-10 flex h-7 w-7 items-center justify-center rounded-full bg-black/40 text-white text-xs font-bold backdrop-blur-sm transition hover:bg-black/60"
+        >
+          i
+        </button>
+      )}
+
       <div className="flex h-28 items-center justify-center bg-slate-100 sm:h-36">
         {image ? (
           <img src={image} alt={name} className="h-full w-full object-cover" />
@@ -57,6 +75,6 @@ export function AttractionCard({
           <p className="mt-0.5 text-xs text-slate-400">{bairro}</p>
         )}
       </div>
-    </button>
+    </div>
   )
 }

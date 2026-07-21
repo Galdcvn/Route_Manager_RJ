@@ -4,6 +4,7 @@ export interface Attraction {
   categoria: string
   descricao?: string
   horarios?: string
+  rua?: string
   bairro?: string
   cidade?: string
   imagem_url?: string

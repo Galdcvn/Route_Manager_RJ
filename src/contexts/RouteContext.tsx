@@ -1,18 +1,24 @@
 import { createContext, useContext, useState, useCallback, type ReactNode } from 'react'
 import type { Attraction, SelectedAttraction } from '../types/attraction'
 
+export type RouteStep = 'select-main' | 'select-nearby'
+
 interface RouteContextValue {
+  step: RouteStep
+  setStep: (step: RouteStep) => void
   selected: SelectedAttraction[]
   toggleAttraction: (attraction: Attraction) => void
   clearSelection: () => void
   isSelected: (id: string) => boolean
   mainAttraction: Attraction | null
   setMainAttraction: (attraction: Attraction | null) => void
+  resetFlow: () => void
 }
 
 const RouteContext = createContext<RouteContextValue | null>(null)
 
 export function RouteProvider({ children }: { children: ReactNode }) {
+  const [step, setStep] = useState<RouteStep>('select-main')
   const [selected, setSelected] = useState<SelectedAttraction[]>([])
   const [mainAttraction, setMainAttraction] = useState<Attraction | null>(null)
 
@@ -31,6 +37,12 @@ export function RouteProvider({ children }: { children: ReactNode }) {
     })
   }, [])
 
+  const resetFlow = useCallback(() => {
+    setStep('select-main')
+    setSelected([])
+    setMainAttraction(null)
+  }, [])
+
   const clearSelection = useCallback(() => {
     setSelected([])
     setMainAttraction(null)
@@ -39,12 +51,15 @@ export function RouteProvider({ children }: { children: ReactNode }) {
   return (
     <RouteContext.Provider
       value={{
+        step,
+        setStep,
         selected,
         toggleAttraction,
         clearSelection,
         isSelected,
         mainAttraction,
         setMainAttraction,
+        resetFlow,
       }}
     >
       {children}

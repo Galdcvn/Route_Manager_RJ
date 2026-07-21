@@ -25,7 +25,7 @@ export function useAttractions(): UseAttractionsResult {
             nome,
             localizacao,
             categoria_atracao ( nome ),
-            endereco_atracao ( bairro, cidade ),
+            endereco_atracao ( rua, bairro, cidade ),
             informacao_atracao ( descricao, horarios, idiomas ( codigo ) ),
             imagens_atracao ( ordem, imagens ( url ) )
           `)
@@ -49,6 +49,7 @@ export function useAttractions(): UseAttractionsResult {
             categoria: row.categoria_atracao?.nome ?? 'outro',
             descricao: infoPt?.descricao,
             horarios: infoPt?.horarios,
+            rua: row.endereco_atracao?.rua,
             bairro: row.endereco_atracao?.bairro,
             cidade: row.endereco_atracao?.cidade,
             imagem_url: imagem,
