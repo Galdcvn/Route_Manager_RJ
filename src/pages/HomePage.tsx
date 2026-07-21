@@ -24,22 +24,11 @@ export function HomePage() {
           </div>
 
           <div className="order-1 flex justify-center md:order-2">
-            <div className="relative">
               <img
                 src="/src/assets/Mapa_RJ.svg"
                 alt="Mapa do Rio de Janeiro"
                 className="h-64 w-auto sm:h-80 lg:h-96"
               />
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-                <svg className="h-16 w-16 sm:h-20 sm:w-20" viewBox="0 0 24 24" fill="none">
-                  <path
-                    d="M12 0C5.4 0 0 5.4 0 12c0 9 12 24 12 24s12-15 12-24C24 5.4 18.6 0 12 0z"
-                    fill="#EB6092"
-                  />
-                  <circle cx="12" cy="11" r="4" fill="white" />
-                </svg>
-              </div>
-            </div>
           </div>
         </section>
       </main>
