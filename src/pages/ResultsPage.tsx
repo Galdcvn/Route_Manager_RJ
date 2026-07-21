@@ -1,22 +1,17 @@
 import { Header } from '../components/Header'
 import { Button } from '../components/Button'
-
-const timelineStops = [
-  { distance: '100m', time: '50min' },
-  { distance: '200m', time: '5min' },
-  { distance: '500m', time: '15min' },
-  { distance: '1km', time: '10min' },
-]
-
-const transportTimes = [
-  { label: 'Carro', time: '30min', color: 'bg-sky' },
-  { label: 'Andar', time: '2h 10min', color: 'bg-lime' },
-  { label: 'Infraestrutura', time: '45min', color: 'bg-mustard' },
-  { label: 'C. pé', time: '1h 30min', color: 'bg-orange' },
-  { label: 'Transporte público', time: '55min', color: 'bg-pink' },
-]
+import { useRoute } from '../contexts/RouteContext'
 
 export function ResultsPage() {
+  const { selected, mainAttraction } = useRoute()
+
+  const orderedAttractions = mainAttraction
+    ? [
+        mainAttraction,
+        ...selected.filter((s) => s.id !== mainAttraction.id),
+      ]
+    : selected
+
   return (
     <div className="min-h-screen bg-white">
       <Header />
@@ -35,21 +30,7 @@ export function ResultsPage() {
                 />
               </div>
 
-              {/* Pins */}
-              <svg className="absolute top-1/4 left-1/3 h-6 w-6" viewBox="0 0 24 24">
-                <path d="M12 0C5.4 0 0 5.4 0 12c0 9 12 24 12 24s12-15 12-24C24 5.4 18.6 0 12 0z" fill="#EF4444" />
-                <circle cx="12" cy="11" r="4" fill="white" />
-              </svg>
-              <svg className="absolute top-1/2 left-1/2 h-6 w-6" viewBox="0 0 24 24">
-                <path d="M12 0C5.4 0 0 5.4 0 12c0 9 12 24 12 24s12-15 12-24C24 5.4 18.6 0 12 0z" fill="#EF4444" />
-                <circle cx="12" cy="11" r="4" fill="white" />
-              </svg>
-              <svg className="absolute bottom-1/3 left-1/4 h-6 w-6" viewBox="0 0 24 24">
-                <path d="M12 0C5.4 0 0 5.4 0 12c0 9 12 24 12 24s12-15 12-24C24 5.4 18.6 0 12 0z" fill="#EF4444" />
-                <circle cx="12" cy="11" r="4" fill="white" />
-              </svg>
-
-              {/* Rota */}
+              {/* Rota tracejada */}
               <svg className="absolute inset-0 h-full w-full" viewBox="0 0 400 300" fill="none">
                 <path
                   d="M130 100 Q200 130 200 180 Q200 230 150 250"
@@ -66,26 +47,42 @@ export function ResultsPage() {
           <div className="flex flex-col gap-6">
             {/* Título */}
             <div>
-              <h1 className="text-2xl font-bold text-navy sm:text-3xl">Tempo total estimado: 30min</h1>
+              <h1 className="text-2xl font-bold text-navy sm:text-3xl">
+                {orderedAttractions.length > 0
+                  ? `Rota: ${orderedAttractions.length} parada${orderedAttractions.length !== 1 ? 's' : ''}`
+                  : 'Nenhuma atração selecionada'}
+              </h1>
             </div>
 
-            {/* Timeline */}
-            <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-slate-50 p-4">
-              <div className="flex min-w-[300px] items-center justify-between">
-                {timelineStops.map((stop, i) => (
-                  <div key={i} className="flex flex-col items-center gap-2">
-                    <div className="flex h-4 w-4 rotate-45 bg-red-500" />
-                    <p className="text-xs font-semibold text-navy">{stop.distance}</p>
-                    <p className="text-[10px] text-slate-400">{stop.time}</p>
-                  </div>
-                ))}
+            {/* Lista de paradas */}
+            {orderedAttractions.length > 0 && (
+              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                <h2 className="mb-3 text-sm font-semibold text-navy">Paradas na ordem da rota</h2>
+                <ol className="space-y-3">
+                  {orderedAttractions.map((attraction, i) => (
+                    <li key={attraction.id} className="flex items-center gap-3">
+                      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-pink text-xs font-bold text-white">
+                        {i + 1}
+                      </span>
+                      <div>
+                        <p className="text-sm font-semibold text-navy">{attraction.nome}</p>
+                        {attraction.bairro && (
+                          <p className="text-xs text-slate-400">{attraction.bairro}</p>
+                        )}
+                      </div>
+                    </li>
+                  ))}
+                </ol>
               </div>
-              <div className="mt-2 h-0.5 w-full bg-red-200" />
-            </div>
+            )}
 
             {/* Tempos por modalidade */}
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-              {transportTimes.map((t) => (
+              {[
+                { label: 'Carro', time: '—', color: 'bg-sky' },
+                { label: 'Andar', time: '—', color: 'bg-lime' },
+                { label: 'Transporte público', time: '—', color: 'bg-pink' },
+              ].map((t) => (
                 <div
                   key={t.label}
                   className="flex flex-col items-center rounded-xl border border-slate-200 p-3"
