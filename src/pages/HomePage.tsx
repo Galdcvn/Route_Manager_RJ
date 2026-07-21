@@ -28,8 +28,7 @@ export function HomePage() {
               <img
                 src="/src/assets/Mapa_RJ.svg"
                 alt="Mapa do Rio de Janeiro"
-                className="h-64 w-auto opacity-30 sm:h-80 lg:h-96"
-                style={{ filter: 'brightness(0) saturate(100%) invert(73%) sepia(42%) saturate(472%) hue-rotate(172deg) brightness(95%) contrast(90%)' }}
+                className="h-64 w-auto sm:h-80 lg:h-96"
               />
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
                 <svg className="h-16 w-16 sm:h-20 sm:w-20" viewBox="0 0 24 24" fill="none">

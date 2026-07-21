@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Logo } from './Logo'
+import logoSvg from '../assets/Logo.svg'
 import { MenuDrawer } from './MenuDrawer'
 
 const navLinks = [
@@ -17,7 +17,7 @@ export function Header() {
     <>
       <header className="sticky top-0 z-40 flex items-center justify-between bg-white px-3 py-3 sm:px-6 sm:py-4">
         <Link to="/">
-          <Logo className="h-10 w-10 sm:h-12 sm:w-12" />
+          <img src={logoSvg} alt="Route Manager RJ" className="h-10 w-10 sm:h-12 sm:w-12" />
         </Link>
 
         <nav className="hidden items-center gap-6 md:flex">
