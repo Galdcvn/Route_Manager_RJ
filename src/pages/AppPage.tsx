@@ -3,10 +3,12 @@ import { Link, useNavigate } from 'react-router-dom'
 import { Header } from '../components/Header'
 import { AttractionCard } from '../components/AttractionCard'
 import { AttractionInfoModal } from '../components/AttractionInfoModal'
+import { SearchInput } from '../components/SearchInput'
 import { Button } from '../components/Button'
 import { useAttractions } from '../hooks/useAttractions'
 import { useRoute } from '../contexts/RouteContext'
 import { haversineKm } from '../utils/distance'
+import { smartSearch } from '../utils/search'
 import type { Attraction } from '../types/attraction'
 
 const RADIUS_KM = 5
@@ -17,6 +19,7 @@ export function AppPage() {
   const { step, setStep, selected, toggleAttraction, mainAttraction, setMainAttraction, resetFlow } = useRoute()
   const navigate = useNavigate()
   const [infoAttraction, setInfoAttraction] = useState<Attraction | null>(null)
+  const [searchQuery, setSearchQuery] = useState('')
 
   const nearbyAttractions = useMemo(() => {
     if (!mainAttraction) return []
@@ -32,6 +35,40 @@ export function AppPage() {
     })
   }, [attractions, mainAttraction])
 
+  const displayAttractions = useMemo(() => {
+    if (step === 'select-main') {
+      return smartSearch(attractions, searchQuery)
+    }
+
+    if (!mainAttraction) return []
+
+    const searchResults = smartSearch(attractions, searchQuery)
+
+    if (!searchQuery.trim()) {
+      return nearbyAttractions
+    }
+
+    const farSearchMatches = searchResults.filter((a) => {
+      if (a.id === mainAttraction.id) return false
+      const dist = haversineKm(
+        mainAttraction.localizacao.lat,
+        mainAttraction.localizacao.lng,
+        a.localizacao.lat,
+        a.localizacao.lng
+      )
+      return dist > RADIUS_KM
+    })
+
+    const seen = new Set(nearbyAttractions.map((a) => a.id))
+    const uniqueFar = farSearchMatches.filter((a) => {
+      if (seen.has(a.id)) return false
+      seen.add(a.id)
+      return true
+    })
+
+    return [...nearbyAttractions, ...uniqueFar]
+  }, [attractions, step, mainAttraction, nearbyAttractions, searchQuery])
+
   const handleSelectMain = (attraction: Attraction) => {
     if (mainAttraction?.id === attraction.id) {
       setMainAttraction(null)
@@ -44,22 +81,18 @@ export function AppPage() {
     if (mainAttraction && !selected.some((s) => s.id === mainAttraction.id)) {
       toggleAttraction(mainAttraction)
     }
+    setSearchQuery('')
     setStep('select-nearby')
   }
 
-  const handleBack = () => {
-    resetFlow()
-  }
-
   const handleBackToMain = () => {
+    setSearchQuery('')
     setStep('select-main')
   }
 
   const currentStepIndex = step === 'select-main' ? 0 : 1
   const canProceedStep1 = mainAttraction !== null
   const canProceedStep2 = selected.length >= 1
-
-  const displayAttractions = step === 'select-main' ? attractions : nearbyAttractions
 
   return (
     <div className="min-h-screen bg-white">
@@ -89,7 +122,7 @@ export function AppPage() {
         </nav>
 
         {/* Título */}
-        <div className="mb-6 rounded-2xl border border-slate-200 bg-slate-50 p-4 sm:mb-8 sm:p-6">
+        <div className="mb-4 rounded-2xl border border-slate-200 bg-slate-50 p-4 sm:mb-6 sm:p-6">
           {step === 'select-main' ? (
             <>
               <h1 className="text-xl font-bold text-navy sm:text-2xl">Escolha a atração principal</h1>
@@ -114,6 +147,15 @@ export function AppPage() {
           )}
         </div>
 
+        {/* Busca */}
+        {!loading && !error && (
+          <SearchInput
+            value={searchQuery}
+            onChange={setSearchQuery}
+            placeholder={step === 'select-main' ? 'Buscar atração...' : 'Buscar atração fora do raio...'}
+          />
+        )}
+
         {/* Loading / Error */}
         {loading && (
           <div className="flex justify-center py-12">
@@ -127,10 +169,17 @@ export function AppPage() {
           </div>
         )}
 
-        {/* Nenhuma atração próxima */}
-        {step === 'select-nearby' && !loading && nearbyAttractions.length === 0 && (
+        {/* Nenhum resultado */}
+        {!loading && !error && displayAttractions.length === 0 && searchQuery.trim() && (
+          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-500">
+            Nenhuma atração encontrada para "{searchQuery}".
+          </div>
+        )}
+
+        {/* Nenhuma atração próxima (etapa 2 sem busca) */}
+        {!loading && step === 'select-nearby' && !searchQuery.trim() && nearbyAttractions.length === 0 && (
           <div className="rounded-2xl border border-mustard/30 bg-mustard/10 p-4 text-sm text-mustard">
-            Nenhuma atração encontrada dentro de {RADIUS_KM} km de {mainAttraction?.nome}.
+            Nenhuma atração encontrada dentro de {RADIUS_KM} km de {mainAttraction?.nome}. Use a busca para encontrar atrações mais distantes.
           </div>
         )}
 
