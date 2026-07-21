@@ -1,9 +1,16 @@
+import { useAuth } from '../contexts/AuthContext'
+import { AuthModal } from './AuthModal'
+import { useState } from 'react'
+
 type MenuDrawerProps = {
   open: boolean
   onClose: () => void
 }
 
 export function MenuDrawer({ open, onClose }: MenuDrawerProps) {
+  const { user, signOut } = useAuth()
+  const [authOpen, setAuthOpen] = useState(false)
+
   return (
     <>
       {open && (
@@ -32,30 +39,87 @@ export function MenuDrawer({ open, onClose }: MenuDrawerProps) {
         </div>
 
         <nav className="flex flex-col gap-1 p-4">
-          <a
-            href="#"
-            className="flex items-center gap-3 rounded-xl bg-sky px-4 py-3 text-sm font-semibold text-white shadow-md transition hover:-translate-y-0.5"
-          >
-            <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4M10 17l5-5-5-5M15 12H3" />
-            </svg>
-            Login
-          </a>
+          {user ? (
+            <>
+              {/* Logado */}
+              <div className="flex items-center gap-3 rounded-xl bg-slate-50 px-4 py-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-navy text-sm font-bold text-white">
+                  {user.user_metadata?.full_name?.charAt(0)?.toUpperCase() || user.email?.charAt(0)?.toUpperCase()}
+                </div>
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-semibold text-navy">
+                    {user.user_metadata?.full_name || 'Usuário'}
+                  </p>
+                  <p className="truncate text-xs text-slate-400">{user.email}</p>
+                </div>
+              </div>
 
-          <div className="my-2 h-px bg-slate-100" />
+              <div className="my-2 h-px bg-slate-100" />
 
-          <a
-            href="#"
-            className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-navy transition hover:bg-slate-50"
-          >
-            <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <circle cx="12" cy="12" r="10" />
-              <path d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z" />
-            </svg>
-            Idiomas
-          </a>
+              <a href="#" className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-navy transition hover:bg-slate-50">
+                <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+                  <circle cx="12" cy="7" r="4" />
+                </svg>
+                Perfil
+              </a>
+
+              <a href="#" className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-navy transition hover:bg-slate-50">
+                <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  <circle cx="12" cy="11" r="3" />
+                </svg>
+                Rotas Salvas
+              </a>
+
+              <a href="#" className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-navy transition hover:bg-slate-50">
+                <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="12" cy="12" r="10" />
+                  <path d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z" />
+                </svg>
+                Idiomas
+              </a>
+
+              <div className="my-2 h-px bg-slate-100" />
+
+              <button
+                onClick={() => { signOut(); onClose() }}
+                className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-red-500 transition hover:bg-red-50"
+              >
+                <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9" />
+                </svg>
+                Sair
+              </button>
+            </>
+          ) : (
+            <>
+              {/* Deslogado */}
+              <button
+                onClick={() => { setAuthOpen(true); onClose() }}
+                className="flex items-center gap-3 rounded-xl bg-sky px-4 py-3 text-sm font-semibold text-white shadow-md transition hover:-translate-y-0.5"
+              >
+                <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4M10 17l5-5-5-5M15 12H3" />
+                </svg>
+                Login
+              </button>
+
+              <div className="my-2 h-px bg-slate-100" />
+
+              <a href="#" className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-navy transition hover:bg-slate-50">
+                <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="12" cy="12" r="10" />
+                  <path d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z" />
+                </svg>
+                Idiomas
+              </a>
+            </>
+          )}
         </nav>
       </div>
+
+      <AuthModal open={authOpen} onClose={() => setAuthOpen(false)} />
     </>
   )
 }

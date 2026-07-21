@@ -2,6 +2,8 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import logoSvg from '../assets/Logo.svg'
 import { MenuDrawer } from './MenuDrawer'
+import { AuthModal } from './AuthModal'
+import { useAuth } from '../contexts/AuthContext'
 
 const navLinks = [
   { label: 'Inicio', to: '/' },
@@ -12,6 +14,8 @@ const navLinks = [
 
 export function Header() {
   const [drawerOpen, setDrawerOpen] = useState(false)
+  const [authOpen, setAuthOpen] = useState(false)
+  const { user } = useAuth()
 
   return (
     <>
@@ -32,17 +36,37 @@ export function Header() {
           ))}
         </nav>
 
-        <button
-          onClick={() => setDrawerOpen(true)}
-          className="flex flex-col gap-1 p-2 md:hidden"
-          aria-label="Abrir menu"
-        >
-          <span className="block h-0.5 w-6 bg-navy" />
-          <span className="block h-0.5 w-6 bg-navy" />
-        </button>
+        <div className="flex items-center gap-3">
+          {/* Desktop: botão login ou avatar */}
+          <div className="hidden md:block">
+            {user ? (
+              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-navy text-sm font-bold text-white">
+                {user.user_metadata?.full_name?.charAt(0)?.toUpperCase() || user.email?.charAt(0)?.toUpperCase()}
+              </div>
+            ) : (
+              <button
+                onClick={() => setAuthOpen(true)}
+                className="rounded-full bg-sky px-4 py-2 text-sm font-semibold text-white shadow-md transition hover:-translate-y-0.5 hover:brightness-110"
+              >
+                Entrar
+              </button>
+            )}
+          </div>
+
+          {/* Mobile: hamburger */}
+          <button
+            onClick={() => setDrawerOpen(true)}
+            className="flex flex-col gap-1 p-2 md:hidden"
+            aria-label="Abrir menu"
+          >
+            <span className="block h-0.5 w-6 bg-navy" />
+            <span className="block h-0.5 w-6 bg-navy" />
+          </button>
+        </div>
       </header>
 
       <MenuDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />
+      <AuthModal open={authOpen} onClose={() => setAuthOpen(false)} />
     </>
   )
 }
