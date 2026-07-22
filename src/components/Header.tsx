@@ -88,6 +88,17 @@ export function Header() {
                       </svg>
                       Meu Perfil
                     </Link>
+                    <Link
+                      to="/app"
+                      onClick={() => setDropdownOpen(false)}
+                      className="flex items-center gap-2 px-4 py-2.5 text-sm text-navy transition hover:bg-slate-50"
+                    >
+                      <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                        <circle cx="12" cy="11" r="3" />
+                      </svg>
+                      Planejar Rota
+                    </Link>
                     <button
                       onClick={() => { signOut(); setDropdownOpen(false) }}
                       className="flex w-full items-center gap-2 px-4 py-2.5 text-sm text-red-500 transition hover:bg-red-50"
