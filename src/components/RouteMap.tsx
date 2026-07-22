@@ -1,5 +1,6 @@
-import { useMemo, useCallback } from 'react'
-import { GoogleMap, useJsApiLoader, Marker, Polyline } from '@react-google-maps/api'
+import { useCallback } from 'react'
+import { GoogleMap, Marker, Polyline } from '@react-google-maps/api'
+import { useGoogleMapsLoaded } from '../hooks/useGoogleMapsLoaded'
 import type { SelectedAttraction } from '../types/attraction'
 
 const RJ_CENTER = { lat: -22.9519, lng: -43.1822 }
@@ -12,29 +13,23 @@ interface RouteMapProps {
 const containerStyle = { width: '100%', height: '100%', minHeight: '400px' }
 
 export function RouteMap({ attractions, directionResult }: RouteMapProps) {
-  const { isLoaded, loadError } = useJsApiLoader({
-    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_KEY ?? '',
-    libraries: ['geometry'],
-  })
+  const { isLoaded, loadError } = useGoogleMapsLoaded()
 
-  const center = useMemo(() => {
+  const center = (() => {
     if (attractions.length === 0) return RJ_CENTER
     const lat = attractions.reduce((sum, a) => sum + a.localizacao.lat, 0) / attractions.length
     const lng = attractions.reduce((sum, a) => sum + a.localizacao.lng, 0) / attractions.length
     return { lat, lng }
-  }, [attractions])
+  })()
 
-  const markers = useMemo(
-    () =>
-      attractions.map((a) => ({
-        position: { lat: a.localizacao.lat, lng: a.localizacao.lng },
-        label: String(a.order),
-        title: a.nome,
-      })),
-    [attractions]
-  )
+  const markers = attractions.map((a) => ({
+    position: { lat: a.localizacao.lat, lng: a.localizacao.lng },
+    label: String(a.order),
+    title: a.nome,
+  }))
 
-  const polylinePath = useMemo(() => {
+  const polylinePath = (() => {
+    if (!isLoaded) return attractions.map((a) => ({ lat: a.localizacao.lat, lng: a.localizacao.lng }))
     if (directionResult) {
       const route = directionResult.routes[0]
       if (route?.overview_polyline) {
@@ -42,20 +37,16 @@ export function RouteMap({ attractions, directionResult }: RouteMapProps) {
       }
     }
     return attractions.map((a) => ({ lat: a.localizacao.lat, lng: a.localizacao.lng }))
-  }, [directionResult, attractions])
-
-  const bounds = useMemo(() => {
-    if (attractions.length === 0) return undefined
-    const b = new google.maps.LatLngBounds()
-    attractions.forEach((a) => b.extend({ lat: a.localizacao.lat, lng: a.localizacao.lng }))
-    return b
-  }, [attractions])
+  })()
 
   const onMapLoad = useCallback(
     (map: google.maps.Map) => {
-      if (bounds) map.fitBounds(bounds, 50)
+      if (attractions.length === 0) return
+      const b = new google.maps.LatLngBounds()
+      attractions.forEach((a) => b.extend({ lat: a.localizacao.lat, lng: a.localizacao.lng }))
+      map.fitBounds(b, 50)
     },
-    [bounds]
+    [attractions]
   )
 
   if (loadError) {

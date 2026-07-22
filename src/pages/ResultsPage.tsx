@@ -6,6 +6,7 @@ import { RouteLoading } from '../components/RouteLoading'
 import { Button } from '../components/Button'
 import { useRoute } from '../contexts/RouteContext'
 import { useToast } from '../contexts/ToastContext'
+import { useGoogleMapsLoaded } from '../hooks/useGoogleMapsLoaded'
 import { calculateRoute, type TravelTime } from '../utils/routeCalculator'
 import { saveRoute } from '../utils/saveRoute'
 import { shareWhatsApp } from '../utils/shareWhatsApp'
@@ -20,8 +21,9 @@ export function ResultsPage() {
   const { selected, mainAttraction, setSavedRouteId } = useRoute()
   const navigate = useNavigate()
   const { toast } = useToast()
+  const { isLoaded, loadError } = useGoogleMapsLoaded()
 
-  const [loading, setLoading] = useState(true)
+  const [calculating, setCalculating] = useState(false)
   const [travelTimes, setTravelTimes] = useState<TravelTime[]>([])
   const [directionResult, setDirectionResult] = useState<google.maps.DirectionsResult | null>(null)
   const [totalDistance, setTotalDistance] = useState('')
@@ -37,10 +39,9 @@ export function ResultsPage() {
     : selected
 
   useEffect(() => {
-    if (orderedAttractions.length < 2) {
-      setLoading(false)
-      return
-    }
+    if (!isLoaded || orderedAttractions.length < 2) return
+
+    setCalculating(true)
 
     calculateRoute(orderedAttractions)
       .then(async (results) => {
@@ -65,10 +66,27 @@ export function ResultsPage() {
         console.error('Erro ao calcular rota:', err)
         toast({ type: 'error', message: 'Erro ao calcular rota. Tente novamente.' })
       })
-      .finally(() => setLoading(false))
-  }, [orderedAttractions, toast])
+      .finally(() => setCalculating(false))
+  }, [isLoaded, orderedAttractions, toast, setSavedRouteId])
 
-  if (loading) return <RouteLoading />
+  if (loadError) {
+    return (
+      <div className="min-h-screen bg-white">
+        <Header />
+        <main className="mx-auto max-w-6xl px-4 py-16 text-center sm:px-6">
+          <p className="text-lg font-bold text-navy">Erro ao carregar o Google Maps</p>
+          <p className="mt-2 text-sm text-slate-500">Verifique sua conexao e recarregue a pagina.</p>
+          <Button variant="pink" radius={15} className="mt-6" onClick={() => navigate('/app')}>
+            Voltar
+          </Button>
+        </main>
+      </div>
+    )
+  }
+
+  if (!isLoaded || calculating) {
+    return <RouteLoading phase={!isLoaded ? 'loading-map' : 'calculating'} />
+  }
 
   return (
     <div className="min-h-screen bg-white">
