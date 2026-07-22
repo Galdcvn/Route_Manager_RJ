@@ -1,6 +1,7 @@
 import { useAuth } from '../contexts/AuthContext'
 import { AuthModal } from './AuthModal'
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 
 type MenuDrawerProps = {
   open: boolean
@@ -56,29 +57,29 @@ export function MenuDrawer({ open, onClose }: MenuDrawerProps) {
 
               <div className="my-2 h-px bg-slate-100" />
 
-              <a href="#" className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-navy transition hover:bg-slate-50">
+              <Link
+                to="/profile"
+                onClick={onClose}
+                className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-navy transition hover:bg-slate-50"
+              >
                 <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
                   <circle cx="12" cy="7" r="4" />
                 </svg>
                 Perfil
-              </a>
+              </Link>
 
-              <a href="#" className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-navy transition hover:bg-slate-50">
+              <Link
+                to="/app"
+                onClick={onClose}
+                className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-navy transition hover:bg-slate-50"
+              >
                 <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                   <circle cx="12" cy="11" r="3" />
                 </svg>
-                Rotas Salvas
-              </a>
-
-              <a href="#" className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-navy transition hover:bg-slate-50">
-                <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <circle cx="12" cy="12" r="10" />
-                  <path d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z" />
-                </svg>
-                Idiomas
-              </a>
+                Planejar Rota
+              </Link>
 
               <div className="my-2 h-px bg-slate-100" />
 
@@ -104,16 +105,6 @@ export function MenuDrawer({ open, onClose }: MenuDrawerProps) {
                 </svg>
                 Login
               </button>
-
-              <div className="my-2 h-px bg-slate-100" />
-
-              <a href="#" className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-navy transition hover:bg-slate-50">
-                <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <circle cx="12" cy="12" r="10" />
-                  <path d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z" />
-                </svg>
-                Idiomas
-              </a>
             </>
           )}
         </nav>

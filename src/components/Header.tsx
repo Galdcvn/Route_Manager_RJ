@@ -6,10 +6,8 @@ import { AuthModal } from './AuthModal'
 import { useAuth } from '../contexts/AuthContext'
 
 const navLinks = [
-  { label: 'Inicio', to: '/' },
-  { label: 'Route Manager', to: '/app' },
-  { label: 'Contato', to: '/' },
-  { label: 'Sobre', to: '/' },
+  { label: 'Início', to: '/' },
+  { label: 'Planejar Rota', to: '/app' },
 ]
 
 export function Header() {
@@ -40,9 +38,11 @@ export function Header() {
           {/* Desktop: botão login ou avatar */}
           <div className="hidden md:block">
             {user ? (
-              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-navy text-sm font-bold text-white">
-                {user.user_metadata?.full_name?.charAt(0)?.toUpperCase() || user.email?.charAt(0)?.toUpperCase()}
-              </div>
+              <Link to="/profile">
+                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-navy text-sm font-bold text-white transition hover:ring-2 hover:ring-pink/30">
+                  {user.user_metadata?.full_name?.charAt(0)?.toUpperCase() || user.email?.charAt(0)?.toUpperCase()}
+                </div>
+              </Link>
             ) : (
               <button
                 onClick={() => setAuthOpen(true)}
