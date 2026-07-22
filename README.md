@@ -10,7 +10,8 @@ Aplicativo de planejamento de rotas turísticas no Rio de Janeiro. O usuário se
 - **Perfil do usuário**: editar nome, upload de avatar para Supabase Storage, preview
 - **Seleção de atrações**: fluxo em 2 etapas — etapa 1 escolhe atração principal, etapa 2 mostra atrações próximas (≤5km) + busca
 - **Busca inteligente**: scoring multi-campo (nome 4x, categoria 3x, bairro 2x, descrição 1x), normalização NFD para acentos
-- **Cálculo de rotas via OSRM**: rotas para carro, a pé e bicicleta, com decode de polyline6
+- **Cálculo de rotas via OSRM**: rotas para carro, a pé e bicicleta, com decode de polyline6, chamadas em paralelo com timeout 15s
+- **Otimização de rota**: algoritmo nearest-neighbor com Haversine — reordena atrações a partir da principal para minimizar distância total
 - **Mapa interativo com Leaflet**: markers numerados, polyline da rota, auto-zoom com FitBounds
 - **Loading animado**: tela com fases visuais (conectando ao servidor / calculando rotas)
 - **Compartilhar via WhatsApp**: formatação da rota como mensagem e envio
@@ -96,7 +97,7 @@ route-manager-rj/
         ├── supabase.ts         # Cliente Supabase
         ├── distance.ts         # Fórmula de Haversine (distância client-side)
         ├── search.ts           # Busca inteligente multi-campo
-        ├── routeCalculator.ts  # OSRM API via Vite proxy + decode polyline6
+        ├── routeCalculator.ts  # OSRM paralelo + otimização nearest-neighbor + decode polyline6
         ├── parseWKB.ts         # Parse de WKB hex (PostGIS) para lat/lng
         ├── saveRoute.ts        # Salvar rota no Supabase DB
         └── shareWhatsApp.ts    # Formatar mensagem e abrir wa.me
@@ -218,13 +219,15 @@ Schema completo em `supabase/schema.sql` — 14 tabelas com PostGIS, RLS e seeds
 1. Usuário seleciona atrações na `/app`
 2. `RouteContext` armazena atrações + atração principal
 3. `ResultsPage` calcula rotas chamando `routeCalculator.ts`
-4. `routeCalculator.ts` faz chamadas sequenciais ao OSRM via Vite proxy:
+4. `optimizeOrder()` reordena atrações por **nearest-neighbor** (Haversine) a partir da principal
+5. `routeCalculator.ts` faz chamadas **em paralelo** ao OSRM via Vite proxy (timeout 15s por modo):
    - `GET /api/osrm/driving/route/v1/driving/{coords}`
    - `GET /api/osrm/foot/route/v1/foot/{coords}`
    - `GET /api/osrm/cycling/route/v1/cycling/{coords}`
-5. Respostas contêm polyline6 que é decodificada para coordenadas
-6. `RouteMap.tsx` renderiza no Leaflet com markers numerados e polyline
-7. Tempo/duração exibidos por modalidade
+6. `Promise.allSettled` garante que modos que falharam não bloqueiam os que funcionaram
+7. Respostas contêm polyline6 que é decodificada para coordenadas
+8. `RouteMap.tsx` renderiza no Leaflet com markers numerados e polyline
+9. Tempo/duração exibidos por modalidade
 
 ### Proxy (Vite dev)
 
