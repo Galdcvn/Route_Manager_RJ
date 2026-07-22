@@ -48,6 +48,8 @@ export function AppPage() {
       return nearbyAttractions
     }
 
+    const filteredNearby = smartSearch(nearbyAttractions, searchQuery)
+
     const farSearchMatches = searchResults.filter((a) => {
       if (a.id === mainAttraction.id) return false
       const dist = haversineKm(
@@ -59,14 +61,14 @@ export function AppPage() {
       return dist > RADIUS_KM
     })
 
-    const seen = new Set(nearbyAttractions.map((a) => a.id))
+    const seen = new Set(filteredNearby.map((a) => a.id))
     const uniqueFar = farSearchMatches.filter((a) => {
       if (seen.has(a.id)) return false
       seen.add(a.id)
       return true
     })
 
-    return [...nearbyAttractions, ...uniqueFar]
+    return [...filteredNearby, ...uniqueFar]
   }, [attractions, step, mainAttraction, nearbyAttractions, searchQuery])
 
   const handleSelectMain = (attraction: Attraction) => {
