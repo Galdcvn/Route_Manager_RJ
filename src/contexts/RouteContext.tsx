@@ -13,6 +13,8 @@ interface RouteContextValue {
   mainAttraction: Attraction | null
   setMainAttraction: (attraction: Attraction | null) => void
   resetFlow: () => void
+  savedRouteId: string | null
+  setSavedRouteId: (id: string | null) => void
 }
 
 const RouteContext = createContext<RouteContextValue | null>(null)
@@ -21,6 +23,7 @@ export function RouteProvider({ children }: { children: ReactNode }) {
   const [step, setStep] = useState<RouteStep>('select-main')
   const [selected, setSelected] = useState<SelectedAttraction[]>([])
   const [mainAttraction, setMainAttraction] = useState<Attraction | null>(null)
+  const [savedRouteId, setSavedRouteId] = useState<string | null>(null)
 
   const isSelected = useCallback(
     (id: string) => selected.some((s) => s.id === id),
@@ -41,6 +44,7 @@ export function RouteProvider({ children }: { children: ReactNode }) {
     setStep('select-main')
     setSelected([])
     setMainAttraction(null)
+    setSavedRouteId(null)
   }, [])
 
   const clearSelection = useCallback(() => {
@@ -60,6 +64,8 @@ export function RouteProvider({ children }: { children: ReactNode }) {
         mainAttraction,
         setMainAttraction,
         resetFlow,
+        savedRouteId,
+        setSavedRouteId,
       }}
     >
       {children}

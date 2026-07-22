@@ -7,6 +7,7 @@ import { HomePage } from './pages/HomePage'
 import { AppPage } from './pages/AppPage'
 import { ResultsPage } from './pages/ResultsPage'
 import { ProfilePage } from './pages/ProfilePage'
+import { NotFoundPage } from './pages/NotFoundPage'
 
 export default function App() {
   return (
@@ -40,6 +41,7 @@ export default function App() {
                 </ProtectedRoute>
               }
             />
+            <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </BrowserRouter>
         </ToastProvider>

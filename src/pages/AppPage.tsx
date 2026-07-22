@@ -17,7 +17,7 @@ const steps = ['Escolher atração principal', 'Atrações próximas', 'Resultad
 
 export function AppPage() {
   const { attractions, loading, error } = useAttractions()
-  const { step, setStep, selected, toggleAttraction, mainAttraction, setMainAttraction, resetFlow } = useRoute()
+  const { step, setStep, selected, toggleAttraction, mainAttraction, setMainAttraction } = useRoute()
   const navigate = useNavigate()
   const { toast } = useToast()
   const [infoAttraction, setInfoAttraction] = useState<Attraction | null>(null)
