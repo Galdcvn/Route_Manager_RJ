@@ -73,7 +73,11 @@ export function ResultsPage() {
             totalDistanceKm: driving.totalDistanceKm,
             totalDurationMin: driving.totalDurationMin,
           })
-          if (routeId) setSavedRouteId(routeId)
+          if (routeId) {
+            setSavedRouteId(routeId)
+          } else {
+            toast({ type: 'error', message: 'Rota calculada, mas não foi possível salvar.' })
+          }
         }
         setTravelTimes(results.map((r) => r.travelTimes[0]))
       })

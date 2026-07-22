@@ -26,7 +26,7 @@ export async function saveRoute({
 
   if (!statusData) return null
 
-  const nome = `Rota ${attractions.length} paradas - ${new Date().toLocaleDateString('pt-BR')}`
+  const nome = `Rota ${attractions.length} paradas - ${Date.now()}`
 
   const { data: routeData, error: routeError } = await supabase
     .from('rotas')
@@ -42,7 +42,9 @@ export async function saveRoute({
     .select('id')
     .single()
 
-  if (routeError || !routeData) return null
+  if (routeError) return null
+
+  if (!routeData) return null
 
   const rotaAtracoes = attractions.map((a) => ({
     rota_id: routeData.id,
@@ -54,7 +56,10 @@ export async function saveRoute({
     .from('rota_atracoes')
     .insert(rotaAtracoes)
 
-  if (pivotError) return null
+  if (pivotError) {
+    console.error('[saveRoute] pivot insert error:', pivotError)
+    return null
+  }
 
   return routeData.id
 }

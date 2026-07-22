@@ -110,30 +110,39 @@ async function fetchOSRMRoute(
 ): Promise<OSRMRouteResponse> {
   const url = `/api/osrm/${proxyPath}/route/v1/${osrmProfile}/${coordinates}?overview=full&geometries=polyline6&steps=false`
 
-  const response = await fetch(url)
+  const controller = new AbortController()
+  const timeout = setTimeout(() => controller.abort(), 15000)
 
-  if (!response.ok) {
-    throw new Error(`OSRM API error: ${response.status}`)
+  try {
+    const response = await fetch(url, { signal: controller.signal })
+
+    if (!response.ok) {
+      throw new Error(`OSRM API error: ${response.status}`)
+    }
+
+    const data = await response.json()
+
+    if (data.code !== 'Ok' || !data.routes || data.routes.length === 0) {
+      throw new Error(`OSRM ${proxyPath}: ${data.code ?? 'no code'} - ${data.message ?? 'no routes'}`)
+    }
+
+    return data
+  } finally {
+    clearTimeout(timeout)
   }
-
-  const data = await response.json()
-
-  if (data.code !== 'Ok' || !data.routes || data.routes.length === 0) {
-    throw new Error(`OSRM ${proxyPath}: ${data.code ?? 'no code'} - ${data.message ?? 'no routes'}`)
-  }
-
-  return data
 }
 
-export async function calculateRoute(
-  attractions: SelectedAttraction[]
-): Promise<{
+export type RouteResult = {
   travelTimes: TravelTime[]
   polylinePath: { lat: number; lng: number }[]
   totalDistanceKm: number
   totalDurationMin: number
   optimizedOrder: SelectedAttraction[]
-}[]> {
+}
+
+export async function calculateRoute(
+  attractions: SelectedAttraction[]
+): Promise<RouteResult[]> {
   const validAttractions = attractions
     .filter((a) => a.localizacao.lat !== 0 || a.localizacao.lng !== 0)
 
@@ -142,41 +151,24 @@ export async function calculateRoute(
   const ordered = optimizeOrder(validAttractions)
   const coordinates = ordered.map((a) => `${a.localizacao.lng},${a.localizacao.lat}`).join(';')
 
-  const results: {
-    travelTimes: TravelTime[]
-    polylinePath: { lat: number; lng: number }[]
-    totalDistanceKm: number
-    totalDurationMin: number
-    optimizedOrder: SelectedAttraction[]
-  }[] = []
-
-  for (const { mode, label, proxyPath, osrmProfile } of MODE_CONFIG) {
-    try {
+  const settled = await Promise.allSettled(
+    MODE_CONFIG.map(async ({ mode, label, proxyPath, osrmProfile }) => {
       const data = await fetchOSRMRoute(coordinates, proxyPath, osrmProfile)
-
       const route = data.routes[0]
       const polylinePath = route?.geometry ? decodePolyline6(route.geometry) : []
       const totalDistanceKm = (route?.distance ?? 0) / 1000
       const totalDurationMin = (route?.duration ?? 0) / 60
-
-      results.push({
-        travelTimes: [
-          {
-            mode,
-            label,
-            distance: `${totalDistanceKm.toFixed(1)} km`,
-            duration: formatDuration(totalDurationMin),
-          },
-        ],
+      return {
+        travelTimes: [{ mode, label, distance: `${totalDistanceKm.toFixed(1)} km`, duration: formatDuration(totalDurationMin) }],
         polylinePath,
         totalDistanceKm,
         totalDurationMin,
         optimizedOrder: ordered,
-      })
-    } catch (err) {
-      console.error(`[OSRM ${proxyPath}] failed:`, err)
-    }
-  }
+      }
+    })
+  )
 
-  return results
+  return settled
+    .filter((r): r is PromiseFulfilledResult<RouteResult> => r.status === 'fulfilled')
+    .map((r) => r.value)
 }
