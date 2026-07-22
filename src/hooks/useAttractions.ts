@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { supabase } from '../utils/supabase'
 import { parseWKBHex } from '../utils/parseWKB'
 import type { Attraction } from '../types/attraction'
+import i18n from '../i18n'
 
 interface UseAttractionsResult {
   attractions: Attraction[]
@@ -19,6 +20,7 @@ export function useAttractions(): UseAttractionsResult {
 
     async function fetchAttractions() {
       try {
+        const lang = i18n.language.split('-')[0] || 'pt'
         const { data, error: dbError } = await supabase
           .from('atracoes')
           .select(`
@@ -37,6 +39,8 @@ export function useAttractions(): UseAttractionsResult {
 
         const mapped: Attraction[] = (data ?? []).map((row: any) => {
           const infoPt = row.informacao_atracao?.find(
+            (i: any) => i.idiomas?.codigo === lang
+          ) ?? row.informacao_atracao?.find(
             (i: any) => i.idiomas?.codigo === 'pt'
           )
 

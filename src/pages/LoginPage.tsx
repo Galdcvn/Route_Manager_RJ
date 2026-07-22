@@ -1,5 +1,6 @@
 import { Navigate } from 'react-router-dom'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import logoSvg from '../assets/Logo.svg'
 import { useAuth } from '../contexts/AuthContext'
 import { useToast } from '../contexts/ToastContext'
@@ -7,6 +8,7 @@ import { useToast } from '../contexts/ToastContext'
 type Tab = 'login' | 'signup'
 
 export function LoginPage() {
+  const { t } = useTranslation()
   const { user, signIn, signUp, signInWithGoogle } = useAuth()
   const { toast } = useToast()
   const [tab, setTab] = useState<Tab>('login')
@@ -34,9 +36,9 @@ export function LoginPage() {
     <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4">
       <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl sm:p-8">
         <div className="mb-6 flex flex-col items-center gap-3">
-          <img src={logoSvg} alt="Route Manager RJ" className="h-14 w-14" />
-          <h1 className="text-xl font-bold text-navy">Route Manager RJ</h1>
-          <p className="text-sm text-slate-500">Planeje sua rota pelos pontos turísticos do Rio</p>
+          <img src={logoSvg} alt={t('common.appName')} className="h-14 w-14" />
+          <h1 className="text-xl font-bold text-navy">{t('common.appName')}</h1>
+          <p className="text-sm text-slate-500">{t('login.subtitle')}</p>
         </div>
 
         <div className="mb-6 flex gap-1 rounded-xl bg-slate-100 p-1">
@@ -46,7 +48,7 @@ export function LoginPage() {
               tab === 'login' ? 'bg-white text-navy shadow-sm' : 'text-slate-500'
             }`}
           >
-            Entrar
+            {t('auth.login')}
           </button>
           <button
             onClick={() => setTab('signup')}
@@ -54,19 +56,19 @@ export function LoginPage() {
               tab === 'signup' ? 'bg-white text-navy shadow-sm' : 'text-slate-500'
             }`}
           >
-            Criar conta
+            {t('auth.signup')}
           </button>
         </div>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           {tab === 'signup' && (
             <div>
-              <label className="mb-1 block text-xs font-medium text-slate-500">Nome</label>
+              <label className="mb-1 block text-xs font-medium text-slate-500">{t('auth.name')}</label>
               <input
                 type="text"
                 value={nome}
                 onChange={(e) => setNome(e.target.value)}
-                placeholder="Seu nome"
+                placeholder={t('auth.namePlaceholder')}
                 required
                 className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-navy outline-none transition focus:border-sky focus:ring-2 focus:ring-sky/20"
               />
@@ -74,7 +76,7 @@ export function LoginPage() {
           )}
 
           <div>
-            <label className="mb-1 block text-xs font-medium text-slate-500">Email</label>
+            <label className="mb-1 block text-xs font-medium text-slate-500">{t('auth.email')}</label>
             <input
               type="email"
               value={email}
@@ -86,7 +88,7 @@ export function LoginPage() {
           </div>
 
           <div>
-            <label className="mb-1 block text-xs font-medium text-slate-500">Senha</label>
+            <label className="mb-1 block text-xs font-medium text-slate-500">{t('auth.password')}</label>
             <div className="relative">
               <input
                 type={showPassword ? 'text' : 'password'}
@@ -122,13 +124,13 @@ export function LoginPage() {
             disabled={loading}
             className="w-full rounded-xl bg-sky py-3 text-sm font-semibold text-white shadow-md transition hover:-translate-y-0.5 hover:brightness-110 disabled:opacity-50"
           >
-            {loading ? 'Carregando...' : tab === 'login' ? 'Entrar' : 'Criar conta'}
+            {loading ? t('common.loading') : tab === 'login' ? t('auth.login') : t('auth.signup')}
           </button>
         </form>
 
         <div className="my-6 flex items-center gap-3">
           <div className="h-px flex-1 bg-slate-200" />
-          <span className="text-xs text-slate-400">ou</span>
+          <span className="text-xs text-slate-400">{t('common.or')}</span>
           <div className="h-px flex-1 bg-slate-200" />
         </div>
 
@@ -142,7 +144,7 @@ export function LoginPage() {
             <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
             <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
           </svg>
-          Entrar com Google
+          {t('auth.loginGoogle')}
         </button>
       </div>
     </div>

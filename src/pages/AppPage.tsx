@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { Header } from '../components/Header'
 import { AttractionCard } from '../components/AttractionCard'
 import { AttractionInfoModal } from '../components/AttractionInfoModal'
@@ -13,9 +14,9 @@ import { smartSearch } from '../utils/search'
 import type { Attraction } from '../types/attraction'
 
 const RADIUS_KM = 5
-const steps = ['Escolher atração principal', 'Atrações próximas', 'Resultado']
 
 export function AppPage() {
+  const { t } = useTranslation()
   const { attractions, loading, error } = useAttractions()
   const { step, setStep, selected, toggleAttraction, mainAttraction, setMainAttraction } = useRoute()
   const navigate = useNavigate()
@@ -26,6 +27,8 @@ export function AppPage() {
   useEffect(() => {
     if (error) toast({ type: 'error', message: error })
   }, [error, toast])
+
+  const steps = [t('app.stepMain'), t('app.stepNearby'), t('app.stepResult')]
 
   const nearbyAttractions = useMemo(() => {
     if (!mainAttraction) return []
@@ -107,7 +110,6 @@ export function AppPage() {
       <Header />
 
       <main className="mx-auto max-w-6xl px-4 py-6 pb-28 sm:px-6 sm:py-8">
-        {/* Breadcrumbs */}
         <nav className="mb-6 overflow-x-auto sm:mb-8">
           <ol className="flex items-center gap-2 whitespace-nowrap">
             {steps.map((s, i) => (
@@ -129,63 +131,57 @@ export function AppPage() {
           </ol>
         </nav>
 
-        {/* Título */}
         <div className="mb-4 rounded-2xl border border-slate-200 bg-slate-50 p-4 sm:mb-6 sm:p-6">
           {step === 'select-main' ? (
             <>
-              <h1 className="text-xl font-bold text-navy sm:text-2xl">Escolha a atração principal</h1>
+              <h1 className="text-xl font-bold text-navy sm:text-2xl">{t('app.chooseMain')}</h1>
               <p className="mt-1 text-sm text-slate-500">
-                Selecione o ponto de partida da sua rota.
+                {t('app.chooseMainSub')}
               </p>
             </>
           ) : (
             <>
               <h1 className="text-xl font-bold text-navy sm:text-2xl">
-                Atrações próximas a {mainAttraction?.nome}
+                {t('app.nearbyTitle', { name: mainAttraction?.nome })}
               </h1>
               <p className="mt-1 text-sm text-slate-500">
-                Raio de {RADIUS_KM} km · Selecione mais atrações para sua rota.
+                {t('app.nearbySub', { radius: RADIUS_KM })}
               </p>
               {selected.length > 0 && (
                 <p className="mt-2 text-xs text-pink font-medium">
-                  {selected.length} atração{selected.length !== 1 ? 'ões' : ''} selecionada{selected.length !== 1 ? 's' : ''}
+                  {t('app.selectedCount', { count: selected.length })}
                 </p>
               )}
             </>
           )}
         </div>
 
-        {/* Busca */}
         {!loading && !error && (
           <SearchInput
             value={searchQuery}
             onChange={setSearchQuery}
-            placeholder={step === 'select-main' ? 'Buscar atração...' : 'Buscar atração fora do raio...'}
+            placeholder={step === 'select-main' ? t('app.searchMain') : t('app.searchNearby')}
           />
         )}
 
-        {/* Loading */}
         {loading && (
           <div className="flex justify-center py-12">
             <div className="h-8 w-8 animate-spin rounded-full border-4 border-pink border-t-transparent" />
           </div>
         )}
 
-        {/* Nenhum resultado */}
         {!loading && !error && displayAttractions.length === 0 && searchQuery.trim() && (
           <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-500">
-            Nenhuma atração encontrada para "{searchQuery}".
+            {t('app.noResults', { query: searchQuery })}
           </div>
         )}
 
-        {/* Nenhuma atração próxima (etapa 2 sem busca) */}
         {!loading && step === 'select-nearby' && !searchQuery.trim() && nearbyAttractions.length === 0 && (
           <div className="rounded-2xl border border-mustard/30 bg-mustard/10 p-4 text-sm text-mustard">
-            Nenhuma atração encontrada dentro de {RADIUS_KM} km de {mainAttraction?.nome}. Use a busca para encontrar atrações mais distantes.
+            {t('app.noNearby', { radius: RADIUS_KM, name: mainAttraction?.nome })}
           </div>
         )}
 
-        {/* Cards de atrações */}
         {!loading && !error && displayAttractions.length > 0 && (
           <div className="mb-8 flex gap-4 overflow-x-auto pb-4 sm:mb-10 sm:gap-5 sm:pb-2 lg:grid lg:grid-cols-3 lg:overflow-visible">
             {displayAttractions.map((attraction) => {
@@ -215,14 +211,13 @@ export function AppPage() {
         )}
       </main>
 
-      {/* Barra fixa inferior */}
       <div className="fixed bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/95 backdrop-blur-sm">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6">
           {step === 'select-main' ? (
             <>
               <Link to="/">
                 <Button variant="outline" radius={15}>
-                  Voltar
+                  {t('common.back')}
                 </Button>
               </Link>
               <Button
@@ -231,13 +226,13 @@ export function AppPage() {
                 disabled={!canProceedStep1}
                 onClick={handleProceed}
               >
-                Prosseguir
+                {t('common.next')}
               </Button>
             </>
           ) : (
             <>
               <Button variant="outline" radius={15} onClick={handleBackToMain}>
-                Voltar
+                {t('common.back')}
               </Button>
               <Button
                 variant={canProceedStep2 ? 'pink' : 'outline'}
@@ -245,14 +240,13 @@ export function AppPage() {
                 disabled={!canProceedStep2}
                 onClick={() => navigate('/results')}
               >
-                Calcular rota
+                {t('app.calculate')}
               </Button>
             </>
           )}
         </div>
       </div>
 
-      {/* Modal de informações */}
       <AttractionInfoModal
         open={infoAttraction !== null}
         onClose={() => setInfoAttraction(null)}

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useAuth } from '../contexts/AuthContext'
 import { useToast } from '../contexts/ToastContext'
 
@@ -10,6 +11,7 @@ type AuthModalProps = {
 type Tab = 'login' | 'signup'
 
 export function AuthModal({ open, onClose }: AuthModalProps) {
+  const { t } = useTranslation()
   const { signIn, signUp, signInWithGoogle } = useAuth()
   const { toast } = useToast()
   const [tab, setTab] = useState<Tab>('login')
@@ -60,10 +62,9 @@ export function AuthModal({ open, onClose }: AuthModalProps) {
 
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
         <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl sm:p-8">
-          {/* Header */}
           <div className="mb-6 flex items-center justify-between">
             <h2 className="text-xl font-bold text-navy">
-              {tab === 'login' ? 'Entrar' : 'Criar conta'}
+              {tab === 'login' ? t('auth.loginTitle') : t('auth.signupTitle')}
             </h2>
             <button
               onClick={handleClose}
@@ -75,7 +76,6 @@ export function AuthModal({ open, onClose }: AuthModalProps) {
             </button>
           </div>
 
-          {/* Abas */}
           <div className="mb-6 flex gap-1 rounded-xl bg-slate-100 p-1">
             <button
               onClick={() => setTab('login')}
@@ -83,7 +83,7 @@ export function AuthModal({ open, onClose }: AuthModalProps) {
                 tab === 'login' ? 'bg-white text-navy shadow-sm' : 'text-slate-500'
               }`}
             >
-              Entrar
+              {t('auth.login')}
             </button>
             <button
               onClick={() => setTab('signup')}
@@ -91,20 +91,19 @@ export function AuthModal({ open, onClose }: AuthModalProps) {
                 tab === 'signup' ? 'bg-white text-navy shadow-sm' : 'text-slate-500'
               }`}
             >
-              Criar conta
+              {t('auth.signup')}
             </button>
           </div>
 
-          {/* Formulário */}
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             {tab === 'signup' && (
               <div>
-                <label className="mb-1 block text-xs font-medium text-slate-500">Nome</label>
+                <label className="mb-1 block text-xs font-medium text-slate-500">{t('auth.name')}</label>
                 <input
                   type="text"
                   value={nome}
                   onChange={(e) => setNome(e.target.value)}
-                  placeholder="Seu nome"
+                  placeholder={t('auth.namePlaceholder')}
                   required
                   className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-navy outline-none transition focus:border-sky focus:ring-2 focus:ring-sky/20"
                 />
@@ -112,7 +111,7 @@ export function AuthModal({ open, onClose }: AuthModalProps) {
             )}
 
             <div>
-              <label className="mb-1 block text-xs font-medium text-slate-500">Email</label>
+              <label className="mb-1 block text-xs font-medium text-slate-500">{t('auth.email')}</label>
               <input
                 type="email"
                 value={email}
@@ -124,7 +123,7 @@ export function AuthModal({ open, onClose }: AuthModalProps) {
             </div>
 
             <div>
-              <label className="mb-1 block text-xs font-medium text-slate-500">Senha</label>
+              <label className="mb-1 block text-xs font-medium text-slate-500">{t('auth.password')}</label>
               <div className="relative">
                 <input
                   type={showPassword ? 'text' : 'password'}
@@ -160,18 +159,16 @@ export function AuthModal({ open, onClose }: AuthModalProps) {
               disabled={loading}
               className="w-full rounded-xl bg-sky py-3 text-sm font-semibold text-white shadow-md transition hover:-translate-y-0.5 hover:brightness-110 disabled:opacity-50"
             >
-              {loading ? 'Carregando...' : tab === 'login' ? 'Entrar' : 'Criar conta'}
+              {loading ? t('common.loading') : tab === 'login' ? t('auth.login') : t('auth.signup')}
             </button>
           </form>
 
-          {/* Divisor */}
           <div className="my-6 flex items-center gap-3">
             <div className="h-px flex-1 bg-slate-200" />
-            <span className="text-xs text-slate-400">ou</span>
+            <span className="text-xs text-slate-400">{t('common.or')}</span>
             <div className="h-px flex-1 bg-slate-200" />
           </div>
 
-          {/* Google */}
           <button
             onClick={handleGoogle}
             className="flex w-full items-center justify-center gap-3 rounded-xl border border-slate-200 py-3 text-sm font-medium text-navy transition hover:bg-slate-50"
@@ -182,7 +179,7 @@ export function AuthModal({ open, onClose }: AuthModalProps) {
               <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
               <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
             </svg>
-            Entrar com Google
+            {t('auth.loginGoogle')}
           </button>
         </div>
       </div>

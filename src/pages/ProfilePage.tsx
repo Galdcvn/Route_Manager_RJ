@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Header } from '../components/Header'
 import { Button } from '../components/Button'
 import { useAuth } from '../contexts/AuthContext'
@@ -6,6 +7,7 @@ import { useToast } from '../contexts/ToastContext'
 import { supabase } from '../utils/supabase'
 
 export function ProfilePage() {
+  const { t } = useTranslation()
   const { user } = useAuth()
   const { toast } = useToast()
   const [nome, setNome] = useState('')
@@ -29,12 +31,12 @@ export function ProfilePage() {
     if (!file) return
 
     if (!file.type.startsWith('image/')) {
-      toast({ type: 'error', message: 'Selecione um arquivo de imagem.' })
+      toast({ type: 'error', message: t('profile.avatarError') })
       return
     }
 
     if (file.size > 2 * 1024 * 1024) {
-      toast({ type: 'error', message: 'A imagem deve ter no máximo 2MB.' })
+      toast({ type: 'error', message: t('profile.avatarSizeError') })
       return
     }
 
@@ -74,7 +76,7 @@ export function ProfilePage() {
       if (uploaded) {
         finalAvatarUrl = uploaded
       } else {
-        toast({ type: 'error', message: 'Erro ao enviar a imagem. Tente novamente.' })
+        toast({ type: 'error', message: t('profile.avatarUploadError') })
         setSaving(false)
         return
       }
@@ -102,7 +104,7 @@ export function ProfilePage() {
         setAvatarUrl(finalAvatarUrl)
         setAvatarFile(null)
         setAvatarPreview(null)
-        toast({ type: 'success', message: 'Perfil atualizado com sucesso!' })
+        toast({ type: 'success', message: t('profile.profileUpdated') })
       }
     }
 
@@ -117,12 +119,11 @@ export function ProfilePage() {
 
       <main className="mx-auto max-w-2xl px-4 py-6 sm:px-6 sm:py-8">
         <div className="mb-6 sm:mb-8">
-          <h1 className="text-2xl font-bold text-navy sm:text-3xl">Meu Perfil</h1>
-          <p className="mt-1 text-sm text-slate-500">Gerencie suas informações pessoais.</p>
+          <h1 className="text-2xl font-bold text-navy sm:text-3xl">{t('profile.title')}</h1>
+          <p className="mt-1 text-sm text-slate-500">{t('profile.subtitle')}</p>
         </div>
 
         <div className="rounded-2xl border border-slate-200 bg-slate-50 p-6 sm:p-8">
-          {/* Avatar com upload */}
           <div className="mb-6 flex items-center gap-4">
             <button
               type="button"
@@ -132,7 +133,7 @@ export function ProfilePage() {
               {displayImage ? (
                 <img
                   src={displayImage}
-                  alt="Avatar"
+                  alt={t('profile.avatarAlt')}
                   className="h-16 w-16 rounded-full object-cover"
                 />
               ) : (
@@ -155,41 +156,40 @@ export function ProfilePage() {
               />
             </button>
             <div>
-              <p className="text-lg font-semibold text-navy">{nome || 'Usuário'}</p>
+              <p className="text-lg font-semibold text-navy">{nome || t('common.user')}</p>
               <p className="text-sm text-slate-400">{email}</p>
-              <p className="mt-1 text-xs text-slate-400">Clique na foto para alterar (máx. 2MB)</p>
+              <p className="mt-1 text-xs text-slate-400">{t('profile.avatarHint')}</p>
             </div>
           </div>
 
           <div className="h-px bg-slate-200" />
 
-          {/* Formulário */}
           <form onSubmit={handleSave} className="mt-6 flex flex-col gap-4">
             <div>
-              <label className="mb-1 block text-xs font-medium text-slate-500">Nome completo</label>
+              <label className="mb-1 block text-xs font-medium text-slate-500">{t('profile.fullNameLabel')}</label>
               <input
                 type="text"
                 value={nome}
                 onChange={(e) => setNome(e.target.value)}
-                placeholder="Seu nome"
+                placeholder={t('profile.namePlaceholder')}
                 className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-navy outline-none transition focus:border-sky focus:ring-2 focus:ring-sky/20"
               />
             </div>
 
             <div>
-              <label className="mb-1 block text-xs font-medium text-slate-500">Email</label>
+              <label className="mb-1 block text-xs font-medium text-slate-500">{t('profile.emailLabel')}</label>
               <input
                 type="email"
                 value={email}
                 disabled
                 className="w-full rounded-xl border border-slate-200 bg-slate-100 px-4 py-3 text-sm text-slate-400"
               />
-              <p className="mt-1 text-xs text-slate-400">O email não pode ser alterado.</p>
+              <p className="mt-1 text-xs text-slate-400">{t('auth.emailCantChange')}</p>
             </div>
 
             <div className="flex justify-end">
               <Button variant="sky" radius={15} disabled={saving}>
-                {saving ? 'Salvando...' : 'Salvar alterações'}
+                {saving ? t('common.saving') : t('common.save')}
               </Button>
             </div>
           </form>

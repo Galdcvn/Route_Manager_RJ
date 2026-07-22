@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next'
+
 type SearchInputProps = {
   value: string
   onChange: (value: string) => void
@@ -5,6 +7,8 @@ type SearchInputProps = {
 }
 
 export function SearchInput({ value, onChange, placeholder }: SearchInputProps) {
+  const { t } = useTranslation()
+
   return (
     <div className="relative mb-6">
       <svg
@@ -21,7 +25,7 @@ export function SearchInput({ value, onChange, placeholder }: SearchInputProps) 
         type="text"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder ?? 'Buscar atração...'}
+        placeholder={placeholder ?? t('search.placeholder')}
         className="w-full rounded-xl border border-slate-200 bg-slate-50 py-3 pl-10 pr-4 text-sm text-navy outline-none transition placeholder:text-slate-400 focus:border-pink focus:ring-2 focus:ring-pink/20"
       />
       {value && (

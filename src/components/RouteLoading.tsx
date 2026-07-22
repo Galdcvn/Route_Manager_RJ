@@ -1,23 +1,24 @@
 import { useState, useEffect } from 'react'
-
-const mapSteps = [
-  'Preparando ambiente...',
-  'Conectando ao servidor de rotas...',
-  'Carregando mapa...',
-]
-
-const calcSteps = [
-  'Encontrando melhor rota...',
-  'Calculando distancias...',
-  'Estimando tempos...',
-  'Preparando resultado...',
-]
+import { useTranslation } from 'react-i18next'
 
 interface RouteLoadingProps {
   phase?: 'loading-map' | 'calculating'
 }
 
 export function RouteLoading({ phase = 'calculating' }: RouteLoadingProps) {
+  const { t } = useTranslation()
+  const mapSteps = [
+    t('loading.preparingEnv'),
+    t('loading.connecting'),
+    t('loading.loadingMap'),
+  ]
+  const calcSteps = [
+    t('loading.findingRoute'),
+    t('loading.calculatingDist'),
+    t('loading.estimatingTimes'),
+    t('loading.preparingResult'),
+  ]
+
   const steps = phase === 'loading-map' ? mapSteps : calcSteps
   const [currentStep, setCurrentStep] = useState(0)
 
@@ -46,7 +47,7 @@ export function RouteLoading({ phase = 'calculating' }: RouteLoadingProps) {
 
         <div className="text-center">
           <h2 className="text-lg font-bold text-navy">
-            {phase === 'loading-map' ? 'Preparando mapa' : 'Calculando melhor rota'}
+            {phase === 'loading-map' ? t('loading.loadingMapTitle') : t('loading.calculatingTitle')}
           </h2>
           <p className="mt-1 text-sm text-slate-400 transition-all duration-300">
             {steps[currentStep]}

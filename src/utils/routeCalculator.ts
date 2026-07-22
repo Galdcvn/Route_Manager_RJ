@@ -1,11 +1,20 @@
 import type { SelectedAttraction } from '../types/attraction'
 import { haversineKm } from './distance'
+import i18n from '../i18n'
 
 export interface TravelTime {
   mode: 'DRIVING' | 'WALKING' | 'BICYCLE'
   label: string
   distance: string
   duration: string
+}
+
+function getTravelLabels() {
+  return {
+    DRIVING: i18n.t('route.driving'),
+    WALKING: i18n.t('route.walking'),
+    BICYCLE: i18n.t('route.bicycle'),
+  }
 }
 
 interface OSRMRouteResponse {
@@ -19,11 +28,12 @@ interface OSRMRouteResponse {
   }[]
 }
 
-const MODE_CONFIG: { mode: 'DRIVING' | 'WALKING' | 'BICYCLE'; label: string; proxyPath: string; osrmProfile: string }[] = [
-  { mode: 'DRIVING', label: 'Carro', proxyPath: 'driving', osrmProfile: 'driving' },
-  { mode: 'WALKING', label: 'Andar', proxyPath: 'foot', osrmProfile: 'foot' },
-  { mode: 'BICYCLE', label: 'Bicicleta', proxyPath: 'cycling', osrmProfile: 'cycling' },
-]
+  const labels = getTravelLabels()
+  const MODE_CONFIG: { mode: 'DRIVING' | 'WALKING' | 'BICYCLE'; label: string; proxyPath: string; osrmProfile: string }[] = [
+    { mode: 'DRIVING', label: labels.DRIVING, proxyPath: 'driving', osrmProfile: 'driving' },
+    { mode: 'WALKING', label: labels.WALKING, proxyPath: 'foot', osrmProfile: 'foot' },
+    { mode: 'BICYCLE', label: labels.BICYCLE, proxyPath: 'cycling', osrmProfile: 'cycling' },
+  ]
 
 function decodePolyline6(encoded: string): { lat: number; lng: number }[] {
   const points: { lat: number; lng: number }[] = []

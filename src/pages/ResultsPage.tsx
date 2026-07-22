@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo, useRef, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { Header } from '../components/Header'
 import { RouteMap } from '../components/RouteMap'
 import { RouteLoading } from '../components/RouteLoading'
@@ -18,6 +19,7 @@ const ICONS: Record<string, string> = {
 }
 
 export function ResultsPage() {
+  const { t } = useTranslation()
   const { selected, mainAttraction, setSavedRouteId, resetFlow } = useRoute()
   const navigate = useNavigate()
   const { toast } = useToast()
@@ -76,21 +78,21 @@ export function ResultsPage() {
           if (routeId) {
             setSavedRouteId(routeId)
           } else {
-            toast({ type: 'error', message: 'Rota calculada, mas não foi possível salvar.' })
+            toast({ type: 'error', message: t('results.saveError') })
           }
         }
         setTravelTimes(results.map((r) => r.travelTimes[0]))
       })
       .catch((err) => {
-        console.error('Erro ao calcular rota:', err)
+        console.error('Route calculation error:', err)
         setError(true)
-        toast({ type: 'error', message: 'Erro ao calcular rota. Tente novamente.' })
+        toast({ type: 'error', message: t('results.calcFail') })
       })
       .finally(() => {
         fetchingRef.current = false
         setCalculating(false)
       })
-  }, [orderedAttractions, toast, setSavedRouteId])
+  }, [orderedAttractions, toast, setSavedRouteId, t])
 
   useEffect(() => {
     doFetch()
@@ -101,14 +103,14 @@ export function ResultsPage() {
       <div className="min-h-screen bg-white">
         <Header />
         <main className="mx-auto max-w-6xl px-4 py-16 text-center sm:px-6">
-          <p className="text-lg font-bold text-navy">Erro ao calcular rota</p>
-          <p className="mt-2 text-sm text-slate-500">Verifique sua conexão e tente novamente.</p>
+          <p className="text-lg font-bold text-navy">{t('results.calcError')}</p>
+          <p className="mt-2 text-sm text-slate-500">{t('results.calcErrorSub')}</p>
           <div className="mt-6 flex justify-center gap-3">
             <Button variant="pink" radius={15} onClick={() => navigate('/app')}>
-              Voltar
+              {t('common.back')}
             </Button>
             <Button variant="lime" radius={15} onClick={doFetch}>
-              Tentar novamente
+              {t('common.retry')}
             </Button>
           </div>
         </main>
@@ -130,8 +132,8 @@ export function ResultsPage() {
             <div>
               <h1 className="text-2xl font-bold text-navy sm:text-3xl">
                 {optimizedAttractions.length > 0
-                  ? `Rota: ${optimizedAttractions.length} parada${optimizedAttractions.length !== 1 ? 's' : ''}`
-                  : 'Nenhuma atração selecionada'}
+                  ? t('results.routeTitle', { count: optimizedAttractions.length })
+                  : t('results.noSelection')}
               </h1>
               {totalDistance && totalDuration && (
                 <p className="mt-1 text-sm text-slate-500">
@@ -140,7 +142,7 @@ export function ResultsPage() {
               )}
             </div>
             <Button variant="outline" radius={15} onClick={() => navigate('/app')}>
-              Editar
+              {t('common.edit')}
             </Button>
           </div>
         </div>
@@ -155,7 +157,7 @@ export function ResultsPage() {
           <div className="flex flex-col gap-6">
             {optimizedAttractions.length > 0 && (
               <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                <h2 className="mb-3 text-sm font-semibold text-navy">Paradas na ordem da rota</h2>
+                <h2 className="mb-3 text-sm font-semibold text-navy">{t('results.stopsTitle')}</h2>
                 <ol className="space-y-3">
                   {optimizedAttractions.map((attraction, i) => (
                     <li key={attraction.id} className="flex items-center gap-3">
@@ -175,9 +177,9 @@ export function ResultsPage() {
             )}
 
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-              {travelTimes.map((t) => (
+              {travelTimes.map((t2) => (
                 <div
-                  key={t.mode}
+                  key={t2.mode}
                   className="flex flex-col items-center rounded-xl border border-slate-200 p-3"
                 >
                   <svg
@@ -185,11 +187,11 @@ export function ResultsPage() {
                     viewBox="0 0 24 24"
                     fill="currentColor"
                   >
-                    <path d={ICONS[t.mode]} />
+                    <path d={ICONS[t2.mode]} />
                   </svg>
-                  <p className="text-xs font-medium text-slate-500">{t.label}</p>
-                  <p className="text-sm font-bold text-navy">{t.duration}</p>
-                  <p className="text-xs text-slate-400">{t.distance}</p>
+                  <p className="text-xs font-medium text-slate-500">{t2.label}</p>
+                  <p className="text-sm font-bold text-navy">{t2.duration}</p>
+                  <p className="text-xs text-slate-400">{t2.distance}</p>
                 </div>
               ))}
             </div>
@@ -201,7 +203,7 @@ export function ResultsPage() {
                 className="flex-1"
                 onClick={() => { resetFlow(); navigate('/app') }}
               >
-                Nova Rota
+                {t('results.newRoute')}
               </Button>
               <Button
                 variant="lime"
@@ -209,10 +211,10 @@ export function ResultsPage() {
                 className="flex-1"
                 onClick={() => shareWhatsApp(optimizedAttractions, travelTimes)}
               >
-                Compartilhar rota (WPP)
+                {t('results.shareWpp')}
               </Button>
               <Button variant="sky" radius={15} className="flex-1" disabled>
-                Gerar PDF
+                {t('results.generatePdf')}
               </Button>
             </div>
           </div>

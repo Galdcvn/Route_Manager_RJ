@@ -1,10 +1,12 @@
 import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { Header } from '../components/Header'
 import { Button } from '../components/Button'
 import { useRoute } from '../contexts/RouteContext'
 
 export function HomePage() {
+  const { t } = useTranslation()
   const { resetFlow } = useRoute()
 
   useEffect(() => {
@@ -19,17 +21,17 @@ export function HomePage() {
         <section className="grid gap-8 md:grid-cols-2 md:items-center">
           <div className="order-2 md:order-1">
             <h1 className="text-3xl font-bold leading-tight text-navy sm:text-4xl lg:text-5xl">
-              Planeje sua rota pelos pontos turísticos do Rio de Janeiro
+              {t('home.title')}
             </h1>
 
             <p className="mt-4 text-base text-slate-500 sm:text-lg">
-              Escolha as atrações que deseja visitar e descubra a melhor rota para conhecer a cidade maravilhosa.
+              {t('home.description')}
             </p>
 
             <div className="mt-6 flex flex-wrap gap-3 sm:mt-8">
               <Link to="/app">
                 <Button variant="sky" radius={15}>
-                  Planejar Rota
+                  {t('home.cta')}
                 </Button>
               </Link>
             </div>
@@ -38,7 +40,7 @@ export function HomePage() {
           <div className="order-1 flex justify-center md:order-2">
             <img
               src="/Mapa_RJ.svg"
-              alt="Mapa do Rio de Janeiro"
+              alt={t('home.mapAlt')}
               className="h-64 w-auto sm:h-80 lg:h-96"
             />
           </div>

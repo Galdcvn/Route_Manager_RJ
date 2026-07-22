@@ -1,0 +1,129 @@
+{
+  "common": {
+    "appName": "Route Manager RJ",
+    "loading": "Cargando...",
+    "save": "Guardar cambios",
+    "saving": "Guardando...",
+    "back": "Volver",
+    "next": "Continuar",
+    "edit": "Editar",
+    "retry": "Intentar de nuevo",
+    "error": "Error",
+    "or": "o",
+    "user": "Usuario"
+  },
+  "auth": {
+    "login": "Iniciar sesión",
+    "signup": "Crear cuenta",
+    "name": "Nombre",
+    "namePlaceholder": "Tu nombre",
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "loginGoogle": "Iniciar sesión con Google",
+    "fullName": "Nombre completo",
+    "emailCantChange": "El correo electrónico no se puede cambiar.",
+    "loginTitle": "Iniciar sesión",
+    "signupTitle": "Crear cuenta"
+  },
+  "login": {
+    "subtitle": "Planifica tu ruta por los principales atractivos de Río"
+  },
+  "home": {
+    "title": "Planifica tu ruta por los puntos turísticos de Río de Janeiro",
+    "description": "Elige los atractivos que deseas visitar y descubre la mejor ruta para conocer la hermosa ciudad.",
+    "cta": "Planificar Ruta",
+    "mapAlt": "Mapa de Río de Janeiro"
+  },
+  "app": {
+    "stepMain": "Elegir atractivo principal",
+    "stepNearby": "Atractivos cercanos",
+    "stepResult": "Resultado",
+    "chooseMain": "Elige el atractivo principal",
+    "chooseMainSub": "Selecciona el punto de partida de tu ruta.",
+    "nearbyTitle": "Atractivos cerca de {{name}}",
+    "nearbySub": "Radio de {{radius}} km · Selecciona más atractivos para tu ruta.",
+    "selectedCount": "{{count}} atractivo seleccionado",
+    "selectedCount_plural": "{{count}} atractivos seleccionados",
+    "searchMain": "Buscar atractivo...",
+    "searchNearby": "Buscar atractivo fuera del radio...",
+    "noResults": "No se encontraron atractivos para \"{{query}}\".",
+    "noNearby": "No se encontraron atractivos dentro de {{radius}} km de {{name}}. Usa la búsqueda para encontrar atractivos más lejanos.",
+    "calculate": "Calcular ruta"
+  },
+  "results": {
+    "routeTitle": "Ruta: {{count}} parada",
+    "routeTitle_plural": "Ruta: {{count}} paradas",
+    "noSelection": "Ningún atractivo seleccionado",
+    "stopsTitle": "Paradas en orden de ruta",
+    "calcError": "Error al calcular la ruta",
+    "calcErrorSub": "Verifica tu conexión e intenta de nuevo.",
+    "saveError": "Ruta calculada, pero no se pudo guardar.",
+    "calcFail": "Error al calcular la ruta. Intenta de nuevo.",
+    "newRoute": "Nueva Ruta",
+    "shareWpp": "Compartir ruta (WPP)",
+    "generatePdf": "Generar PDF"
+  },
+  "profile": {
+    "title": "Mi Perfil",
+    "subtitle": "Gestiona tu información personal.",
+    "fullNameLabel": "Nombre completo",
+    "namePlaceholder": "Tu nombre",
+    "emailLabel": "Correo electrónico",
+    "avatarAlt": "Avatar",
+    "avatarHint": "Haz clic en la foto para cambiar (máx. 2MB)",
+    "avatarError": "Selecciona un archivo de imagen.",
+    "avatarSizeError": "La imagen debe tener como máximo 2MB.",
+    "avatarUploadError": "Error al subir la imagen. Intenta de nuevo.",
+    "profileUpdated": "¡Perfil actualizado con éxito!"
+  },
+  "notfound": {
+    "title": "Página no encontrada",
+    "description": "La dirección que intentaste acceder no existe o ha sido movida.",
+    "backHome": "Volver al inicio"
+  },
+  "header": {
+    "myProfile": "Mi Perfil",
+    "planRoute": "Planificar Ruta",
+    "signOut": "Cerrar sesión",
+    "signIn": "Iniciar sesión",
+    "openMenu": "Abrir menú"
+  },
+  "menu": {
+    "title": "Menú",
+    "closeMenu": "Cerrar menú",
+    "profile": "Perfil",
+    "planRoute": "Planificar Ruta",
+    "signOut": "Cerrar sesión",
+    "login": "Iniciar sesión"
+  },
+  "search": {
+    "placeholder": "Buscar atractivo..."
+  },
+  "loading": {
+    "preparingEnv": "Preparando entorno...",
+    "connecting": "Conectando al servidor de rutas...",
+    "loadingMap": "Cargando mapa...",
+    "findingRoute": "Encontrando mejor ruta...",
+    "calculatingDist": "Calculando distancias...",
+    "estimatingTimes": "Estimando tiempos...",
+    "preparingResult": "Preparando resultado...",
+    "loadingMapTitle": "Preparando mapa",
+    "calculatingTitle": "Calculando mejor ruta"
+  },
+  "route": {
+    "driving": "Coche",
+    "walking": "Caminar",
+    "bicycle": "Bicicleta"
+  },
+  "share": {
+    "header": "*Mi ruta por Río de Janeiro*",
+    "distance": "Distancia: {{distance}}",
+    "duration": "Tiempo estimado (coche): {{duration}}",
+    "footer": "Ruta creada con Route Manager RJ"
+  },
+  "lang": {
+    "pt": "Português",
+    "en": "English",
+    "es": "Español"
+  }
+}
