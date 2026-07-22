@@ -49,7 +49,7 @@ export function ProfilePage() {
     const path = `${user.id}/avatar.${ext}`
 
     const { error } = await supabase.storage
-      .from('avatars')
+      .from('Avatars')
       .upload(path, avatarFile, { upsert: true })
 
     if (error) {
@@ -57,7 +57,7 @@ export function ProfilePage() {
       return null
     }
 
-    const { data } = supabase.storage.from('avatars').getPublicUrl(path)
+    const { data } = supabase.storage.from('Avatars').getPublicUrl(path)
     return data.publicUrl
   }
 
