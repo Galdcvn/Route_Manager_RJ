@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../utils/supabase'
+import { parseWKBHex } from '../utils/parseWKB'
 import type { Attraction } from '../types/attraction'
 
 interface UseAttractionsResult {
@@ -53,10 +54,7 @@ export function useAttractions(): UseAttractionsResult {
             bairro: row.endereco_atracao?.bairro,
             cidade: row.endereco_atracao?.cidade,
             imagem_url: imagem,
-            localizacao: {
-              lat: row.localizacao?.coordinates?.[1] ?? 0,
-              lng: row.localizacao?.coordinates?.[0] ?? 0,
-            },
+            localizacao: parseWKBHex(row.localizacao),
           }
         })
 

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 
 const mapSteps = [
   'Preparando ambiente...',
-  'Conectando ao Google Maps...',
+  'Conectando ao servidor de rotas...',
   'Carregando mapa...',
 ]
 
