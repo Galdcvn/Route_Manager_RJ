@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Header } from '../components/Header'
 import { Button } from '../components/Button'
 import { useAuth } from '../contexts/AuthContext'
@@ -8,15 +8,58 @@ export function ProfilePage() {
   const { user } = useAuth()
   const [nome, setNome] = useState('')
   const [email, setEmail] = useState('')
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null)
+  const [avatarFile, setAvatarFile] = useState<File | null>(null)
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     if (user) {
       setNome(user.user_metadata?.full_name ?? '')
       setEmail(user.email ?? '')
+      setAvatarUrl(user.user_metadata?.avatar_url ?? null)
     }
   }, [user])
+
+  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    if (!file.type.startsWith('image/')) {
+      setMessage({ type: 'error', text: 'Selecione um arquivo de imagem.' })
+      return
+    }
+
+    if (file.size > 2 * 1024 * 1024) {
+      setMessage({ type: 'error', text: 'A imagem deve ter no máximo 2MB.' })
+      return
+    }
+
+    setAvatarFile(file)
+    setAvatarPreview(URL.createObjectURL(file))
+    setMessage(null)
+  }
+
+  async function uploadAvatar(): Promise<string | null> {
+    if (!avatarFile || !user) return avatarUrl
+
+    const ext = avatarFile.name.split('.').pop() ?? 'jpg'
+    const path = `${user.id}/avatar.${ext}`
+
+    const { error } = await supabase.storage
+      .from('avatars')
+      .upload(path, avatarFile, { upsert: true })
+
+    if (error) {
+      console.error('Upload error:', error)
+      return null
+    }
+
+    const { data } = supabase.storage.from('avatars').getPublicUrl(path)
+    return data.publicUrl
+  }
 
   async function handleSave(e: React.FormEvent) {
     e.preventDefault()
@@ -25,8 +68,21 @@ export function ProfilePage() {
     setSaving(true)
     setMessage(null)
 
+    let finalAvatarUrl = avatarUrl
+
+    if (avatarFile) {
+      const uploaded = await uploadAvatar()
+      if (uploaded) {
+        finalAvatarUrl = uploaded
+      } else {
+        setMessage({ type: 'error', text: 'Erro ao enviar a imagem. Tente novamente.' })
+        setSaving(false)
+        return
+      }
+    }
+
     const { error } = await supabase.auth.updateUser({
-      data: { full_name: nome },
+      data: { full_name: nome, avatar_url: finalAvatarUrl },
     })
 
     if (error) {
@@ -34,18 +90,27 @@ export function ProfilePage() {
     } else {
       const { error: dbError } = await supabase
         .from('usuario')
-        .update({ nome_completo: nome, atualizado_em: new Date().toISOString() })
+        .update({
+          nome_completo: nome,
+          avatar_url: finalAvatarUrl,
+          atualizado_em: new Date().toISOString(),
+        })
         .eq('id', user.id)
 
       if (dbError) {
         setMessage({ type: 'error', text: dbError.message })
       } else {
+        setAvatarUrl(finalAvatarUrl)
+        setAvatarFile(null)
+        setAvatarPreview(null)
         setMessage({ type: 'success', text: 'Perfil atualizado com sucesso!' })
       }
     }
 
     setSaving(false)
   }
+
+  const displayImage = avatarPreview || avatarUrl
 
   return (
     <div className="min-h-screen bg-white">
@@ -58,14 +123,42 @@ export function ProfilePage() {
         </div>
 
         <div className="rounded-2xl border border-slate-200 bg-slate-50 p-6 sm:p-8">
-          {/* Avatar */}
+          {/* Avatar com upload */}
           <div className="mb-6 flex items-center gap-4">
-            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-navy text-xl font-bold text-white">
-              {nome.charAt(0)?.toUpperCase() || email.charAt(0)?.toUpperCase()}
-            </div>
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              className="group relative h-16 w-16 shrink-0 overflow-hidden rounded-full bg-navy"
+            >
+              {displayImage ? (
+                <img
+                  src={displayImage}
+                  alt="Avatar"
+                  className="h-16 w-16 rounded-full object-cover"
+                />
+              ) : (
+                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-navy text-xl font-bold text-white">
+                  {nome.charAt(0)?.toUpperCase() || email.charAt(0)?.toUpperCase()}
+                </div>
+              )}
+              <div className="absolute inset-0 flex items-center justify-center rounded-full bg-black/40 opacity-0 transition group-hover:opacity-100">
+                <svg className="h-5 w-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z" />
+                  <circle cx="12" cy="13" r="4" />
+                </svg>
+              </div>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleFileChange}
+                className="hidden"
+              />
+            </button>
             <div>
               <p className="text-lg font-semibold text-navy">{nome || 'Usuário'}</p>
               <p className="text-sm text-slate-400">{email}</p>
+              <p className="mt-1 text-xs text-slate-400">Clique na foto para alterar (máx. 2MB)</p>
             </div>
           </div>
 
