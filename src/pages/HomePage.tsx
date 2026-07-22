@@ -1,14 +1,8 @@
 import { Link } from 'react-router-dom'
 import { Header } from '../components/Header'
 import { Button } from '../components/Button'
-import { useAuth } from '../contexts/AuthContext'
-import { AuthModal } from '../components/AuthModal'
-import { useState } from 'react'
 
 export function HomePage() {
-  const { user } = useAuth()
-  const [authOpen, setAuthOpen] = useState(false)
-
   return (
     <div className="min-h-screen bg-white">
       <Header />
@@ -25,17 +19,11 @@ export function HomePage() {
             </p>
 
             <div className="mt-6 flex flex-wrap gap-3 sm:mt-8">
-              {user ? (
-                <Link to="/app">
-                  <Button variant="sky" radius={15}>
-                    Planejar Rota
-                  </Button>
-                </Link>
-              ) : (
-                <Button variant="sky" radius={15} onClick={() => setAuthOpen(true)}>
-                  Começar agora
+              <Link to="/app">
+                <Button variant="sky" radius={15}>
+                  Planejar Rota
                 </Button>
-              )}
+              </Link>
             </div>
           </div>
 
@@ -48,8 +36,6 @@ export function HomePage() {
           </div>
         </section>
       </main>
-
-      <AuthModal open={authOpen} onClose={() => setAuthOpen(false)} />
     </div>
   )
 }

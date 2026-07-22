@@ -3,6 +3,7 @@ import { AuthProvider } from './contexts/AuthContext'
 import { RouteProvider } from './contexts/RouteContext'
 import { ToastProvider } from './contexts/ToastContext'
 import { ProtectedRoute } from './components/ProtectedRoute'
+import { LoginPage } from './pages/LoginPage'
 import { HomePage } from './pages/HomePage'
 import { AppPage } from './pages/AppPage'
 import { ResultsPage } from './pages/ResultsPage'
@@ -16,7 +17,15 @@ export default function App() {
         <ToastProvider>
           <BrowserRouter>
           <Routes>
-            <Route path="/" element={<HomePage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route
+              path="/"
+              element={
+                <ProtectedRoute>
+                  <HomePage />
+                </ProtectedRoute>
+              }
+            />
             <Route
               path="/app"
               element={

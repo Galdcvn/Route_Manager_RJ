@@ -5,11 +5,6 @@ import { MenuDrawer } from './MenuDrawer'
 import { AuthModal } from './AuthModal'
 import { useAuth } from '../contexts/AuthContext'
 
-const navLinks = [
-  { label: 'Início', to: '/' },
-  { label: 'Planejar Rota', to: '/app' },
-]
-
 export function Header() {
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [authOpen, setAuthOpen] = useState(false)
@@ -35,18 +30,6 @@ export function Header() {
         <Link to="/">
           <img src={logoSvg} alt="Route Manager RJ" className="h-10 w-10 sm:h-12 sm:w-12" />
         </Link>
-
-        <nav className="hidden items-center gap-6 md:flex">
-          {navLinks.map((link) => (
-            <Link
-              key={link.label}
-              to={link.to}
-              className="text-sm font-medium text-navy transition hover:text-pink"
-            >
-              {link.label}
-            </Link>
-          ))}
-        </nav>
 
         <div className="flex items-center gap-3">
           {/* Desktop: dropdown do avatar ou botão login */}
