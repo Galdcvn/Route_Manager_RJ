@@ -28,13 +28,6 @@ interface OSRMRouteResponse {
   }[]
 }
 
-  const labels = getTravelLabels()
-  const MODE_CONFIG: { mode: 'DRIVING' | 'WALKING' | 'BICYCLE'; label: string; proxyPath: string; osrmProfile: string }[] = [
-    { mode: 'DRIVING', label: labels.DRIVING, proxyPath: 'driving', osrmProfile: 'driving' },
-    { mode: 'WALKING', label: labels.WALKING, proxyPath: 'foot', osrmProfile: 'foot' },
-    { mode: 'BICYCLE', label: labels.BICYCLE, proxyPath: 'cycling', osrmProfile: 'cycling' },
-  ]
-
 function decodePolyline6(encoded: string): { lat: number; lng: number }[] {
   const points: { lat: number; lng: number }[] = []
   let index = 0
@@ -160,6 +153,13 @@ export async function calculateRoute(
 
   const ordered = optimizeOrder(validAttractions)
   const coordinates = ordered.map((a) => `${a.localizacao.lng},${a.localizacao.lat}`).join(';')
+
+  const labels = getTravelLabels()
+  const MODE_CONFIG: { mode: 'DRIVING' | 'WALKING' | 'BICYCLE'; label: string; proxyPath: string; osrmProfile: string }[] = [
+    { mode: 'DRIVING', label: labels.DRIVING, proxyPath: 'driving', osrmProfile: 'driving' },
+    { mode: 'WALKING', label: labels.WALKING, proxyPath: 'foot', osrmProfile: 'foot' },
+    { mode: 'BICYCLE', label: labels.BICYCLE, proxyPath: 'cycling', osrmProfile: 'cycling' },
+  ]
 
   const settled = await Promise.allSettled(
     MODE_CONFIG.map(async ({ mode, label, proxyPath, osrmProfile }) => {

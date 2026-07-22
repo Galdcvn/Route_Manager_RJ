@@ -1,4 +1,5 @@
 import { supabase } from './supabase'
+import i18n from '../i18n'
 import type { SelectedAttraction } from '../types/attraction'
 import type { TravelTime } from './routeCalculator'
 
@@ -26,7 +27,7 @@ export async function saveRoute({
 
   if (!statusData) return null
 
-  const nome = `Rota ${attractions.length} paradas - ${Date.now()}`
+  const nome = i18n.t('share.routeName', { count: attractions.length })
 
   const { data: routeData, error: routeError } = await supabase
     .from('rotas')
@@ -36,7 +37,7 @@ export async function saveRoute({
       ponto_inicio_id: attractions[0]?.id ?? null,
       nome,
       distancia_total: totalDistanceKm,
-      duracao_total: `${Math.floor(totalDurationMin)} minutes`,
+      duracao_total: i18n.t('common.minutes', { count: Math.floor(totalDurationMin) }),
       dados_rotas: { travelTimes },
     })
     .select('id')

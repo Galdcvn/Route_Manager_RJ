@@ -10,7 +10,8 @@
     "retry": "Intentar de nuevo",
     "error": "Error",
     "or": "o",
-    "user": "Usuario"
+    "user": "Usuario",
+    "minutes": "{{count}} minutos"
   },
   "auth": {
     "login": "Iniciar sesión",
@@ -18,6 +19,7 @@
     "name": "Nombre",
     "namePlaceholder": "Tu nombre",
     "email": "Correo electrónico",
+    "emailPlaceholder": "tu@email.com",
     "password": "Contraseña",
     "loginGoogle": "Iniciar sesión con Google",
     "fullName": "Nombre completo",
@@ -117,6 +119,7 @@
   },
   "share": {
     "header": "*Mi ruta por Río de Janeiro*",
+    "routeName": "Ruta {{count}} parada(s)",
     "distance": "Distancia: {{distance}}",
     "duration": "Tiempo estimado (coche): {{duration}}",
     "footer": "Ruta creada con Route Manager RJ"
@@ -125,5 +128,8 @@
     "pt": "Português",
     "en": "English",
     "es": "Español"
+  },
+  "attractions": {
+    "fetchError": "Error al buscar atractivos"
   }
 }

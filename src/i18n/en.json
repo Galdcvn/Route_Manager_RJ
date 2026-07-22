@@ -10,7 +10,8 @@
     "retry": "Try again",
     "error": "Error",
     "or": "or",
-    "user": "User"
+    "user": "User",
+    "minutes": "{{count}} minutes"
   },
   "auth": {
     "login": "Sign in",
@@ -18,6 +19,7 @@
     "name": "Name",
     "namePlaceholder": "Your name",
     "email": "Email",
+    "emailPlaceholder": "you@email.com",
     "password": "Password",
     "loginGoogle": "Sign in with Google",
     "fullName": "Full name",
@@ -117,6 +119,7 @@
   },
   "share": {
     "header": "*My route through Rio de Janeiro*",
+    "routeName": "Route {{count}} stop(s)",
     "distance": "Distance: {{distance}}",
     "duration": "Estimated time (car): {{duration}}",
     "footer": "Route created with Route Manager RJ"
@@ -125,5 +128,8 @@
     "pt": "Português",
     "en": "English",
     "es": "Español"
+  },
+  "attractions": {
+    "fetchError": "Error fetching attractions"
   }
 }

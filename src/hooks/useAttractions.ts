@@ -64,7 +64,7 @@ export function useAttractions(): UseAttractionsResult {
 
         setAttractions(mapped)
       } catch (err: any) {
-        if (!cancelled) setError(err.message ?? 'Erro ao buscar atrações')
+        if (!cancelled) setError(err.message ?? i18n.t('attractions.fetchError'))
       } finally {
         if (!cancelled) setLoading(false)
       }
