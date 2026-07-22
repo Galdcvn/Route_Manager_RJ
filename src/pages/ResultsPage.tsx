@@ -9,6 +9,7 @@ import { useToast } from '../contexts/ToastContext'
 import { calculateRoute, type TravelTime } from '../utils/routeCalculator'
 import { saveRoute } from '../utils/saveRoute'
 import { shareWhatsApp } from '../utils/shareWhatsApp'
+import type { SelectedAttraction } from '../types/attraction'
 
 const ICONS: Record<string, string> = {
   DRIVING: 'M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z',
@@ -26,6 +27,7 @@ export function ResultsPage() {
   const [polylinePath, setPolylinePath] = useState<{ lat: number; lng: number }[]>([])
   const [totalDistance, setTotalDistance] = useState('')
   const [totalDuration, setTotalDuration] = useState('')
+  const [optimizedAttractions, setOptimizedAttractions] = useState<SelectedAttraction[]>([])
   const [error, setError] = useState(false)
   const fetchingRef = useRef(false)
 
@@ -63,9 +65,10 @@ export function ResultsPage() {
           setTotalDistance(driving.travelTimes[0].distance)
           setTotalDuration(driving.travelTimes[0].duration)
           setPolylinePath(driving.polylinePath)
+          setOptimizedAttractions(driving.optimizedOrder)
 
           const routeId = await saveRoute({
-            attractions: orderedAttractions,
+            attractions: driving.optimizedOrder,
             travelTimes: driving.travelTimes,
             totalDistanceKm: driving.totalDistanceKm,
             totalDurationMin: driving.totalDurationMin,
@@ -122,8 +125,8 @@ export function ResultsPage() {
           <div className="flex items-start justify-between">
             <div>
               <h1 className="text-2xl font-bold text-navy sm:text-3xl">
-                {orderedAttractions.length > 0
-                  ? `Rota: ${orderedAttractions.length} parada${orderedAttractions.length !== 1 ? 's' : ''}`
+                {optimizedAttractions.length > 0
+                  ? `Rota: ${optimizedAttractions.length} parada${optimizedAttractions.length !== 1 ? 's' : ''}`
                   : 'Nenhuma atração selecionada'}
               </h1>
               {totalDistance && totalDuration && (
@@ -141,16 +144,16 @@ export function ResultsPage() {
         <div className="grid gap-6 lg:grid-cols-2 lg:gap-8">
           <div className="overflow-hidden rounded-2xl border border-slate-200 bg-slate-50">
             <div className="h-64 sm:h-80 lg:h-full lg:min-h-[400px]">
-              <RouteMap attractions={orderedAttractions} polylinePath={polylinePath} />
+              <RouteMap attractions={optimizedAttractions} polylinePath={polylinePath} />
             </div>
           </div>
 
           <div className="flex flex-col gap-6">
-            {orderedAttractions.length > 0 && (
+            {optimizedAttractions.length > 0 && (
               <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
                 <h2 className="mb-3 text-sm font-semibold text-navy">Paradas na ordem da rota</h2>
                 <ol className="space-y-3">
-                  {orderedAttractions.map((attraction, i) => (
+                  {optimizedAttractions.map((attraction, i) => (
                     <li key={attraction.id} className="flex items-center gap-3">
                       <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-pink text-xs font-bold text-white">
                         {i + 1}
@@ -192,7 +195,7 @@ export function ResultsPage() {
                 variant="lime"
                 radius={15}
                 className="flex-1"
-                onClick={() => shareWhatsApp(orderedAttractions, travelTimes)}
+                onClick={() => shareWhatsApp(optimizedAttractions, travelTimes)}
               >
                 Compartilhar rota (WPP)
               </Button>

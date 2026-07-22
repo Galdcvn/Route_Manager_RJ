@@ -1,17 +1,11 @@
 import type { SelectedAttraction } from '../types/attraction'
+import { haversineKm } from './distance'
 
 export interface TravelTime {
   mode: 'DRIVING' | 'WALKING' | 'BICYCLE'
   label: string
   distance: string
   duration: string
-}
-
-export interface RouteCalculation {
-  travelTimes: TravelTime[]
-  polylinePath: { lat: number; lng: number }[]
-  totalDistanceKm: number
-  totalDurationMin: number
 }
 
 interface OSRMRouteResponse {
@@ -76,6 +70,39 @@ function formatDuration(minutes: number): string {
   return m > 0 ? `${h}h ${m}min` : `${h}h`
 }
 
+function optimizeOrder(attractions: SelectedAttraction[]): SelectedAttraction[] {
+  if (attractions.length <= 2) return attractions
+
+  const main = attractions[0]
+  const remaining = attractions.slice(1)
+  const optimized: SelectedAttraction[] = [main]
+  let current = main
+
+  while (remaining.length > 0) {
+    let nearestIdx = 0
+    let nearestDist = Infinity
+
+    for (let i = 0; i < remaining.length; i++) {
+      const dist = haversineKm(
+        current.localizacao.lat,
+        current.localizacao.lng,
+        remaining[i].localizacao.lat,
+        remaining[i].localizacao.lng
+      )
+      if (dist < nearestDist) {
+        nearestDist = dist
+        nearestIdx = i
+      }
+    }
+
+    const nearest = remaining.splice(nearestIdx, 1)[0]
+    optimized.push(nearest)
+    current = nearest
+  }
+
+  return optimized.map((a, i) => ({ ...a, order: i + 1 }))
+}
+
 async function fetchOSRMRoute(
   coordinates: string,
   proxyPath: string,
@@ -100,16 +127,28 @@ async function fetchOSRMRoute(
 
 export async function calculateRoute(
   attractions: SelectedAttraction[]
-): Promise<RouteCalculation[]> {
-  const ordered = [...attractions]
-    .sort((a, b) => a.order - b.order)
+): Promise<{
+  travelTimes: TravelTime[]
+  polylinePath: { lat: number; lng: number }[]
+  totalDistanceKm: number
+  totalDurationMin: number
+  optimizedOrder: SelectedAttraction[]
+}[]> {
+  const validAttractions = attractions
     .filter((a) => a.localizacao.lat !== 0 || a.localizacao.lng !== 0)
 
-  if (ordered.length < 2) return []
+  if (validAttractions.length < 2) return []
 
+  const ordered = optimizeOrder(validAttractions)
   const coordinates = ordered.map((a) => `${a.localizacao.lng},${a.localizacao.lat}`).join(';')
 
-  const results: RouteCalculation[] = []
+  const results: {
+    travelTimes: TravelTime[]
+    polylinePath: { lat: number; lng: number }[]
+    totalDistanceKm: number
+    totalDurationMin: number
+    optimizedOrder: SelectedAttraction[]
+  }[] = []
 
   for (const { mode, label, proxyPath, osrmProfile } of MODE_CONFIG) {
     try {
@@ -132,6 +171,7 @@ export async function calculateRoute(
         polylinePath,
         totalDistanceKm,
         totalDurationMin,
+        optimizedOrder: ordered,
       })
     } catch (err) {
       console.error(`[OSRM ${proxyPath}] failed:`, err)
