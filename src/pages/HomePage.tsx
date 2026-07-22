@@ -41,7 +41,7 @@ export function HomePage() {
 
           <div className="order-1 flex justify-center md:order-2">
             <img
-              src="/src/assets/Mapa_RJ.svg"
+              src="/Mapa_RJ.svg"
               alt="Mapa do Rio de Janeiro"
               className="h-64 w-auto sm:h-80 lg:h-96"
             />

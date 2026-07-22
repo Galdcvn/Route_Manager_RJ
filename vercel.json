@@ -1,0 +1,16 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/osrm/driving/:path*",
+      "destination": "https://routing.openstreetmap.de/routed-car/:path*"
+    },
+    {
+      "source": "/api/osrm/foot/:path*",
+      "destination": "https://routing.openstreetmap.de/routed-foot/:path*"
+    },
+    {
+      "source": "/api/osrm/cycling/:path*",
+      "destination": "https://routing.openstreetmap.de/routed-bike/:path*"
+    }
+  ]
+}
