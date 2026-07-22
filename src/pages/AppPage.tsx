@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Header } from '../components/Header'
 import { AttractionCard } from '../components/AttractionCard'
@@ -7,6 +7,7 @@ import { SearchInput } from '../components/SearchInput'
 import { Button } from '../components/Button'
 import { useAttractions } from '../hooks/useAttractions'
 import { useRoute } from '../contexts/RouteContext'
+import { useToast } from '../contexts/ToastContext'
 import { haversineKm } from '../utils/distance'
 import { smartSearch } from '../utils/search'
 import type { Attraction } from '../types/attraction'
@@ -18,8 +19,13 @@ export function AppPage() {
   const { attractions, loading, error } = useAttractions()
   const { step, setStep, selected, toggleAttraction, mainAttraction, setMainAttraction, resetFlow } = useRoute()
   const navigate = useNavigate()
+  const { toast } = useToast()
   const [infoAttraction, setInfoAttraction] = useState<Attraction | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
+
+  useEffect(() => {
+    if (error) toast({ type: 'error', message: error })
+  }, [error, toast])
 
   const nearbyAttractions = useMemo(() => {
     if (!mainAttraction) return []
@@ -158,16 +164,10 @@ export function AppPage() {
           />
         )}
 
-        {/* Loading / Error */}
+        {/* Loading */}
         {loading && (
           <div className="flex justify-center py-12">
             <div className="h-8 w-8 animate-spin rounded-full border-4 border-pink border-t-transparent" />
-          </div>
-        )}
-
-        {error && (
-          <div className="rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-600">
-            {error}
           </div>
         )}
 

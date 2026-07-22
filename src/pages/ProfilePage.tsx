@@ -2,17 +2,18 @@ import { useState, useEffect, useRef } from 'react'
 import { Header } from '../components/Header'
 import { Button } from '../components/Button'
 import { useAuth } from '../contexts/AuthContext'
+import { useToast } from '../contexts/ToastContext'
 import { supabase } from '../utils/supabase'
 
 export function ProfilePage() {
   const { user } = useAuth()
+  const { toast } = useToast()
   const [nome, setNome] = useState('')
   const [email, setEmail] = useState('')
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null)
   const [avatarFile, setAvatarFile] = useState<File | null>(null)
   const [saving, setSaving] = useState(false)
-  const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -28,18 +29,17 @@ export function ProfilePage() {
     if (!file) return
 
     if (!file.type.startsWith('image/')) {
-      setMessage({ type: 'error', text: 'Selecione um arquivo de imagem.' })
+      toast({ type: 'error', message: 'Selecione um arquivo de imagem.' })
       return
     }
 
     if (file.size > 2 * 1024 * 1024) {
-      setMessage({ type: 'error', text: 'A imagem deve ter no máximo 2MB.' })
+      toast({ type: 'error', message: 'A imagem deve ter no máximo 2MB.' })
       return
     }
 
     setAvatarFile(file)
     setAvatarPreview(URL.createObjectURL(file))
-    setMessage(null)
   }
 
   async function uploadAvatar(): Promise<string | null> {
@@ -66,7 +66,6 @@ export function ProfilePage() {
     if (!user) return
 
     setSaving(true)
-    setMessage(null)
 
     let finalAvatarUrl = avatarUrl
 
@@ -75,7 +74,7 @@ export function ProfilePage() {
       if (uploaded) {
         finalAvatarUrl = uploaded
       } else {
-        setMessage({ type: 'error', text: 'Erro ao enviar a imagem. Tente novamente.' })
+        toast({ type: 'error', message: 'Erro ao enviar a imagem. Tente novamente.' })
         setSaving(false)
         return
       }
@@ -86,7 +85,7 @@ export function ProfilePage() {
     })
 
     if (error) {
-      setMessage({ type: 'error', text: error.message })
+      toast({ type: 'error', message: error.message })
     } else {
       const { error: dbError } = await supabase
         .from('usuario')
@@ -98,12 +97,12 @@ export function ProfilePage() {
         .eq('id', user.id)
 
       if (dbError) {
-        setMessage({ type: 'error', text: dbError.message })
+        toast({ type: 'error', message: dbError.message })
       } else {
         setAvatarUrl(finalAvatarUrl)
         setAvatarFile(null)
         setAvatarPreview(null)
-        setMessage({ type: 'success', text: 'Perfil atualizado com sucesso!' })
+        toast({ type: 'success', message: 'Perfil atualizado com sucesso!' })
       }
     }
 
@@ -187,16 +186,6 @@ export function ProfilePage() {
               />
               <p className="mt-1 text-xs text-slate-400">O email não pode ser alterado.</p>
             </div>
-
-            {message && (
-              <p className={`rounded-lg p-3 text-xs ${
-                message.type === 'success'
-                  ? 'bg-lime/10 text-lime'
-                  : 'bg-red-50 text-red-600'
-              }`}>
-                {message.text}
-              </p>
-            )}
 
             <div className="flex justify-end">
               <Button variant="sky" radius={15} disabled={saving}>

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useAuth } from '../contexts/AuthContext'
+import { useToast } from '../contexts/ToastContext'
 
 type AuthModalProps = {
   open: boolean
@@ -10,12 +11,12 @@ type Tab = 'login' | 'signup'
 
 export function AuthModal({ open, onClose }: AuthModalProps) {
   const { signIn, signUp, signInWithGoogle } = useAuth()
+  const { toast } = useToast()
   const [tab, setTab] = useState<Tab>('login')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [nome, setNome] = useState('')
   const [showPassword, setShowPassword] = useState(false)
-  const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
   if (!open) return null
@@ -24,7 +25,6 @@ export function AuthModal({ open, onClose }: AuthModalProps) {
     setEmail('')
     setPassword('')
     setNome('')
-    setError('')
     setShowPassword(false)
   }
 
@@ -35,7 +35,6 @@ export function AuthModal({ open, onClose }: AuthModalProps) {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    setError('')
     setLoading(true)
 
     const result = tab === 'login'
@@ -45,7 +44,7 @@ export function AuthModal({ open, onClose }: AuthModalProps) {
     setLoading(false)
 
     if (result.error) {
-      setError(result.error)
+      toast({ type: 'error', message: result.error })
     } else {
       handleClose()
     }
@@ -79,7 +78,7 @@ export function AuthModal({ open, onClose }: AuthModalProps) {
           {/* Abas */}
           <div className="mb-6 flex gap-1 rounded-xl bg-slate-100 p-1">
             <button
-              onClick={() => { setTab('login'); setError('') }}
+              onClick={() => setTab('login')}
               className={`flex-1 rounded-lg py-2 text-sm font-semibold transition ${
                 tab === 'login' ? 'bg-white text-navy shadow-sm' : 'text-slate-500'
               }`}
@@ -87,7 +86,7 @@ export function AuthModal({ open, onClose }: AuthModalProps) {
               Entrar
             </button>
             <button
-              onClick={() => { setTab('signup'); setError('') }}
+              onClick={() => setTab('signup')}
               className={`flex-1 rounded-lg py-2 text-sm font-semibold transition ${
                 tab === 'signup' ? 'bg-white text-navy shadow-sm' : 'text-slate-500'
               }`}
@@ -155,10 +154,6 @@ export function AuthModal({ open, onClose }: AuthModalProps) {
                 </button>
               </div>
             </div>
-
-            {error && (
-              <p className="rounded-lg bg-red-50 p-3 text-xs text-red-600">{error}</p>
-            )}
 
             <button
               type="submit"
