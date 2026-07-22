@@ -1,4 +1,5 @@
 import { useAuth } from '../contexts/AuthContext'
+import { useRoute } from '../contexts/RouteContext'
 import { AuthModal } from './AuthModal'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
@@ -10,6 +11,7 @@ type MenuDrawerProps = {
 
 export function MenuDrawer({ open, onClose }: MenuDrawerProps) {
   const { user, signOut } = useAuth()
+  const { resetFlow } = useRoute()
   const [authOpen, setAuthOpen] = useState(false)
 
   return (
@@ -79,7 +81,7 @@ export function MenuDrawer({ open, onClose }: MenuDrawerProps) {
 
               <Link
                 to="/app"
-                onClick={onClose}
+                onClick={() => { resetFlow(); onClose() }}
                 className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-navy transition hover:bg-slate-50"
               >
                 <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

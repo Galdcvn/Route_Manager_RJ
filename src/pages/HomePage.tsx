@@ -1,8 +1,16 @@
+import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { Header } from '../components/Header'
 import { Button } from '../components/Button'
+import { useRoute } from '../contexts/RouteContext'
 
 export function HomePage() {
+  const { resetFlow } = useRoute()
+
+  useEffect(() => {
+    resetFlow()
+  }, [resetFlow])
+
   return (
     <div className="min-h-screen bg-white">
       <Header />

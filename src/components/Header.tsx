@@ -4,6 +4,7 @@ import logoSvg from '../assets/Logo.svg'
 import { MenuDrawer } from './MenuDrawer'
 import { AuthModal } from './AuthModal'
 import { useAuth } from '../contexts/AuthContext'
+import { useRoute } from '../contexts/RouteContext'
 
 export function Header() {
   const [drawerOpen, setDrawerOpen] = useState(false)
@@ -11,6 +12,7 @@ export function Header() {
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
   const { user, signOut } = useAuth()
+  const { resetFlow } = useRoute()
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -73,7 +75,7 @@ export function Header() {
                     </Link>
                     <Link
                       to="/app"
-                      onClick={() => setDropdownOpen(false)}
+                      onClick={() => { resetFlow(); setDropdownOpen(false) }}
                       className="flex items-center gap-2 px-4 py-2.5 text-sm text-navy transition hover:bg-slate-50"
                     >
                       <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

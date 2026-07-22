@@ -18,7 +18,7 @@ const ICONS: Record<string, string> = {
 }
 
 export function ResultsPage() {
-  const { selected, mainAttraction, setSavedRouteId } = useRoute()
+  const { selected, mainAttraction, setSavedRouteId, resetFlow } = useRoute()
   const navigate = useNavigate()
   const { toast } = useToast()
 
@@ -195,6 +195,14 @@ export function ResultsPage() {
             </div>
 
             <div className="flex flex-col gap-3 sm:flex-row">
+              <Button
+                variant="pink"
+                radius={15}
+                className="flex-1"
+                onClick={() => { resetFlow(); navigate('/app') }}
+              >
+                Nova Rota
+              </Button>
               <Button
                 variant="lime"
                 radius={15}
