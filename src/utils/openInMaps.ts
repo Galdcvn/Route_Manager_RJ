@@ -34,8 +34,12 @@ function buildWazeUrl(attraction: SelectedAttraction): string {
   return `https://waze.com/ul?ll=${attraction.localizacao.lat},${attraction.localizacao.lng}&navigate=yes`
 }
 
+function isMobile(): boolean {
+  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+}
+
 async function openExternal(url: string, title?: string) {
-  if (navigator.share) {
+  if (isMobile() && navigator.share) {
     try {
       await navigator.share({ title: title ?? 'Route Manager RJ', url })
       return
