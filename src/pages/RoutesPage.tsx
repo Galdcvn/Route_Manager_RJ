@@ -30,7 +30,6 @@ export function RoutesPage() {
         .from('rotas_favoritas')
         .select('rota_id, rotas ( nome, distancia_total, duracao_total, criado_em )')
         .eq('usuario_id', user!.id)
-        .order('created_at', { ascending: false })
 
       if (error) {
         console.error(error)
@@ -47,6 +46,7 @@ export function RoutesPage() {
           duracao_total: row.rotas.duracao_total,
           criado_em: row.rotas.criado_em,
         }))
+        .sort((a, b) => new Date(b.criado_em).getTime() - new Date(a.criado_em).getTime())
 
       setRoutes(mapped)
       setLoading(false)
