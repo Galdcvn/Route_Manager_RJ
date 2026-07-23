@@ -10,6 +10,7 @@ import { useToast } from '../contexts/ToastContext'
 import { calculateRoute, type TravelTime } from '../utils/routeCalculator'
 import { saveRoute } from '../utils/saveRoute'
 import { shareWhatsApp } from '../utils/shareWhatsApp'
+import { isFavorited, toggleFavorite } from '../utils/favoriteRoute'
 import type { SelectedAttraction } from '../types/attraction'
 
 const ICONS: Record<string, string> = {
@@ -20,7 +21,7 @@ const ICONS: Record<string, string> = {
 
 export function ResultsPage() {
   const { t } = useTranslation()
-  const { selected, mainAttraction, setSavedRouteId, resetFlow } = useRoute()
+  const { selected, mainAttraction, savedRouteId, setSavedRouteId, resetFlow } = useRoute()
   const navigate = useNavigate()
   const { toast } = useToast()
 
@@ -31,6 +32,7 @@ export function ResultsPage() {
   const [totalDuration, setTotalDuration] = useState('')
   const [optimizedAttractions, setOptimizedAttractions] = useState<SelectedAttraction[]>([])
   const [error, setError] = useState(false)
+  const [favorited, setFavorited] = useState(false)
   const fetchingRef = useRef(false)
 
   const orderedAttractions = useMemo(
@@ -97,6 +99,18 @@ export function ResultsPage() {
   useEffect(() => {
     doFetch()
   }, [routeKey, doFetch])
+
+  useEffect(() => {
+    if (!savedRouteId) return
+    isFavorited(savedRouteId).then(setFavorited)
+  }, [savedRouteId])
+
+  async function handleFavorite() {
+    if (!savedRouteId) return
+    const result = await toggleFavorite(savedRouteId)
+    setFavorited(result)
+    toast({ type: 'success', message: t(result ? 'favorites.saved' : 'favorites.removed') })
+  }
 
   if (error) {
     return (
@@ -212,6 +226,15 @@ export function ResultsPage() {
                 onClick={() => shareWhatsApp(optimizedAttractions, travelTimes)}
               >
                 {t('results.shareWpp')}
+              </Button>
+              <Button
+                variant={favorited ? 'mustard' : 'sky'}
+                radius={15}
+                className="flex-1"
+                disabled={!savedRouteId}
+                onClick={handleFavorite}
+              >
+                {favorited ? t('favorites.saved') : t('favorites.save')}
               </Button>
               <Button variant="sky" radius={15} className="flex-1" disabled>
                 {t('results.generatePdf')}

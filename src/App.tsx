@@ -8,6 +8,7 @@ import { HomePage } from './pages/HomePage'
 import { AppPage } from './pages/AppPage'
 import { ResultsPage } from './pages/ResultsPage'
 import { ProfilePage } from './pages/ProfilePage'
+import { RoutesPage } from './pages/RoutesPage'
 import { NotFoundPage } from './pages/NotFoundPage'
 
 export default function App() {
@@ -47,6 +48,14 @@ export default function App() {
               element={
                 <ProtectedRoute>
                   <ProfilePage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/rotas"
+              element={
+                <ProtectedRoute>
+                  <RoutesPage />
                 </ProtectedRoute>
               }
             />

@@ -85,6 +85,7 @@
   },
   "header": {
     "myProfile": "My Profile",
+    "myRoutes": "My Routes",
     "planRoute": "Plan Route",
     "signOut": "Sign out",
     "signIn": "Sign in",
@@ -94,6 +95,7 @@
     "title": "Menu",
     "closeMenu": "Close menu",
     "profile": "Profile",
+    "myRoutes": "My Routes",
     "planRoute": "Plan Route",
     "signOut": "Sign out",
     "login": "Login"
@@ -142,5 +144,15 @@
     "igreja": "Church",
     "restaurante": "Restaurant",
     "outro": "Other"
+  },
+  "favorites": {
+    "save": "Save to Favorites",
+    "saved": "Saved to Favorites",
+    "removed": "Removed from Favorites",
+    "title": "My Routes",
+    "subtitle": "Your saved routes",
+    "empty": "No favorite routes yet",
+    "emptySub": "Create a route and save it to favorites to find it here.",
+    "delete": "Remove"
   }
 }

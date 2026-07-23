@@ -85,6 +85,7 @@
   },
   "header": {
     "myProfile": "Meu Perfil",
+    "myRoutes": "Minhas Rotas",
     "planRoute": "Planejar Rota",
     "signOut": "Sair",
     "signIn": "Entrar",
@@ -94,6 +95,7 @@
     "title": "Menu",
     "closeMenu": "Fechar menu",
     "profile": "Perfil",
+    "myRoutes": "Minhas Rotas",
     "planRoute": "Planejar Rota",
     "signOut": "Sair",
     "login": "Login"
@@ -142,5 +144,15 @@
     "igreja": "Igreja",
     "restaurante": "Restaurante",
     "outro": "Outro"
+  },
+  "favorites": {
+    "save": "Salvar nos Favoritos",
+    "saved": "Salvo nos Favoritos",
+    "removed": "Removido dos Favoritos",
+    "title": "Minhas Rotas",
+    "subtitle": "Suas rotas salvas",
+    "empty": "Nenhuma rota favorita ainda",
+    "emptySub": "Crie uma rota e salve nos favoritos para encontrá-la aqui.",
+    "delete": "Remover"
   }
 }
