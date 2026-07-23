@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next'
+
 type AttractionCardProps = {
   name: string
   category?: string
@@ -29,6 +31,7 @@ export function AttractionCard({
   onClick,
   onInfoClick,
 }: AttractionCardProps) {
+  const { t } = useTranslation()
   return (
     <div
       role="button"
@@ -65,7 +68,7 @@ export function AttractionCard({
       <div className="p-3">
         {category && (
           <span className="mb-1 inline-block rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-medium capitalize text-slate-500">
-            {category}
+            {t('categories.' + (category ?? 'outro'))}
           </span>
         )}
         <p className={`text-sm font-semibold ${selected ? 'text-pink' : 'text-navy'}`}>

@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import type { Attraction } from '../types/attraction'
 
 type AttractionInfoModalProps = {
@@ -19,6 +20,7 @@ const categoryEmoji: Record<string, string> = {
 }
 
 export function AttractionInfoModal({ open, onClose, attraction }: AttractionInfoModalProps) {
+  const { t } = useTranslation()
   if (!open || !attraction) return null
 
   const endereco = [attraction.rua, attraction.bairro, attraction.cidade]
@@ -38,7 +40,7 @@ export function AttractionInfoModal({ open, onClose, attraction }: AttractionInf
               <div>
                 <h2 className="text-lg font-bold text-navy">{attraction.nome}</h2>
                 <span className="inline-block rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium capitalize text-slate-500">
-                  {attraction.categoria}
+                  {t('categories.' + (attraction.categoria ?? 'outro'))}
                 </span>
               </div>
             </div>

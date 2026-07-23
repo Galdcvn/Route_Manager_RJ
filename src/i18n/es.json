@@ -131,5 +131,16 @@
   },
   "attractions": {
     "fetchError": "Error al buscar atractivos"
+  },
+  "categories": {
+    "monumento": "Monumento",
+    "praia": "Playa",
+    "museu": "Museo",
+    "mirante": "Mirador",
+    "parque": "Parque",
+    "mercado": "Mercado",
+    "igreja": "Iglesia",
+    "restaurante": "Restaurante",
+    "outro": "Otro"
   }
 }
