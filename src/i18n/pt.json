@@ -63,7 +63,9 @@
     "calcFail": "Erro ao calcular rota. Tente novamente.",
     "newRoute": "Nova Rota",
     "shareWpp": "Compartilhar rota (WPP)",
-    "generatePdf": "Gerar PDF"
+    "generatePdf": "Gerar PDF",
+    "openMaps": "Abrir no Maps",
+    "openWaze": "Waze"
   },
   "profile": {
     "title": "Meu Perfil",

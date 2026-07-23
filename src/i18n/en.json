@@ -63,7 +63,9 @@
     "calcFail": "Error calculating route. Try again.",
     "newRoute": "New Route",
     "shareWpp": "Share route (WPP)",
-    "generatePdf": "Generate PDF"
+    "generatePdf": "Generate PDF",
+    "openMaps": "Open in Maps",
+    "openWaze": "Waze"
   },
   "profile": {
     "title": "My Profile",
