@@ -153,6 +153,7 @@
     "subtitle": "Your saved routes",
     "empty": "No favorite routes yet",
     "emptySub": "Create a route and save it to favorites to find it here.",
-    "delete": "Remove"
+    "delete": "Remove",
+    "view": "View"
   }
 }

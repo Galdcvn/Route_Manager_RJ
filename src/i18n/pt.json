@@ -153,6 +153,7 @@
     "subtitle": "Suas rotas salvas",
     "empty": "Nenhuma rota favorita ainda",
     "emptySub": "Crie uma rota e salve nos favoritos para encontrá-la aqui.",
-    "delete": "Remover"
+    "delete": "Remover",
+    "view": "Ver"
   }
 }

@@ -153,6 +153,7 @@
     "subtitle": "Tus rutas guardadas",
     "empty": "Aún no hay rutas favoritas",
     "emptySub": "Crea una ruta y guárdala en favoritos para encontrarla aquí.",
-    "delete": "Eliminar"
+    "delete": "Eliminar",
+    "view": "Ver"
   }
 }

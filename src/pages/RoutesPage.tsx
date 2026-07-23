@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { Header } from '../components/Header'
 import { Button } from '../components/Button'
 import { useAuth } from '../contexts/AuthContext'
+import { useRoute } from '../contexts/RouteContext'
 import { useToast } from '../contexts/ToastContext'
 import { supabase } from '../utils/supabase'
 import { toggleFavorite } from '../utils/favoriteRoute'
@@ -18,7 +20,9 @@ interface FavoriteRoute {
 export function RoutesPage() {
   const { t } = useTranslation()
   const { user } = useAuth()
+  const { loadSavedRoute } = useRoute()
   const { toast } = useToast()
+  const navigate = useNavigate()
   const [routes, setRoutes] = useState<FavoriteRoute[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -59,6 +63,15 @@ export function RoutesPage() {
     await toggleFavorite(routeId)
     setRoutes((prev) => prev.filter((r) => r.rota_id !== routeId))
     toast({ type: 'success', message: t('favorites.removed') })
+  }
+
+  async function handleView(routeId: string) {
+    const ok = await loadSavedRoute(routeId)
+    if (ok) {
+      navigate('/results')
+    } else {
+      toast({ type: 'error', message: t('common.error') })
+    }
   }
 
   function formatDate(iso: string) {
@@ -103,14 +116,22 @@ export function RoutesPage() {
                     {formatDate(route.criado_em)}
                   </p>
                 </div>
-                <Button
-                  variant="outline"
-                  radius={15}
-                  className="ml-3 shrink-0"
-                  onClick={() => handleRemove(route.rota_id)}
-                >
-                  {t('favorites.delete')}
-                </Button>
+                <div className="flex items-center gap-2 ml-3 shrink-0">
+                  <Button
+                    variant="sky"
+                    radius={15}
+                    onClick={() => handleView(route.rota_id)}
+                  >
+                    {t('favorites.view')}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    radius={15}
+                    onClick={() => handleRemove(route.rota_id)}
+                  >
+                    {t('favorites.delete')}
+                  </Button>
+                </div>
               </div>
             ))}
           </div>

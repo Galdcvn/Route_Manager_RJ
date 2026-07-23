@@ -71,7 +71,7 @@ export function ResultsPage() {
           setPolylinePath(driving.polylinePath)
           setOptimizedAttractions(driving.optimizedOrder)
 
-          const routeId = await saveRoute({
+          const routeId = savedRouteId ?? await saveRoute({
             attractions: driving.optimizedOrder,
             travelTimes: driving.travelTimes,
             totalDistanceKm: driving.totalDistanceKm,
