@@ -5,9 +5,11 @@ type AttractionCardProps = {
   category?: string
   image?: string
   selected?: boolean
+  favorited?: boolean
   bairro?: string
   onClick?: () => void
   onInfoClick?: () => void
+  onFavoriteClick?: () => void
 }
 
 const categoryEmoji: Record<string, string> = {
@@ -27,9 +29,11 @@ export function AttractionCard({
   category,
   image,
   selected = false,
+  favorited = false,
   bairro,
   onClick,
   onInfoClick,
+  onFavoriteClick,
 }: AttractionCardProps) {
   const { t } = useTranslation()
   return (
@@ -55,6 +59,20 @@ export function AttractionCard({
           className="absolute top-2 right-2 z-10 flex h-7 w-7 items-center justify-center rounded-full bg-black/40 text-white text-xs font-bold backdrop-blur-sm transition hover:bg-black/60"
         >
           i
+        </button>
+      )}
+
+      {/* Botão favoritar */}
+      {onFavoriteClick && (
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation()
+            onFavoriteClick()
+          }}
+          className="absolute top-2 left-2 z-10 flex h-7 w-7 items-center justify-center rounded-full bg-black/40 backdrop-blur-sm transition hover:bg-black/60"
+        >
+          {favorited ? '❤️' : '♡'}
         </button>
       )}
 

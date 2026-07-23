@@ -132,7 +132,9 @@
     "es": "Español"
   },
   "attractions": {
-    "fetchError": "Error al buscar atractivos"
+    "fetchError": "Error al buscar atractivos",
+    "favorite": "Favorito",
+    "unfavorite": "Quitar de favoritos"
   },
   "categories": {
     "monumento": "Monumento",

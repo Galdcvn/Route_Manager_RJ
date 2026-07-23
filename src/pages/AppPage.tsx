@@ -17,7 +17,7 @@ const RADIUS_KM = 5
 
 export function AppPage() {
   const { t } = useTranslation()
-  const { attractions, loading, error } = useAttractions()
+  const { attractions, loading, error, favoriteIds, toggleFavorite } = useAttractions()
   const { step, setStep, selected, toggleAttraction, mainAttraction, setMainAttraction } = useRoute()
   const navigate = useNavigate()
   const { toast } = useToast()
@@ -196,6 +196,7 @@ export function AppPage() {
                   image={attraction.imagem_url}
                   bairro={attraction.bairro}
                   selected={step === 'select-main' ? isMain : isSelected}
+                  favorited={favoriteIds.has(attraction.id)}
                   onClick={() => {
                     if (step === 'select-main') {
                       handleSelectMain(attraction)
@@ -204,6 +205,7 @@ export function AppPage() {
                     }
                   }}
                   onInfoClick={() => setInfoAttraction(attraction)}
+                  onFavoriteClick={() => toggleFavorite(attraction.id)}
                 />
               )
             })}

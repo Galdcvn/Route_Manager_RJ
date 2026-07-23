@@ -1,6 +1,8 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import { supabase } from '../utils/supabase'
 import { parseWKBHex } from '../utils/parseWKB'
+import { getFavoriteIds, toggleFavoriteAttraction } from '../utils/favoriteAttraction'
+import { useAuth } from '../contexts/AuthContext'
 import type { Attraction } from '../types/attraction'
 import i18n from '../i18n'
 
@@ -8,17 +10,21 @@ interface UseAttractionsResult {
   attractions: Attraction[]
   loading: boolean
   error: string | null
+  favoriteIds: Set<string>
+  toggleFavorite: (attractionId: string) => void
 }
 
 export function useAttractions(): UseAttractionsResult {
+  const { user } = useAuth()
   const [rawData, setRawData] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [favoriteIds, setFavoriteIds] = useState<Set<string>>(new Set())
 
   useEffect(() => {
     let cancelled = false
 
-    async function fetchAttractions() {
+    async function fetchAll() {
       try {
         const { data, error: dbError } = await supabase
           .from('atracoes')
@@ -35,6 +41,11 @@ export function useAttractions(): UseAttractionsResult {
 
         if (dbError) throw dbError
         if (!cancelled) setRawData(data ?? [])
+
+        if (user && !cancelled) {
+          const favs = await getFavoriteIds(user.id)
+          if (!cancelled) setFavoriteIds(favs)
+        }
       } catch (err: any) {
         if (!cancelled) setError(err.message ?? i18n.t('attractions.fetchError'))
       } finally {
@@ -42,14 +53,28 @@ export function useAttractions(): UseAttractionsResult {
       }
     }
 
-    fetchAttractions()
+    fetchAll()
     return () => { cancelled = true }
-  }, [])
+  }, [user])
+
+  const toggleFavorite = useCallback((attractionId: string) => {
+    setFavoriteIds((prev) => {
+      const next = new Set(prev)
+      if (next.has(attractionId)) {
+        next.delete(attractionId)
+        if (user) toggleFavoriteAttraction(user.id, attractionId)
+      } else {
+        next.add(attractionId)
+        if (user) toggleFavoriteAttraction(user.id, attractionId)
+      }
+      return next
+    })
+  }, [user])
 
   const attractions = useMemo(() => {
     const lang = i18n.language.split('-')[0] || 'pt'
 
-    return rawData.map((row: any) => {
+    const mapped = rawData.map((row: any) => {
       const info = row.informacao_atracao?.find(
         (i: any) => i.idiomas?.codigo === lang
       ) ?? row.informacao_atracao?.find(
@@ -73,7 +98,14 @@ export function useAttractions(): UseAttractionsResult {
         localizacao: parseWKBHex(row.localizacao),
       }
     })
-  }, [rawData, i18n.language])
 
-  return { attractions, loading, error }
+    return mapped.sort((a, b) => {
+      const aFav = favoriteIds.has(a.id)
+      const bFav = favoriteIds.has(b.id)
+      if (aFav !== bFav) return aFav ? -1 : 1
+      return a.nome.localeCompare(b.nome)
+    })
+  }, [rawData, i18n.language, favoriteIds])
+
+  return { attractions, loading, error, favoriteIds, toggleFavorite }
 }
