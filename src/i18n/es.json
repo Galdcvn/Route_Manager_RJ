@@ -64,8 +64,7 @@
     "newRoute": "Nueva Ruta",
     "shareWpp": "Compartir ruta (WPP)",
     "generatePdf": "Generar PDF",
-    "openMaps": "Abrir en Maps",
-    "openWaze": "Waze"
+    "openMaps": "Abrir en Maps"
   },
   "profile": {
     "title": "Mi Perfil",

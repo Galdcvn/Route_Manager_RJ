@@ -11,7 +11,7 @@ import { calculateRoute, type TravelTime } from '../utils/routeCalculator'
 import { saveRoute } from '../utils/saveRoute'
 import { shareWhatsApp } from '../utils/shareWhatsApp'
 import { isFavorited, toggleFavorite } from '../utils/favoriteRoute'
-import { openGoogleMaps, openWaze } from '../utils/openInMaps'
+import { openGoogleMaps } from '../utils/openInMaps'
 import type { SelectedAttraction } from '../types/attraction'
 
 const ICONS: Record<string, string> = {
@@ -248,15 +248,6 @@ export function ResultsPage() {
                 onClick={() => openGoogleMaps(optimizedAttractions)}
               >
                 {t('results.openMaps')}
-              </Button>
-              <Button
-                variant="sky"
-                radius={15}
-                className="flex-1"
-                disabled={optimizedAttractions.length === 0}
-                onClick={() => openWaze(optimizedAttractions[0])}
-              >
-                {t('results.openWaze')}
               </Button>
             </div>
           </div>
