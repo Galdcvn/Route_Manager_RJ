@@ -37,7 +37,7 @@ export async function saveRoute({
       ponto_inicio_id: attractions[0]?.id ?? null,
       nome,
       distancia_total: totalDistanceKm,
-      duracao_total: i18n.t('common.minutes', { count: Math.floor(totalDurationMin) }),
+      duracao_total: `${Math.floor(totalDurationMin)} minutes`,
       dados_rotas: { travelTimes },
     })
     .select('id')
