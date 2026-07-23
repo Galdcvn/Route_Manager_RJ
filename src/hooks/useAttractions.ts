@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { supabase } from '../utils/supabase'
 import { parseWKBHex } from '../utils/parseWKB'
 import type { Attraction } from '../types/attraction'
@@ -11,7 +11,7 @@ interface UseAttractionsResult {
 }
 
 export function useAttractions(): UseAttractionsResult {
-  const [attractions, setAttractions] = useState<Attraction[]>([])
+  const [rawData, setRawData] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -20,7 +20,6 @@ export function useAttractions(): UseAttractionsResult {
 
     async function fetchAttractions() {
       try {
-        const lang = i18n.language.split('-')[0] || 'pt'
         const { data, error: dbError } = await supabase
           .from('atracoes')
           .select(`
@@ -35,34 +34,7 @@ export function useAttractions(): UseAttractionsResult {
           .order('nome')
 
         if (dbError) throw dbError
-        if (cancelled) return
-
-        const mapped: Attraction[] = (data ?? []).map((row: any) => {
-          const infoPt = row.informacao_atracao?.find(
-            (i: any) => i.idiomas?.codigo === lang
-          ) ?? row.informacao_atracao?.find(
-            (i: any) => i.idiomas?.codigo === 'pt'
-          )
-
-          const imagem = row.imagens_atracao
-            ?.sort((a: any, b: any) => a.ordem - b.ordem)[0]
-            ?.imagens?.url
-
-          return {
-            id: row.id,
-            nome: row.nome,
-            categoria: row.categoria_atracao?.nome ?? 'outro',
-            descricao: infoPt?.descricao,
-            horarios: infoPt?.horarios,
-            rua: row.endereco_atracao?.rua,
-            bairro: row.endereco_atracao?.bairro,
-            cidade: row.endereco_atracao?.cidade,
-            imagem_url: imagem,
-            localizacao: parseWKBHex(row.localizacao),
-          }
-        })
-
-        setAttractions(mapped)
+        if (!cancelled) setRawData(data ?? [])
       } catch (err: any) {
         if (!cancelled) setError(err.message ?? i18n.t('attractions.fetchError'))
       } finally {
@@ -73,6 +45,35 @@ export function useAttractions(): UseAttractionsResult {
     fetchAttractions()
     return () => { cancelled = true }
   }, [])
+
+  const attractions = useMemo(() => {
+    const lang = i18n.language.split('-')[0] || 'pt'
+
+    return rawData.map((row: any) => {
+      const info = row.informacao_atracao?.find(
+        (i: any) => i.idiomas?.codigo === lang
+      ) ?? row.informacao_atracao?.find(
+        (i: any) => i.idiomas?.codigo === 'pt'
+      )
+
+      const imagem = row.imagens_atracao
+        ?.sort((a: any, b: any) => a.ordem - b.ordem)[0]
+        ?.imagens?.url
+
+      return {
+        id: row.id,
+        nome: row.nome,
+        categoria: row.categoria_atracao?.nome ?? 'outro',
+        descricao: info?.descricao,
+        horarios: info?.horarios,
+        rua: row.endereco_atracao?.rua,
+        bairro: row.endereco_atracao?.bairro,
+        cidade: row.endereco_atracao?.cidade,
+        imagem_url: imagem,
+        localizacao: parseWKBHex(row.localizacao),
+      }
+    })
+  }, [rawData, i18n.language])
 
   return { attractions, loading, error }
 }
