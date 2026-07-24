@@ -12,6 +12,7 @@ import { saveRoute } from '../utils/saveRoute'
 import { shareWhatsApp } from '../utils/shareWhatsApp'
 import { isFavorited, toggleFavorite } from '../utils/favoriteRoute'
 import { openGoogleMaps } from '../utils/openInMaps'
+import { supabase } from '../utils/supabase'
 import type { SelectedAttraction } from '../types/attraction'
 
 const ICONS: Record<string, string> = {
@@ -22,7 +23,7 @@ const ICONS: Record<string, string> = {
 
 export function ResultsPage() {
   const { t } = useTranslation()
-  const { selected, mainAttraction, savedRouteId, setSavedRouteId, resetFlow } = useRoute()
+  const { selected, mainAttraction, savedRouteId, setSavedRouteId, resetFlow, routeName, setRouteName } = useRoute()
   const navigate = useNavigate()
   const { toast } = useToast()
 
@@ -77,6 +78,7 @@ export function ResultsPage() {
             travelTimes: driving.travelTimes,
             totalDistanceKm: driving.totalDistanceKm,
             totalDurationMin: driving.totalDurationMin,
+            nome: routeName,
           })
           if (routeId) {
             setSavedRouteId(routeId)
@@ -95,7 +97,7 @@ export function ResultsPage() {
         fetchingRef.current = false
         setCalculating(false)
       })
-  }, [orderedAttractions, toast, setSavedRouteId, t])
+  }, [orderedAttractions, toast, setSavedRouteId, t, routeName])
 
   useEffect(() => {
     doFetch()
@@ -111,6 +113,14 @@ export function ResultsPage() {
     const result = await toggleFavorite(savedRouteId)
     setFavorited(result)
     toast({ type: 'success', message: t(result ? 'favorites.saved' : 'favorites.removed') })
+  }
+
+  async function handleUpdateName(newName: string) {
+    if (!savedRouteId) return
+    const trimmed = newName.trim()
+    const finalName = trimmed || t('results.routeTitle', { count: optimizedAttractions.length })
+    setRouteName(finalName)
+    await supabase.from('rotas').update({ nome: finalName }).eq('id', savedRouteId)
   }
 
   if (error) {
@@ -144,12 +154,16 @@ export function ResultsPage() {
       <main className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-8">
         <div className="mb-4 rounded-2xl border border-slate-200 bg-slate-50 p-4 sm:mb-6 sm:p-6">
           <div className="flex items-start justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-navy sm:text-3xl">
-                {optimizedAttractions.length > 0
-                  ? t('results.routeTitle', { count: optimizedAttractions.length })
-                  : t('results.noSelection')}
-              </h1>
+            <div className="min-w-0 flex-1">
+              <input
+                type="text"
+                value={routeName}
+                onChange={(e) => setRouteName(e.target.value)}
+                onBlur={(e) => handleUpdateName(e.target.value)}
+                onKeyDown={(e) => { if (e.key === 'Enter') e.currentTarget.blur() }}
+                placeholder={t('results.routeTitle', { count: optimizedAttractions.length })}
+                className="w-full bg-transparent text-2xl font-bold text-navy outline-none placeholder:text-slate-400 sm:text-3xl"
+              />
               {totalDistance && totalDuration && (
                 <p className="mt-1 text-sm text-slate-500">
                   {totalDistance} · {totalDuration}

@@ -64,7 +64,9 @@
     "newRoute": "Nova Rota",
     "shareWpp": "Compartilhar rota (WPP)",
     "generatePdf": "Gerar PDF",
-    "openMaps": "Abrir no Maps"
+    "openMaps": "Abrir no Maps",
+    "namePlaceholder": "Nome da rota (opcional)",
+    "nameLabel": "Nome da rota"
   },
   "profile": {
     "title": "Meu Perfil",

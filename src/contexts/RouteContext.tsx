@@ -19,6 +19,8 @@ interface RouteContextValue {
   savedRouteId: string | null
   setSavedRouteId: (id: string | null) => void
   loadSavedRoute: (routeId: string) => Promise<boolean>
+  routeName: string
+  setRouteName: (name: string) => void
 }
 
 const RouteContext = createContext<RouteContextValue | null>(null)
@@ -28,6 +30,7 @@ export function RouteProvider({ children }: { children: ReactNode }) {
   const [selected, setSelected] = useState<SelectedAttraction[]>([])
   const [mainAttraction, setMainAttraction] = useState<Attraction | null>(null)
   const [savedRouteId, setSavedRouteId] = useState<string | null>(null)
+  const [routeName, setRouteName] = useState('')
 
   const isSelected = useCallback(
     (id: string) => selected.some((s) => s.id === id),
@@ -49,6 +52,7 @@ export function RouteProvider({ children }: { children: ReactNode }) {
     setSelected([])
     setMainAttraction(null)
     setSavedRouteId(null)
+    setRouteName('')
   }, [])
 
   const clearSelection = useCallback(() => {
@@ -147,6 +151,8 @@ export function RouteProvider({ children }: { children: ReactNode }) {
         savedRouteId,
         setSavedRouteId,
         loadSavedRoute,
+        routeName,
+        setRouteName,
       }}
     >
       {children}

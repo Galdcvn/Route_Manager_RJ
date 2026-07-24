@@ -18,7 +18,7 @@ const RADIUS_KM = 5
 export function AppPage() {
   const { t } = useTranslation()
   const { attractions, loading, error, favoriteIds, toggleFavorite } = useAttractions()
-  const { step, setStep, selected, toggleAttraction, mainAttraction, setMainAttraction } = useRoute()
+  const { step, setStep, selected, toggleAttraction, mainAttraction, setMainAttraction, routeName, setRouteName } = useRoute()
   const navigate = useNavigate()
   const { toast } = useToast()
   const [infoAttraction, setInfoAttraction] = useState<Attraction | null>(null)
@@ -154,6 +154,13 @@ export function AppPage() {
               )}
             </>
           )}
+          <input
+            type="text"
+            value={routeName}
+            onChange={(e) => setRouteName(e.target.value)}
+            placeholder={t('results.namePlaceholder')}
+            className="mt-3 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-navy outline-none transition placeholder:text-slate-400 focus:border-pink focus:ring-2 focus:ring-pink/20"
+          />
         </div>
 
         {!loading && !error && (
