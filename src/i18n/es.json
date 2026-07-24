@@ -64,7 +64,9 @@
     "newRoute": "Nueva Ruta",
     "share": "Compartir Ruta",
     "generatePdf": "Generar PDF",
-    "openMaps": "Abrir en Maps"
+    "openMaps": "Abrir en Maps",
+    "namePlaceholder": "Nombre de la ruta (opcional)",
+    "nameLabel": "Nombre de la ruta"
   },
   "profile": {
     "title": "Mi Perfil",
@@ -151,6 +153,7 @@
   "favorites": {
     "save": "Guardar en Favoritos",
     "saved": "Guardado en Favoritos",
+    "remove": "Eliminar de Favoritos",
     "removed": "Eliminado de Favoritos",
     "title": "Mis Rutas",
     "subtitle": "Tus rutas guardadas",

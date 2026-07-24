@@ -8,6 +8,7 @@ interface SaveRouteParams {
   travelTimes: TravelTime[]
   totalDistanceKm: number
   totalDurationMin: number
+  nome?: string
 }
 
 export async function saveRoute({
@@ -15,6 +16,7 @@ export async function saveRoute({
   travelTimes,
   totalDistanceKm,
   totalDurationMin,
+  nome,
 }: SaveRouteParams): Promise<string | null> {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return null
@@ -27,7 +29,7 @@ export async function saveRoute({
 
   if (!statusData) return null
 
-  const nome = i18n.t('share.routeName', { count: attractions.length })
+  const routeNome = nome?.trim() || i18n.t('share.routeName', { count: attractions.length })
 
   const { data: routeData, error: routeError } = await supabase
     .from('rotas')
@@ -35,7 +37,7 @@ export async function saveRoute({
       usuario_id: user.id,
       status_id: statusData.id,
       ponto_inicio_id: attractions[0]?.id ?? null,
-      nome,
+      nome: routeNome,
       distancia_total: totalDistanceKm,
       duracao_total: `${Math.floor(totalDurationMin)} minutes`,
       dados_rotas: { travelTimes },

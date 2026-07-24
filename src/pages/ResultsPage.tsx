@@ -12,6 +12,7 @@ import { saveRoute } from '../utils/saveRoute'
 import { shareRoute } from '../utils/shareWhatsApp'
 import { isFavorited, toggleFavorite } from '../utils/favoriteRoute'
 import { openGoogleMaps } from '../utils/openInMaps'
+import { supabase } from '../utils/supabase'
 import type { SelectedAttraction } from '../types/attraction'
 
 const ICONS: Record<string, string> = {
@@ -22,7 +23,7 @@ const ICONS: Record<string, string> = {
 
 export function ResultsPage() {
   const { t } = useTranslation()
-  const { selected, mainAttraction, savedRouteId, setSavedRouteId, resetFlow } = useRoute()
+  const { selected, mainAttraction, savedRouteId, setSavedRouteId, resetFlow, routeName, setRouteName } = useRoute()
   const navigate = useNavigate()
   const { toast } = useToast()
 
@@ -34,7 +35,11 @@ export function ResultsPage() {
   const [optimizedAttractions, setOptimizedAttractions] = useState<SelectedAttraction[]>([])
   const [error, setError] = useState(false)
   const [favorited, setFavorited] = useState(false)
+  const [editingName, setEditingName] = useState(false)
+  const [savingFavorite, setSavingFavorite] = useState(false)
   const fetchingRef = useRef(false)
+  const routeNameRef = useRef(routeName)
+  routeNameRef.current = routeName
 
   const orderedAttractions = useMemo(
     () =>
@@ -77,6 +82,7 @@ export function ResultsPage() {
             travelTimes: driving.travelTimes,
             totalDistanceKm: driving.totalDistanceKm,
             totalDurationMin: driving.totalDurationMin,
+            nome: routeNameRef.current,
           })
           if (routeId) {
             setSavedRouteId(routeId)
@@ -107,10 +113,23 @@ export function ResultsPage() {
   }, [savedRouteId])
 
   async function handleFavorite() {
+    if (!savedRouteId || savingFavorite) return
+    setSavingFavorite(true)
+    try {
+      const result = await toggleFavorite(savedRouteId)
+      setFavorited(result)
+      toast({ type: 'success', message: t(result ? 'favorites.saved' : 'favorites.removed') })
+    } finally {
+      setSavingFavorite(false)
+    }
+  }
+
+  async function handleUpdateName(newName: string) {
     if (!savedRouteId) return
-    const result = await toggleFavorite(savedRouteId)
-    setFavorited(result)
-    toast({ type: 'success', message: t(result ? 'favorites.saved' : 'favorites.removed') })
+    const trimmed = newName.trim()
+    const finalName = trimmed || t('results.routeTitle', { count: optimizedAttractions.length })
+    setRouteName(finalName)
+    await supabase.from('rotas').update({ nome: finalName }).eq('id', savedRouteId)
   }
 
   if (error) {
@@ -144,12 +163,44 @@ export function ResultsPage() {
       <main className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-8">
         <div className="mb-4 rounded-2xl border border-slate-200 bg-slate-50 p-4 sm:mb-6 sm:p-6">
           <div className="flex items-start justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-navy sm:text-3xl">
-                {optimizedAttractions.length > 0
-                  ? t('results.routeTitle', { count: optimizedAttractions.length })
-                  : t('results.noSelection')}
-              </h1>
+            <div className="min-w-0 flex-1">
+              {editingName ? (
+                <input
+                  autoFocus
+                  type="text"
+                  value={routeName}
+                  onChange={(e) => setRouteName(e.target.value)}
+                  onBlur={(e) => { handleUpdateName(e.target.value); setEditingName(false) }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') e.currentTarget.blur()
+                    if (e.key === 'Escape') { setRouteName(routeName); setEditingName(false) }
+                  }}
+                  placeholder={t('results.routeTitle', { count: optimizedAttractions.length })}
+                  className="w-full rounded-lg border-2 border-pink bg-white px-2 py-0.5 text-2xl font-bold text-navy outline-none ring-2 ring-pink/20 sm:text-3xl"
+                />
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setEditingName(true)}
+                  className="group flex items-center gap-2 rounded-lg py-0.5 text-left transition hover:bg-slate-100"
+                >
+                  <span className="text-2xl font-bold text-navy sm:text-3xl">
+                    {routeName || t('results.routeTitle', { count: optimizedAttractions.length })}
+                  </span>
+                  <svg
+                    className="h-5 w-5 shrink-0 text-slate-300 transition group-hover:text-pink"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
+                    <path d="m15 5 4 4" />
+                  </svg>
+                </button>
+              )}
               {totalDistance && totalDuration && (
                 <p className="mt-1 text-sm text-slate-500">
                   {totalDistance} · {totalDuration}
@@ -229,13 +280,19 @@ export function ResultsPage() {
                 {t('results.share')}
               </Button>
               <Button
-                variant={favorited ? 'mustard' : 'sky'}
+                variant={favorited ? 'orange' : 'mustard'}
                 radius={15}
                 className="flex-1"
                 disabled={!savedRouteId}
                 onClick={handleFavorite}
               >
-                {favorited ? t('favorites.saved') : t('favorites.save')}
+                {savingFavorite ? (
+                  <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                ) : favorited ? (
+                  t('favorites.remove')
+                ) : (
+                  t('favorites.save')
+                )}
               </Button>
             </div>
 
