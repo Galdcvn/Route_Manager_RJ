@@ -35,6 +35,7 @@ export function ResultsPage() {
   const [optimizedAttractions, setOptimizedAttractions] = useState<SelectedAttraction[]>([])
   const [error, setError] = useState(false)
   const [favorited, setFavorited] = useState(false)
+  const [editingName, setEditingName] = useState(false)
   const fetchingRef = useRef(false)
 
   const orderedAttractions = useMemo(
@@ -155,15 +156,43 @@ export function ResultsPage() {
         <div className="mb-4 rounded-2xl border border-slate-200 bg-slate-50 p-4 sm:mb-6 sm:p-6">
           <div className="flex items-start justify-between">
             <div className="min-w-0 flex-1">
-              <input
-                type="text"
-                value={routeName}
-                onChange={(e) => setRouteName(e.target.value)}
-                onBlur={(e) => handleUpdateName(e.target.value)}
-                onKeyDown={(e) => { if (e.key === 'Enter') e.currentTarget.blur() }}
-                placeholder={t('results.routeTitle', { count: optimizedAttractions.length })}
-                className="w-full bg-transparent text-2xl font-bold text-navy outline-none placeholder:text-slate-400 sm:text-3xl"
-              />
+              {editingName ? (
+                <input
+                  autoFocus
+                  type="text"
+                  value={routeName}
+                  onChange={(e) => setRouteName(e.target.value)}
+                  onBlur={(e) => { handleUpdateName(e.target.value); setEditingName(false) }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') e.currentTarget.blur()
+                    if (e.key === 'Escape') { setRouteName(routeName); setEditingName(false) }
+                  }}
+                  placeholder={t('results.routeTitle', { count: optimizedAttractions.length })}
+                  className="w-full rounded-lg border-2 border-pink bg-white px-2 py-0.5 text-2xl font-bold text-navy outline-none ring-2 ring-pink/20 sm:text-3xl"
+                />
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setEditingName(true)}
+                  className="group flex items-center gap-2 rounded-lg px-2 py-0.5 text-left transition hover:bg-slate-100"
+                >
+                  <span className="text-2xl font-bold text-navy sm:text-3xl">
+                    {routeName || t('results.routeTitle', { count: optimizedAttractions.length })}
+                  </span>
+                  <svg
+                    className="h-5 w-5 shrink-0 text-slate-300 transition group-hover:text-pink"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
+                    <path d="m15 5 4 4" />
+                  </svg>
+                </button>
+              )}
               {totalDistance && totalDuration && (
                 <p className="mt-1 text-sm text-slate-500">
                   {totalDistance} · {totalDuration}
