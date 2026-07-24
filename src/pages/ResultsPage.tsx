@@ -9,7 +9,7 @@ import { useRoute } from '../contexts/RouteContext'
 import { useToast } from '../contexts/ToastContext'
 import { calculateRoute, type TravelTime } from '../utils/routeCalculator'
 import { saveRoute } from '../utils/saveRoute'
-import { shareWhatsApp } from '../utils/shareWhatsApp'
+import { shareRoute } from '../utils/shareWhatsApp'
 import { isFavorited, toggleFavorite } from '../utils/favoriteRoute'
 import { openGoogleMaps } from '../utils/openInMaps'
 import type { SelectedAttraction } from '../types/attraction'
@@ -224,9 +224,9 @@ export function ResultsPage() {
                 variant="lime"
                 radius={15}
                 className="flex-1"
-                onClick={() => shareWhatsApp(optimizedAttractions, travelTimes)}
+                onClick={() => shareRoute(optimizedAttractions, travelTimes)}
               >
-                {t('results.shareWpp')}
+                {t('results.share')}
               </Button>
               <Button
                 variant={favorited ? 'mustard' : 'sky'}

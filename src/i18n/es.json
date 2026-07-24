@@ -62,7 +62,7 @@
     "saveError": "Ruta calculada, pero no se pudo guardar.",
     "calcFail": "Error al calcular la ruta. Intenta de nuevo.",
     "newRoute": "Nueva Ruta",
-    "shareWpp": "Compartir ruta (WPP)",
+    "share": "Compartir Ruta",
     "generatePdf": "Generar PDF",
     "openMaps": "Abrir en Maps"
   },

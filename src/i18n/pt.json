@@ -62,7 +62,7 @@
     "saveError": "Rota calculada, mas não foi possível salvar.",
     "calcFail": "Erro ao calcular rota. Tente novamente.",
     "newRoute": "Nova Rota",
-    "shareWpp": "Compartilhar rota (WPP)",
+    "share": "Compartilhar Rota",
     "generatePdf": "Gerar PDF",
     "openMaps": "Abrir no Maps"
   },

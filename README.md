@@ -20,7 +20,7 @@ Aplicativo de planejamento de rotas turísticas no Rio de Janeiro. O usuário se
 - **Favoritar rotas**: botão nos resultados, sync com Supabase (`rotas_favoritas`), acesso rápido em "Minhas Rotas"
 - **Minhas Rotas** (`/rotas`): lista de rotas favoritas com data, distância e duração; botões para visualizar e remover
 - **Visualizar rota salva**: carrega rota do banco de dados e redireciona para `/results` com atras restaurados
-- **Abrir no Google Maps/Waze**: gera URL de navegação com todos os pontos da rota
+- **Abrir no Google Maps**: gera URL de navegação com todos os pontos da rota; `navigator.share()` no mobile
 - **Compartilhar via WhatsApp**: formatação da rota como mensagem e envio
 - **Toast notifications**: sistema global com auto-dismiss (4s sucesso, 5s erro)
 - **Reset automático**: fluxo reseta ao navegar para Home ou Planejar Rota
@@ -121,7 +121,7 @@ route-manager-rj/
         ├── saveRoute.ts        # Salvar rota no Supabase DB
         ├── favoriteRoute.ts    # Favoritar/desfavoritar rotas (rotas_favoritas)
         ├── favoriteAttraction.ts # Favoritar/desfavoritar atrações (atracoes_favoritas)
-        ├── openInMaps.ts       # Abrir rota no Google Maps ou Waze
+        ├── openInMaps.ts       # Abrir rota no Google Maps (+ navigator.share no mobile)
         └── shareWhatsApp.ts    # Formatar mensagem e abrir wa.me (i18n)
 ```
 
@@ -262,7 +262,7 @@ ON CONFLICT (id) DO NOTHING;
 8. `RouteMap.tsx` renderiza no Leaflet com markers numerados e polyline
 9. Tempo/duração exibidos por modalidade (labels internacionalizados)
 10. Usuário pode **favoritar a rota** (salva em `rotas_favoritas`)
-11. **"Abrir no Maps"** gera URL de navegação no Google Maps/Waze com todos os pontos
+11. **"Abrir no Maps"** gera URL de navegação no Google Maps com todos os pontos
 12. **"Minhas Rotas"** (`/rotas`) lista rotas favoritas; **"Ver"** carrega a rota via `loadSavedRoute()` e redireciona para `/results`
 
 ### Sistema de Favoritos
@@ -283,10 +283,9 @@ ON CONFLICT (id) DO NOTHING;
 - Restaura `selected`, `mainAttraction`, `savedRouteId`
 - Redireciona para `/results`
 
-### Abrir no Maps/Waze (`openInMaps.ts`)
+### Abrir no Google Maps (`openInMaps.ts`)
 
 - `openGoogleMaps(attractions, travelMode)` → gera URL `google.com/maps/dir/` com origin, destination e waypoints
-- `openWaze(attraction)` → gera URL `waze.com/ul?ll=` com navegação ativa
 - No mobile usa `navigator.share()` quando disponível; fallback para `window.open`
 - Travel mode mapping: `DRIVING` → `driving`, `WALKING` → `walking`, `BICYCLE` → `bicycling`
 

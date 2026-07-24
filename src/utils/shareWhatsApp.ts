@@ -2,10 +2,10 @@ import type { SelectedAttraction } from '../types/attraction'
 import type { TravelTime } from './routeCalculator'
 import i18n from '../i18n'
 
-export function shareWhatsApp(
+function buildShareText(
   attractions: SelectedAttraction[],
   travelTimes: TravelTime[]
-): void {
+): string {
   const t = i18n.t.bind(i18n)
   const driving = travelTimes.find((tt) => tt.mode === 'DRIVING')
 
@@ -23,6 +23,23 @@ export function shareWhatsApp(
   lines.push('')
   lines.push(t('share.footer'))
 
-  const text = encodeURIComponent(lines.join('\n'))
-  window.open(`https://wa.me/?text=${text}`, '_blank')
+  return lines.join('\n')
+}
+
+export async function shareRoute(
+  attractions: SelectedAttraction[],
+  travelTimes: TravelTime[]
+): Promise<void> {
+  const text = buildShareText(attractions, travelTimes)
+
+  if (navigator.share) {
+    try {
+      await navigator.share({ title: 'Route Manager RJ', text })
+      return
+    } catch {
+      // User cancelled or share failed — fall through to WhatsApp
+    }
+  }
+
+  window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank')
 }

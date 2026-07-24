@@ -62,7 +62,7 @@
     "saveError": "Route calculated, but it could not be saved.",
     "calcFail": "Error calculating route. Try again.",
     "newRoute": "New Route",
-    "shareWpp": "Share route (WPP)",
+    "share": "Share Route",
     "generatePdf": "Generate PDF",
     "openMaps": "Open in Maps"
   },
