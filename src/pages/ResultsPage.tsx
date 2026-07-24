@@ -37,6 +37,8 @@ export function ResultsPage() {
   const [favorited, setFavorited] = useState(false)
   const [editingName, setEditingName] = useState(false)
   const fetchingRef = useRef(false)
+  const routeNameRef = useRef(routeName)
+  routeNameRef.current = routeName
 
   const orderedAttractions = useMemo(
     () =>
@@ -79,7 +81,7 @@ export function ResultsPage() {
             travelTimes: driving.travelTimes,
             totalDistanceKm: driving.totalDistanceKm,
             totalDurationMin: driving.totalDurationMin,
-            nome: routeName,
+            nome: routeNameRef.current,
           })
           if (routeId) {
             setSavedRouteId(routeId)
@@ -98,7 +100,7 @@ export function ResultsPage() {
         fetchingRef.current = false
         setCalculating(false)
       })
-  }, [orderedAttractions, toast, setSavedRouteId, t, routeName])
+  }, [orderedAttractions, toast, setSavedRouteId, t])
 
   useEffect(() => {
     doFetch()
