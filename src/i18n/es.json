@@ -153,6 +153,7 @@
   "favorites": {
     "save": "Guardar en Favoritos",
     "saved": "Guardado en Favoritos",
+    "remove": "Eliminar de Favoritos",
     "removed": "Eliminado de Favoritos",
     "title": "Mis Rutas",
     "subtitle": "Tus rutas guardadas",

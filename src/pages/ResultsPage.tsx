@@ -36,6 +36,7 @@ export function ResultsPage() {
   const [error, setError] = useState(false)
   const [favorited, setFavorited] = useState(false)
   const [editingName, setEditingName] = useState(false)
+  const [savingFavorite, setSavingFavorite] = useState(false)
   const fetchingRef = useRef(false)
   const routeNameRef = useRef(routeName)
   routeNameRef.current = routeName
@@ -112,10 +113,15 @@ export function ResultsPage() {
   }, [savedRouteId])
 
   async function handleFavorite() {
-    if (!savedRouteId) return
-    const result = await toggleFavorite(savedRouteId)
-    setFavorited(result)
-    toast({ type: 'success', message: t(result ? 'favorites.saved' : 'favorites.removed') })
+    if (!savedRouteId || savingFavorite) return
+    setSavingFavorite(true)
+    try {
+      const result = await toggleFavorite(savedRouteId)
+      setFavorited(result)
+      toast({ type: 'success', message: t(result ? 'favorites.saved' : 'favorites.removed') })
+    } finally {
+      setSavingFavorite(false)
+    }
   }
 
   async function handleUpdateName(newName: string) {
@@ -176,7 +182,7 @@ export function ResultsPage() {
                 <button
                   type="button"
                   onClick={() => setEditingName(true)}
-                  className="group flex items-center gap-2 rounded-lg px-2 py-0.5 text-left transition hover:bg-slate-100"
+                  className="group flex items-center gap-2 rounded-lg py-0.5 text-left transition hover:bg-slate-100"
                 >
                   <span className="text-2xl font-bold text-navy sm:text-3xl">
                     {routeName || t('results.routeTitle', { count: optimizedAttractions.length })}
@@ -274,13 +280,19 @@ export function ResultsPage() {
                 {t('results.shareWpp')}
               </Button>
               <Button
-                variant={favorited ? 'mustard' : 'sky'}
+                variant={favorited ? 'orange' : 'mustard'}
                 radius={15}
                 className="flex-1"
                 disabled={!savedRouteId}
                 onClick={handleFavorite}
               >
-                {favorited ? t('favorites.saved') : t('favorites.save')}
+                {savingFavorite ? (
+                  <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                ) : favorited ? (
+                  t('favorites.remove')
+                ) : (
+                  t('favorites.save')
+                )}
               </Button>
             </div>
 
