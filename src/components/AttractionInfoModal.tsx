@@ -1,22 +1,11 @@
 import { useTranslation } from 'react-i18next'
 import type { Attraction } from '../types/attraction'
+import { categoryEmoji } from '../utils/categoryEmoji'
 
 type AttractionInfoModalProps = {
   open: boolean
   onClose: () => void
   attraction: Attraction | null
-}
-
-const categoryEmoji: Record<string, string> = {
-  monumento: '🗿',
-  praia: '🏖️',
-  museu: '🏛️',
-  mirante: '🏔️',
-  parque: '🌳',
-  mercado: '🏪',
-  igreja: '⛪',
-  restaurante: '🍽️',
-  outro: '📍',
 }
 
 export function AttractionInfoModal({ open, onClose, attraction }: AttractionInfoModalProps) {

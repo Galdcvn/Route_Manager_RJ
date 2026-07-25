@@ -30,10 +30,6 @@ function buildGoogleMapsUrl(
   return `https://www.google.com/maps/dir/?${params.toString()}`
 }
 
-function buildWazeUrl(attraction: SelectedAttraction): string {
-  return `https://waze.com/ul?ll=${attraction.localizacao.lat},${attraction.localizacao.lng}&navigate=yes`
-}
-
 function isMobile(): boolean {
   return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
 }
@@ -56,8 +52,4 @@ export function openGoogleMaps(
 ) {
   const url = buildGoogleMapsUrl(attractions, travelMode)
   if (url) openExternal(url, 'Route Manager RJ')
-}
-
-export function openWaze(attraction: SelectedAttraction) {
-  openExternal(buildWazeUrl(attraction), 'Route Manager RJ')
 }

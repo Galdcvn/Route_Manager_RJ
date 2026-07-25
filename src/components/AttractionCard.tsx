@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next'
+import { categoryEmoji } from '../utils/categoryEmoji'
 
 type AttractionCardProps = {
   name: string
@@ -10,18 +11,6 @@ type AttractionCardProps = {
   onClick?: () => void
   onInfoClick?: () => void
   onFavoriteClick?: () => void
-}
-
-const categoryEmoji: Record<string, string> = {
-  monumento: '🗿',
-  praia: '🏖️',
-  museu: '🏛️',
-  mirante: '🏔️',
-  parque: '🌳',
-  mercado: '🏪',
-  igreja: '⛪',
-  restaurante: '🍽️',
-  outro: '📍',
 }
 
 export function AttractionCard({
