@@ -14,9 +14,9 @@ export function ShareModal({ open, onClose, onShare, onCopyLink }: ShareModalPro
 
   return createPortal(
     <>
-      <div className="fixed inset-0 z-[100] bg-black/50" onClick={onClose} />
+      <div className="fixed inset-0 z-[9999] bg-black/50" onClick={onClose} />
 
-      <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+      <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
         <div
           className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl"
           onClick={(e) => e.stopPropagation()}
