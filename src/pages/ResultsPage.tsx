@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useRef, useCallback } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { Header } from '../components/Header'
 import { RouteMap } from '../components/RouteMap'
@@ -23,8 +23,9 @@ const ICONS: Record<string, string> = {
 
 export function ResultsPage() {
   const { t } = useTranslation()
-  const { selected, mainAttraction, savedRouteId, setSavedRouteId, resetFlow, routeName, setRouteName } = useRoute()
+  const { selected, mainAttraction, savedRouteId, setSavedRouteId, resetFlow, routeName, setRouteName, loadSavedRoute } = useRoute()
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
   const { toast } = useToast()
 
   const [calculating, setCalculating] = useState(false)
@@ -40,6 +41,16 @@ export function ResultsPage() {
   const fetchingRef = useRef(false)
   const routeNameRef = useRef(routeName)
   routeNameRef.current = routeName
+  const loadedFromUrlRef = useRef(false)
+
+  useEffect(() => {
+    if (loadedFromUrlRef.current) return
+    const routeParam = searchParams.get('route')
+    if (routeParam && !savedRouteId) {
+      loadedFromUrlRef.current = true
+      loadSavedRoute(routeParam)
+    }
+  }, [searchParams, savedRouteId, loadSavedRoute])
 
   const orderedAttractions = useMemo(
     () =>
@@ -86,6 +97,7 @@ export function ResultsPage() {
           })
           if (routeId) {
             setSavedRouteId(routeId)
+            window.history.replaceState(null, '', `/results?route=${routeId}`)
           } else {
             toast({ type: 'error', message: t('results.saveError') })
           }
@@ -122,6 +134,13 @@ export function ResultsPage() {
     } finally {
       setSavingFavorite(false)
     }
+  }
+
+  function handleCopyLink() {
+    const url = `${window.location.origin}/results?route=${savedRouteId}`
+    navigator.clipboard.writeText(url).then(() => {
+      toast({ type: 'success', message: t('results.linkCopied') })
+    })
   }
 
   async function handleUpdateName(newName: string) {
@@ -275,7 +294,7 @@ export function ResultsPage() {
                 variant="lime"
                 radius={15}
                 className="flex-1"
-                onClick={() => shareRoute(optimizedAttractions, travelTimes)}
+                onClick={() => shareRoute(optimizedAttractions, travelTimes, savedRouteId)}
               >
                 {t('results.share')}
               </Button>
@@ -305,6 +324,15 @@ export function ResultsPage() {
                 onClick={() => openGoogleMaps(optimizedAttractions)}
               >
                 {t('results.openMaps')}
+              </Button>
+              <Button
+                variant="lime"
+                radius={15}
+                className="flex-1"
+                disabled={!savedRouteId}
+                onClick={handleCopyLink}
+              >
+                {t('results.shareLink')}
               </Button>
             </div>
           </div>

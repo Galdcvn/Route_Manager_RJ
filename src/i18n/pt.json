@@ -25,7 +25,12 @@
     "fullName": "Nome completo",
     "emailCantChange": "O email não pode ser alterado.",
     "loginTitle": "Entrar",
-    "signupTitle": "Criar conta"
+    "signupTitle": "Criar conta",
+    "forgotPassword": "Esqueci minha senha",
+    "resetPassword": "Redefinir senha",
+    "resetInstructions": "Informe seu email para receber um link de redefinição de senha.",
+    "resetEmailSent": "Email de redefinição enviado! Verifique sua caixa de entrada.",
+    "sendResetEmail": "Enviar link de redefinição"
   },
   "login": {
     "subtitle": "Planeje sua rota pelos pontos turísticos do Rio"
@@ -63,6 +68,8 @@
     "calcFail": "Erro ao calcular rota. Tente novamente.",
     "newRoute": "Nova Rota",
     "share": "Compartilhar Rota",
+    "shareLink": "Copiar Link",
+    "linkCopied": "Link copiado!",
     "generatePdf": "Gerar PDF",
     "openMaps": "Abrir no Maps",
     "namePlaceholder": "Nome da rota (opcional)",
@@ -79,7 +86,14 @@
     "avatarError": "Selecione um arquivo de imagem.",
     "avatarSizeError": "A imagem deve ter no máximo 2MB.",
     "avatarUploadError": "Erro ao enviar a imagem. Tente novamente.",
-    "profileUpdated": "Perfil atualizado com sucesso!"
+    "profileUpdated": "Perfil atualizado com sucesso!",
+    "deleteAccount": "Excluir conta",
+    "deleteAccountWarning": "Esta ação é irreversível. Todos os seus dados serão removidos.",
+    "deleteAccountConfirm": "Tem certeza? Digite EXCLUIR para confirmar.",
+    "deleteInputText": "EXCLUIR",
+    "deleteInputPlaceholder": "Digite EXCLUIR",
+    "deleteAccountSuccess": "Conta excluída com sucesso.",
+    "deleteAccountError": "Erro ao excluir conta. Tente novamente."
   },
   "notfound": {
     "title": "Página não encontrada",

@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { Header } from '../components/Header'
 import { Button } from '../components/Button'
@@ -8,14 +9,18 @@ import { supabase } from '../utils/supabase'
 
 export function ProfilePage() {
   const { t } = useTranslation()
-  const { user } = useAuth()
+  const { user, deleteAccount } = useAuth()
   const { toast } = useToast()
+  const navigate = useNavigate()
   const [nome, setNome] = useState('')
   const [email, setEmail] = useState('')
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null)
   const [avatarFile, setAvatarFile] = useState<File | null>(null)
   const [saving, setSaving] = useState(false)
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+  const [deleteInput, setDeleteInput] = useState('')
+  const [deleting, setDeleting] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -111,6 +116,19 @@ export function ProfilePage() {
     setSaving(false)
   }
 
+  async function handleDeleteAccount() {
+    if (deleteInput !== t('profile.deleteInputText')) return
+    setDeleting(true)
+    const result = await deleteAccount()
+    setDeleting(false)
+    if (result.error) {
+      toast({ type: 'error', message: result.error })
+    } else {
+      toast({ type: 'success', message: t('profile.deleteAccountSuccess') })
+      navigate('/login')
+    }
+  }
+
   const displayImage = avatarPreview || avatarUrl
 
   return (
@@ -193,6 +211,50 @@ export function ProfilePage() {
               </Button>
             </div>
           </form>
+        </div>
+
+        <div className="mt-8 rounded-2xl border border-red-200 bg-red-50 p-6 sm:p-8">
+          <h2 className="text-lg font-bold text-red-700">{t('profile.deleteAccount')}</h2>
+          <p className="mt-1 text-sm text-red-600">{t('profile.deleteAccountWarning')}</p>
+
+          {!showDeleteConfirm ? (
+            <Button
+              variant="outline"
+              radius={15}
+              className="mt-4 border-red-300 text-red-700 hover:bg-red-100"
+              onClick={() => setShowDeleteConfirm(true)}
+            >
+              {t('profile.deleteAccount')}
+            </Button>
+          ) : (
+            <div className="mt-4 flex flex-col gap-3">
+              <p className="text-xs text-red-600">{t('profile.deleteAccountConfirm')}</p>
+              <input
+                type="text"
+                value={deleteInput}
+                onChange={(e) => setDeleteInput(e.target.value)}
+                placeholder={t('profile.deleteInputPlaceholder')}
+                className="w-full rounded-xl border border-red-300 bg-white px-4 py-3 text-sm text-navy outline-none transition focus:border-red-500 focus:ring-2 focus:ring-red/20"
+              />
+              <div className="flex gap-3">
+                <Button
+                  variant="outline"
+                  radius={15}
+                  onClick={() => { setShowDeleteConfirm(false); setDeleteInput('') }}
+                >
+                  {t('common.back')}
+                </Button>
+                <Button
+                  variant="pink"
+                  radius={15}
+                  disabled={deleteInput !== t('profile.deleteInputText') || deleting}
+                  onClick={handleDeleteAccount}
+                >
+                  {deleting ? t('common.loading') : t('profile.deleteAccount')}
+                </Button>
+              </div>
+            </div>
+          )}
         </div>
       </main>
     </div>

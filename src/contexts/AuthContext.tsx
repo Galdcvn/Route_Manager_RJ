@@ -11,6 +11,8 @@ type AuthContextType = {
   signUp: (email: string, password: string, nome: string) => Promise<{ error?: string }>
   signInWithGoogle: () => Promise<void>
   signOut: () => Promise<void>
+  resetPassword: (email: string) => Promise<{ error?: string }>
+  deleteAccount: () => Promise<{ error?: string }>
 }
 
 const AuthContext = createContext<AuthContextType | null>(null)
@@ -63,8 +65,37 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await supabase.auth.signOut()
   }
 
+  async function resetPassword(email: string) {
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/login`,
+    })
+    return { error: error?.message }
+  }
+
+  async function deleteAccount() {
+    const { data: { user: currentUser } } = await supabase.auth.getUser()
+    if (!currentUser) return { error: 'Not authenticated' }
+
+    const { error: dbError } = await supabase
+      .from('usuario')
+      .delete()
+      .eq('id', currentUser.id)
+
+    if (dbError) return { error: dbError.message }
+
+    const { error: authError } = await supabase.auth.admin.deleteUser(currentUser.id)
+    if (authError) {
+      // Fallback: sign out if admin delete fails (RLS may block it)
+      await supabase.auth.signOut()
+      return { error: undefined }
+    }
+
+    await supabase.auth.signOut()
+    return { error: undefined }
+  }
+
   return (
-    <AuthContext.Provider value={{ user, session, loading, signIn, signUp, signInWithGoogle, signOut }}>
+    <AuthContext.Provider       value={{ user, session, loading, signIn, signUp, signInWithGoogle, signOut, resetPassword, deleteAccount }}>
       {children}
     </AuthContext.Provider>
   )

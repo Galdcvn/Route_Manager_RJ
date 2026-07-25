@@ -25,7 +25,12 @@
     "fullName": "Full name",
     "emailCantChange": "Email cannot be changed.",
     "loginTitle": "Sign in",
-    "signupTitle": "Create account"
+    "signupTitle": "Create account",
+    "forgotPassword": "Forgot password",
+    "resetPassword": "Reset password",
+    "resetInstructions": "Enter your email to receive a password reset link.",
+    "resetEmailSent": "Reset email sent! Check your inbox.",
+    "sendResetEmail": "Send reset link"
   },
   "login": {
     "subtitle": "Plan your route through Rio's top attractions"
@@ -63,6 +68,8 @@
     "calcFail": "Error calculating route. Try again.",
     "newRoute": "New Route",
     "share": "Share Route",
+    "shareLink": "Copy Link",
+    "linkCopied": "Link copied!",
     "generatePdf": "Generate PDF",
     "openMaps": "Open in Maps",
     "namePlaceholder": "Route name (optional)",
@@ -79,7 +86,14 @@
     "avatarError": "Select an image file.",
     "avatarSizeError": "Image must be at most 2MB.",
     "avatarUploadError": "Error uploading image. Try again.",
-    "profileUpdated": "Profile updated successfully!"
+    "profileUpdated": "Profile updated successfully!",
+    "deleteAccount": "Delete account",
+    "deleteAccountWarning": "This action is irreversible. All your data will be removed.",
+    "deleteAccountConfirm": "Are you sure? Type DELETE to confirm.",
+    "deleteInputText": "DELETE",
+    "deleteInputPlaceholder": "Type DELETE",
+    "deleteAccountSuccess": "Account deleted successfully.",
+    "deleteAccountError": "Error deleting account. Try again."
   },
   "notfound": {
     "title": "Page not found",

@@ -25,7 +25,12 @@
     "fullName": "Nombre completo",
     "emailCantChange": "El correo electrónico no se puede cambiar.",
     "loginTitle": "Iniciar sesión",
-    "signupTitle": "Crear cuenta"
+    "signupTitle": "Crear cuenta",
+    "forgotPassword": "Olvidé mi contraseña",
+    "resetPassword": "Restablecer contraseña",
+    "resetInstructions": "Ingresa tu correo para recibir un enlace de restablecimiento.",
+    "resetEmailSent": "¡Correo de restablecimiento enviado! Revisa tu bandeja de entrada.",
+    "sendResetEmail": "Enviar enlace de restablecimiento"
   },
   "login": {
     "subtitle": "Planifica tu ruta por los principales atractivos de Río"
@@ -63,6 +68,8 @@
     "calcFail": "Error al calcular la ruta. Intenta de nuevo.",
     "newRoute": "Nueva Ruta",
     "share": "Compartir Ruta",
+    "shareLink": "Copiar Enlace",
+    "linkCopied": "¡Enlace copiado!",
     "generatePdf": "Generar PDF",
     "openMaps": "Abrir en Maps",
     "namePlaceholder": "Nombre de la ruta (opcional)",
@@ -79,7 +86,14 @@
     "avatarError": "Selecciona un archivo de imagen.",
     "avatarSizeError": "La imagen debe tener como máximo 2MB.",
     "avatarUploadError": "Error al subir la imagen. Intenta de nuevo.",
-    "profileUpdated": "¡Perfil actualizado con éxito!"
+    "profileUpdated": "¡Perfil actualizado con éxito!",
+    "deleteAccount": "Eliminar cuenta",
+    "deleteAccountWarning": "Esta acción es irreversible. Todos tus datos serán eliminados.",
+    "deleteAccountConfirm": "¿Estás seguro? Escribe ELIMINAR para confirmar.",
+    "deleteInputText": "ELIMINAR",
+    "deleteInputPlaceholder": "Escribe ELIMINAR",
+    "deleteAccountSuccess": "Cuenta eliminada con éxito.",
+    "deleteAccountError": "Error al eliminar la cuenta. Intenta de nuevo."
   },
   "notfound": {
     "title": "Página no encontrada",

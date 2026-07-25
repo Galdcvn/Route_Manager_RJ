@@ -4,7 +4,8 @@ import i18n from '../i18n'
 
 function buildShareText(
   attractions: SelectedAttraction[],
-  travelTimes: TravelTime[]
+  travelTimes: TravelTime[],
+  routeId?: string | null
 ): string {
   const t = i18n.t.bind(i18n)
   const driving = travelTimes.find((tt) => tt.mode === 'DRIVING')
@@ -21,6 +22,10 @@ function buildShareText(
     lines.push(t('share.duration', { duration: driving.duration }))
   }
   lines.push('')
+  if (routeId) {
+    lines.push(`${window.location.origin}/results?route=${routeId}`)
+    lines.push('')
+  }
   lines.push(t('share.footer'))
 
   return lines.join('\n')
@@ -28,9 +33,10 @@ function buildShareText(
 
 export async function shareRoute(
   attractions: SelectedAttraction[],
-  travelTimes: TravelTime[]
+  travelTimes: TravelTime[],
+  routeId?: string | null
 ): Promise<void> {
-  const text = buildShareText(attractions, travelTimes)
+  const text = buildShareText(attractions, travelTimes, routeId)
 
   if (navigator.share) {
     try {
