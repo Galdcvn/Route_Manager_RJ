@@ -109,7 +109,6 @@ export function ResultsPage() {
         // ── User route ──
         const userDriving = result.userRoute.find((r) => r.travelTimes[0].mode === 'DRIVING')
         if (userDriving) {
-          setUserTravelTimes(userDriving.travelTimes)
           setUserTotalDistance(userDriving.travelTimes[0].distance)
           setUserTotalDuration(userDriving.travelTimes[0].duration)
           setUserPolyline(userDriving.polylinePath)
@@ -135,7 +134,6 @@ export function ResultsPage() {
           const optDriving = result.optimalRoute.find((r) => r.travelTimes[0].mode === 'DRIVING')
           if (optDriving) {
             setOptimalAvailable(true)
-            setOptimalTravelTimes(optDriving.travelTimes)
             setOptimalTotalDistance(optDriving.travelTimes[0].distance)
             setOptimalTotalDuration(optDriving.travelTimes[0].duration)
             setOptimalPolyline(optDriving.polylinePath)
@@ -156,8 +154,11 @@ export function ResultsPage() {
           setOptimalAvailable(false)
         }
 
-        // Set user travel times for the summary (all modes)
+        // Set travel times for the summary (all modes)
         setUserTravelTimes(result.userRoute.map((r) => r.travelTimes[0]))
+        if (result.optimalDifferent && result.optimalRoute) {
+          setOptimalTravelTimes(result.optimalRoute.map((r) => r.travelTimes[0]))
+        }
       })
       .catch((err) => {
         console.error('Route calculation error:', err)
