@@ -13,6 +13,7 @@ import { shareRoute } from '../utils/shareWhatsApp'
 import { isFavorited, toggleFavorite } from '../utils/favoriteRoute'
 import { openGoogleMaps } from '../utils/openInMaps'
 import { supabase } from '../utils/supabase'
+import { ShareModal } from '../components/ShareModal'
 import type { SelectedAttraction } from '../types/attraction'
 
 const ICONS: Record<string, string> = {
@@ -38,6 +39,7 @@ export function ResultsPage() {
   const [favorited, setFavorited] = useState(false)
   const [editingName, setEditingName] = useState(false)
   const [savingFavorite, setSavingFavorite] = useState(false)
+  const [shareModalOpen, setShareModalOpen] = useState(false)
   const fetchingRef = useRef(false)
   const routeNameRef = useRef(routeName)
   routeNameRef.current = routeName
@@ -291,14 +293,6 @@ export function ResultsPage() {
                 {t('results.newRoute')}
               </Button>
               <Button
-                variant="lime"
-                radius={15}
-                className="flex-1"
-                onClick={() => shareRoute(optimizedAttractions, travelTimes, savedRouteId)}
-              >
-                {t('results.share')}
-              </Button>
-              <Button
                 variant={favorited ? 'orange' : 'mustard'}
                 radius={15}
                 className="flex-1"
@@ -330,14 +324,21 @@ export function ResultsPage() {
                 radius={15}
                 className="flex-1"
                 disabled={!savedRouteId}
-                onClick={handleCopyLink}
+                onClick={() => setShareModalOpen(true)}
               >
-                {t('results.shareLink')}
+                {t('results.share')}
               </Button>
             </div>
           </div>
         </div>
       </main>
+
+      <ShareModal
+        open={shareModalOpen}
+        onClose={() => setShareModalOpen(false)}
+        onShare={() => shareRoute(optimizedAttractions, travelTimes, savedRouteId)}
+        onCopyLink={handleCopyLink}
+      />
     </div>
   )
 }
