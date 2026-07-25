@@ -76,7 +76,11 @@
     "generatePdf": "Gerar PDF",
     "openMaps": "Abrir no Maps",
     "namePlaceholder": "Nome da rota (opcional)",
-    "nameLabel": "Nome da rota"
+    "nameLabel": "Nome da rota",
+    "optimalBanner": "Encontramos uma rota melhor que essa, iniciando em outro ponto de partida.",
+    "viewOptimal": "Ver rota otimizada",
+    "backToOriginal": "Voltar à rota original",
+    "optimalRouteName": "Rota ótima"
   },
   "profile": {
     "title": "Meu Perfil",

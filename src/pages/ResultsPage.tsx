@@ -30,13 +30,7 @@ export function ResultsPage() {
   const { toast } = useToast()
 
   const [calculating, setCalculating] = useState(false)
-  const [travelTimes, setTravelTimes] = useState<TravelTime[]>([])
-  const [polylinePath, setPolylinePath] = useState<{ lat: number; lng: number }[]>([])
-  const [totalDistance, setTotalDistance] = useState('')
-  const [totalDuration, setTotalDuration] = useState('')
-  const [optimizedAttractions, setOptimizedAttractions] = useState<SelectedAttraction[]>([])
   const [error, setError] = useState(false)
-  const [favorited, setFavorited] = useState(false)
   const [editingName, setEditingName] = useState(false)
   const [savingFavorite, setSavingFavorite] = useState(false)
   const [shareModalOpen, setShareModalOpen] = useState(false)
@@ -44,6 +38,35 @@ export function ResultsPage() {
   const routeNameRef = useRef(routeName)
   routeNameRef.current = routeName
   const loadedFromUrlRef = useRef(false)
+
+  // User's route data
+  const [userTravelTimes, setUserTravelTimes] = useState<TravelTime[]>([])
+  const [userPolyline, setUserPolyline] = useState<{ lat: number; lng: number }[]>([])
+  const [userTotalDistance, setUserTotalDistance] = useState('')
+  const [userTotalDuration, setUserTotalDuration] = useState('')
+  const [userOptimized, setUserOptimized] = useState<SelectedAttraction[]>([])
+
+  // Optimal route data
+  const [optimalAvailable, setOptimalAvailable] = useState(false)
+  const [optimalTravelTimes, setOptimalTravelTimes] = useState<TravelTime[]>([])
+  const [optimalPolyline, setOptimalPolyline] = useState<{ lat: number; lng: number }[]>([])
+  const [optimalTotalDistance, setOptimalTotalDistance] = useState('')
+  const [optimalTotalDuration, setOptimalTotalDuration] = useState('')
+  const [optimalOptimized, setOptimalOptimized] = useState<SelectedAttraction[]>([])
+
+  // View state
+  const [viewingOptimal, setViewingOptimal] = useState(false)
+  const [optimalSavedRouteId, setOptimalSavedRouteId] = useState<string | null>(null)
+
+  // Currently displayed data (derived from viewingOptimal)
+  const travelTimes = viewingOptimal ? optimalTravelTimes : userTravelTimes
+  const polylinePath = viewingOptimal ? optimalPolyline : userPolyline
+  const totalDistance = viewingOptimal ? optimalTotalDistance : userTotalDistance
+  const totalDuration = viewingOptimal ? optimalTotalDuration : userTotalDuration
+  const optimizedAttractions = viewingOptimal ? optimalOptimized : userOptimized
+  const activeSavedRouteId = viewingOptimal ? optimalSavedRouteId : savedRouteId
+
+  const [favorited, setFavorited] = useState(false)
 
   useEffect(() => {
     if (loadedFromUrlRef.current) return
@@ -79,22 +102,24 @@ export function ResultsPage() {
     fetchingRef.current = true
     setCalculating(true)
     setError(false)
+    setViewingOptimal(false)
 
     calculateRoute(orderedAttractions)
-      .then(async (results) => {
-        const driving = results.find((r) => r.travelTimes[0].mode === 'DRIVING')
-        if (driving) {
-          setTravelTimes(driving.travelTimes)
-          setTotalDistance(driving.travelTimes[0].distance)
-          setTotalDuration(driving.travelTimes[0].duration)
-          setPolylinePath(driving.polylinePath)
-          setOptimizedAttractions(driving.optimizedOrder)
+      .then(async (result) => {
+        // ── User route ──
+        const userDriving = result.userRoute.find((r) => r.travelTimes[0].mode === 'DRIVING')
+        if (userDriving) {
+          setUserTravelTimes(userDriving.travelTimes)
+          setUserTotalDistance(userDriving.travelTimes[0].distance)
+          setUserTotalDuration(userDriving.travelTimes[0].duration)
+          setUserPolyline(userDriving.polylinePath)
+          setUserOptimized(userDriving.optimizedOrder)
 
           const routeId = savedRouteId ?? await saveRoute({
-            attractions: driving.optimizedOrder,
-            travelTimes: driving.travelTimes,
-            totalDistanceKm: driving.totalDistanceKm,
-            totalDurationMin: driving.totalDurationMin,
+            attractions: userDriving.optimizedOrder,
+            travelTimes: userDriving.travelTimes,
+            totalDistanceKm: userDriving.totalDistanceKm,
+            totalDurationMin: userDriving.totalDurationMin,
             nome: routeNameRef.current,
           })
           if (routeId) {
@@ -104,7 +129,35 @@ export function ResultsPage() {
             toast({ type: 'error', message: t('results.saveError') })
           }
         }
-        setTravelTimes(results.map((r) => r.travelTimes[0]))
+
+        // ── Optimal route ──
+        if (result.optimalDifferent && result.optimalRoute) {
+          const optDriving = result.optimalRoute.find((r) => r.travelTimes[0].mode === 'DRIVING')
+          if (optDriving) {
+            setOptimalAvailable(true)
+            setOptimalTravelTimes(optDriving.travelTimes)
+            setOptimalTotalDistance(optDriving.travelTimes[0].distance)
+            setOptimalTotalDuration(optDriving.travelTimes[0].duration)
+            setOptimalPolyline(optDriving.polylinePath)
+            setOptimalOptimized(optDriving.optimizedOrder)
+
+            const optRouteId = await saveRoute({
+              attractions: optDriving.optimizedOrder,
+              travelTimes: optDriving.travelTimes,
+              totalDistanceKm: optDriving.totalDistanceKm,
+              totalDurationMin: optDriving.totalDurationMin,
+              nome: t('results.optimalRouteName'),
+            })
+            if (optRouteId) {
+              setOptimalSavedRouteId(optRouteId)
+            }
+          }
+        } else {
+          setOptimalAvailable(false)
+        }
+
+        // Set user travel times for the summary (all modes)
+        setUserTravelTimes(result.userRoute.map((r) => r.travelTimes[0]))
       })
       .catch((err) => {
         console.error('Route calculation error:', err)
@@ -115,22 +168,22 @@ export function ResultsPage() {
         fetchingRef.current = false
         setCalculating(false)
       })
-  }, [orderedAttractions, toast, setSavedRouteId, t])
+  }, [orderedAttractions, toast, setSavedRouteId, t, savedRouteId])
 
   useEffect(() => {
     doFetch()
   }, [routeKey, doFetch])
 
   useEffect(() => {
-    if (!savedRouteId) return
-    isFavorited(savedRouteId).then(setFavorited)
-  }, [savedRouteId])
+    if (!activeSavedRouteId) return
+    isFavorited(activeSavedRouteId).then(setFavorited)
+  }, [activeSavedRouteId])
 
   async function handleFavorite() {
-    if (!savedRouteId || savingFavorite) return
+    if (!activeSavedRouteId || savingFavorite) return
     setSavingFavorite(true)
     try {
-      const result = await toggleFavorite(savedRouteId)
+      const result = await toggleFavorite(activeSavedRouteId)
       setFavorited(result)
       toast({ type: 'success', message: t(result ? 'favorites.saved' : 'favorites.removed') })
     } finally {
@@ -139,18 +192,28 @@ export function ResultsPage() {
   }
 
   function handleCopyLink() {
-    const url = `${window.location.origin}/results?route=${savedRouteId}`
+    const url = `${window.location.origin}/results?route=${activeSavedRouteId}`
     navigator.clipboard.writeText(url).then(() => {
       toast({ type: 'success', message: t('results.linkCopied') })
     })
   }
 
   async function handleUpdateName(newName: string) {
-    if (!savedRouteId) return
+    if (!activeSavedRouteId) return
     const trimmed = newName.trim()
     const finalName = trimmed || t('results.routeTitle', { count: optimizedAttractions.length })
     setRouteName(finalName)
-    await supabase.from('rotas').update({ nome: finalName }).eq('id', savedRouteId)
+    await supabase.from('rotas').update({ nome: finalName }).eq('id', activeSavedRouteId)
+  }
+
+  function handleViewOptimal() {
+    setViewingOptimal(true)
+    window.history.replaceState(null, '', `/results?route=${optimalSavedRouteId}`)
+  }
+
+  function handleBackToOriginal() {
+    setViewingOptimal(false)
+    window.history.replaceState(null, '', `/results?route=${savedRouteId}`)
   }
 
   if (error) {
@@ -182,6 +245,7 @@ export function ResultsPage() {
       <Header />
 
       <main className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-8">
+        {/* ── Route header ── */}
         <div className="mb-4 rounded-2xl border border-slate-200 bg-slate-50 p-4 sm:mb-6 sm:p-6">
           <div className="flex items-start justify-between">
             <div className="min-w-0 flex-1">
@@ -228,11 +292,30 @@ export function ResultsPage() {
                 </p>
               )}
             </div>
-            <Button variant="outline" radius={15} onClick={() => navigate('/app')}>
-              {t('common.edit')}
-            </Button>
+            {viewingOptimal ? (
+              <Button variant="outline" radius={15} onClick={handleBackToOriginal}>
+                {t('results.backToOriginal')}
+              </Button>
+            ) : (
+              <Button variant="outline" radius={15} onClick={() => navigate('/app')}>
+                {t('common.edit')}
+              </Button>
+            )}
           </div>
         </div>
+
+        {/* ── Optimal route banner ── */}
+        {optimalAvailable && !viewingOptimal && (
+          <div className="mb-4 flex items-center gap-3 rounded-2xl border border-mustard/30 bg-mustard/10 p-4 sm:mb-6">
+            <span className="text-2xl">💡</span>
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-medium text-navy">{t('results.optimalBanner')}</p>
+            </div>
+            <Button variant="mustard" radius={15} onClick={handleViewOptimal}>
+              {t('results.viewOptimal')}
+            </Button>
+          </div>
+        )}
 
         <div className="grid gap-6 lg:grid-cols-2 lg:gap-8">
           <div className="overflow-hidden rounded-2xl border border-slate-200 bg-slate-50">
@@ -296,7 +379,7 @@ export function ResultsPage() {
                 variant={favorited ? 'orange' : 'mustard'}
                 radius={15}
                 className="flex-1"
-                disabled={!savedRouteId}
+                disabled={!activeSavedRouteId}
                 onClick={handleFavorite}
               >
                 {savingFavorite ? (
@@ -323,7 +406,7 @@ export function ResultsPage() {
                 variant="lime"
                 radius={15}
                 className="flex-1"
-                disabled={!savedRouteId}
+                disabled={!activeSavedRouteId}
                 onClick={() => setShareModalOpen(true)}
               >
                 {t('results.share')}
@@ -336,7 +419,7 @@ export function ResultsPage() {
       <ShareModal
         open={shareModalOpen}
         onClose={() => setShareModalOpen(false)}
-        onShare={() => shareRoute(optimizedAttractions, travelTimes, savedRouteId)}
+        onShare={() => shareRoute(optimizedAttractions, travelTimes, activeSavedRouteId)}
         onCopyLink={handleCopyLink}
       />
     </div>

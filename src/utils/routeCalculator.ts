@@ -73,38 +73,148 @@ function formatDuration(minutes: number): string {
   return m > 0 ? `${h}h ${m}min` : `${h}h`
 }
 
-function optimizeOrder(attractions: SelectedAttraction[]): SelectedAttraction[] {
-  if (attractions.length <= 2) return attractions
+// ─── Distance matrix (cached per calculation) ───────────────────────────
 
-  const main = attractions[0]
-  const remaining = attractions.slice(1)
-  const optimized: SelectedAttraction[] = [main]
-  let current = main
-
-  while (remaining.length > 0) {
-    let nearestIdx = 0
-    let nearestDist = Infinity
-
-    for (let i = 0; i < remaining.length; i++) {
-      const dist = haversineKm(
-        current.localizacao.lat,
-        current.localizacao.lng,
-        remaining[i].localizacao.lat,
-        remaining[i].localizacao.lng
+function buildDistanceMatrix(attractions: SelectedAttraction[]): number[][] {
+  const n = attractions.length
+  const matrix: number[][] = Array.from({ length: n }, () => Array(n).fill(0))
+  for (let i = 0; i < n; i++) {
+    for (let j = i + 1; j < n; j++) {
+      const d = haversineKm(
+        attractions[i].localizacao.lat, attractions[i].localizacao.lng,
+        attractions[j].localizacao.lat, attractions[j].localizacao.lng
       )
-      if (dist < nearestDist) {
-        nearestDist = dist
-        nearestIdx = i
-      }
+      matrix[i][j] = d
+      matrix[j][i] = d
     }
+  }
+  return matrix
+}
 
-    const nearest = remaining.splice(nearestIdx, 1)[0]
-    optimized.push(nearest)
-    current = nearest
+// ─── Held-Karp with fixed starting point ────────────────────────────────
+
+interface HeldKarpResult {
+  order: number[]
+  distance: number
+}
+
+function heldKarpFixedStart(
+  matrix: number[][],
+  startIndex: number
+): HeldKarpResult {
+  const n = matrix.length
+  if (n <= 1) return { order: [startIndex], distance: 0 }
+  if (n === 2) {
+    const other = startIndex === 0 ? 1 : 0
+    return {
+      order: [startIndex, other],
+      distance: matrix[startIndex][other],
+    }
   }
 
-  return optimized.map((a, i) => ({ ...a, order: i + 1 }))
+  const SIZE = 1 << n
+  const INF = Infinity
+
+  const dp: number[][] = Array.from({ length: SIZE }, () => Array(n).fill(INF))
+  const parent: number[][] = Array.from({ length: SIZE }, () => Array(n).fill(-1))
+
+  dp[1 << startIndex][startIndex] = 0
+
+  for (let mask = 1; mask < SIZE; mask++) {
+    for (let u = 0; u < n; u++) {
+      if (dp[mask][u] === INF) continue
+      if (!(mask & (1 << u))) continue
+
+      for (let v = 0; v < n; v++) {
+        if (mask & (1 << v)) continue
+
+        const nextMask = mask | (1 << v)
+        const newDist = dp[mask][u] + matrix[u][v]
+
+        if (newDist < dp[nextMask][v]) {
+          dp[nextMask][v] = newDist
+          parent[nextMask][v] = u
+        }
+      }
+    }
+  }
+
+  const fullMask = SIZE - 1
+  let lastIdx = -1
+  let bestDist = INF
+
+  for (let u = 0; u < n; u++) {
+    if (dp[fullMask][u] < bestDist) {
+      bestDist = dp[fullMask][u]
+      lastIdx = u
+    }
+  }
+
+  // Reconstruct path
+  const path: number[] = []
+  let mask = fullMask
+  let current = lastIdx
+
+  while (current !== -1) {
+    path.unshift(current)
+    const prev = parent[mask][current]
+    mask ^= (1 << current)
+    current = prev
+  }
+
+  return { order: path, distance: bestDist }
 }
+
+// ─── Global optimum: best starting point ────────────────────────────────
+
+interface GlobalOptimumResult {
+  optimizedOrder: SelectedAttraction[]
+  startIndex: number
+  totalDistanceKm: number
+}
+
+function findGlobalOptimum(
+  attractions: SelectedAttraction[],
+  matrix: number[][]
+): GlobalOptimumResult {
+  let bestDistance = Infinity
+  let bestOrder: number[] = []
+  let bestStart = 0
+
+  for (let i = 0; i < attractions.length; i++) {
+    const result = heldKarpFixedStart(matrix, i)
+    if (result.distance < bestDistance) {
+      bestDistance = result.distance
+      bestOrder = result.order
+      bestStart = i
+    }
+  }
+
+  return {
+    optimizedOrder: bestOrder.map((idx, pos) => ({
+      ...attractions[idx],
+      order: pos + 1,
+    })),
+    startIndex: bestStart,
+    totalDistanceKm: bestDistance,
+  }
+}
+
+// ─── User's route with Held-Karp (fixed starting point) ─────────────────
+
+function optimizeOrderHeldKarp(
+  attractions: SelectedAttraction[],
+  matrix: number[][]
+): SelectedAttraction[] {
+  const startIndex = 0 // main attraction is always first
+  const result = heldKarpFixedStart(matrix, startIndex)
+  return result.order.map((idx, pos) => ({
+    ...attractions[idx],
+    order: pos + 1,
+  }))
+}
+
+// ─── OSRM fetch ─────────────────────────────────────────────────────────
 
 async function fetchOSRMRoute(
   coordinates: string,
@@ -135,6 +245,35 @@ async function fetchOSRMRoute(
   }
 }
 
+// ─── Build RouteResult from OSRM response ───────────────────────────────
+
+function buildRouteResult(
+  data: OSRMRouteResponse,
+  mode: 'DRIVING' | 'WALKING' | 'BICYCLE',
+  label: string,
+  ordered: SelectedAttraction[]
+): {
+  travelTimes: TravelTime[]
+  polylinePath: { lat: number; lng: number }[]
+  totalDistanceKm: number
+  totalDurationMin: number
+  optimizedOrder: SelectedAttraction[]
+} {
+  const route = data.routes[0]
+  const polylinePath = route?.geometry ? decodePolyline6(route.geometry) : []
+  const totalDistanceKm = (route?.distance ?? 0) / 1000
+  const totalDurationMin = (route?.duration ?? 0) / 60
+  return {
+    travelTimes: [{ mode, label, distance: `${totalDistanceKm.toFixed(1)} km`, duration: formatDuration(totalDurationMin) }],
+    polylinePath,
+    totalDistanceKm,
+    totalDurationMin,
+    optimizedOrder: ordered,
+  }
+}
+
+// ─── Public types ───────────────────────────────────────────────────────
+
 export type RouteResult = {
   travelTimes: TravelTime[]
   polylinePath: { lat: number; lng: number }[]
@@ -143,42 +282,84 @@ export type RouteResult = {
   optimizedOrder: SelectedAttraction[]
 }
 
+export type CalculateRouteResult = {
+  userRoute: RouteResult[]
+  optimalRoute: RouteResult[] | null
+  optimalDifferent: boolean
+}
+
+// ─── Main function ──────────────────────────────────────────────────────
+
+const OPTIMAL_DIFF_THRESHOLD_KM = 0.5
+
 export async function calculateRoute(
   attractions: SelectedAttraction[]
-): Promise<RouteResult[]> {
+): Promise<CalculateRouteResult> {
   const validAttractions = attractions
     .filter((a) => a.localizacao.lat !== 0 || a.localizacao.lng !== 0)
 
-  if (validAttractions.length < 2) return []
+  if (validAttractions.length < 2) {
+    return { userRoute: [], optimalRoute: null, optimalDifferent: false }
+  }
 
-  const ordered = optimizeOrder(validAttractions)
-  const coordinates = ordered.map((a) => `${a.localizacao.lng},${a.localizacao.lat}`).join(';')
-
+  const matrix = buildDistanceMatrix(validAttractions)
   const labels = getTravelLabels()
+
   const MODE_CONFIG: { mode: 'DRIVING' | 'WALKING' | 'BICYCLE'; label: string; proxyPath: string; osrmProfile: string }[] = [
     { mode: 'DRIVING', label: labels.DRIVING, proxyPath: 'driving', osrmProfile: 'driving' },
     { mode: 'WALKING', label: labels.WALKING, proxyPath: 'foot', osrmProfile: 'foot' },
     { mode: 'BICYCLE', label: labels.BICYCLE, proxyPath: 'cycling', osrmProfile: 'cycling' },
   ]
 
-  const settled = await Promise.allSettled(
-    MODE_CONFIG.map(async ({ mode, label, proxyPath, osrmProfile }) => {
-      const data = await fetchOSRMRoute(coordinates, proxyPath, osrmProfile)
-      const route = data.routes[0]
-      const polylinePath = route?.geometry ? decodePolyline6(route.geometry) : []
-      const totalDistanceKm = (route?.distance ?? 0) / 1000
-      const totalDurationMin = (route?.duration ?? 0) / 60
-      return {
-        travelTimes: [{ mode, label, distance: `${totalDistanceKm.toFixed(1)} km`, duration: formatDuration(totalDurationMin) }],
-        polylinePath,
-        totalDistanceKm,
-        totalDurationMin,
-        optimizedOrder: ordered,
-      }
-    })
-  )
+  // 1. Optimize user's order (Held-Karp with user's main as start)
+  const userOrdered = optimizeOrderHeldKarp(validAttractions, matrix)
+  const userCoords = userOrdered.map((a) => `${a.localizacao.lng},${a.localizacao.lat}`).join(';')
 
-  return settled
-    .filter((r): r is PromiseFulfilledResult<RouteResult> => r.status === 'fulfilled')
-    .map((r) => r.value)
+  // 2. Find global optimum
+  const globalOpt = findGlobalOptimum(validAttractions, matrix)
+  const optCoords = globalOpt.optimizedOrder.map((a) => `${a.localizacao.lng},${a.localizacao.lat}`).join(';')
+
+  // 3. Check if optimal is meaningfully different from user's route
+  const userHeldKarp = heldKarpFixedStart(matrix, 0)
+  const optimalDifferent =
+    globalOpt.totalDistanceKm > 0 &&
+    userHeldKarp.distance - globalOpt.totalDistanceKm > OPTIMAL_DIFF_THRESHOLD_KM &&
+    globalOpt.startIndex !== 0
+
+  // 4. Fetch OSRM for user route + optimal route (parallel)
+  const osrmTasks: Promise<OSRMRouteResponse>[] = []
+  const taskMeta: { mode: 'DRIVING' | 'WALKING' | 'BICYCLE'; label: string; coords: string; isOptimal: boolean }[] = []
+
+  for (const cfg of MODE_CONFIG) {
+    osrmTasks.push(fetchOSRMRoute(userCoords, cfg.proxyPath, cfg.osrmProfile))
+    taskMeta.push({ mode: cfg.mode, label: cfg.label, coords: userCoords, isOptimal: false })
+
+    if (optimalDifferent) {
+      osrmTasks.push(fetchOSRMRoute(optCoords, cfg.proxyPath, cfg.osrmProfile))
+      taskMeta.push({ mode: cfg.mode, label: cfg.label, coords: optCoords, isOptimal: true })
+    }
+  }
+
+  const settled = await Promise.allSettled(osrmTasks)
+
+  const userResults: RouteResult[] = []
+  const optResults: RouteResult[] = []
+
+  settled.forEach((result, i) => {
+    if (result.status !== 'fulfilled') return
+    const meta = taskMeta[i]
+    const routeResult = buildRouteResult(result.value, meta.mode, meta.label, meta.isOptimal ? globalOpt.optimizedOrder : userOrdered)
+
+    if (meta.isOptimal) {
+      optResults.push(routeResult)
+    } else {
+      userResults.push(routeResult)
+    }
+  })
+
+  return {
+    userRoute: userResults,
+    optimalRoute: optimalDifferent && optResults.length > 0 ? optResults : null,
+    optimalDifferent: optimalDifferent && optResults.length > 0,
+  }
 }
