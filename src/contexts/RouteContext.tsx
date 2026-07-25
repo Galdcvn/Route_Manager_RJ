@@ -63,7 +63,7 @@ export function RouteProvider({ children }: { children: ReactNode }) {
   const loadSavedRoute = useCallback(async (routeId: string): Promise<boolean> => {
     const { data: route, error: routeError } = await supabase
       .from('rotas')
-      .select('ponto_inicio_id')
+      .select('ponto_inicio_id, nome')
       .eq('id', routeId)
       .single()
 
@@ -132,6 +132,7 @@ export function RouteProvider({ children }: { children: ReactNode }) {
     setSelected(mapped)
     setMainAttraction(main)
     setSavedRouteId(routeId)
+    setRouteName(route.nome ?? '')
 
     return true
   }, [])

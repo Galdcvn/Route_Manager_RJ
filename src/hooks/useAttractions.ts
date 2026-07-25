@@ -57,19 +57,35 @@ export function useAttractions(): UseAttractionsResult {
     return () => { cancelled = true }
   }, [user])
 
-  const toggleFavorite = useCallback((attractionId: string) => {
+  const toggleFavorite = useCallback(async (attractionId: string) => {
+    const wasFavorited = favoriteIds.has(attractionId)
+
     setFavoriteIds((prev) => {
       const next = new Set(prev)
-      if (next.has(attractionId)) {
+      if (wasFavorited) {
         next.delete(attractionId)
-        if (user) toggleFavoriteAttraction(user.id, attractionId)
       } else {
         next.add(attractionId)
-        if (user) toggleFavoriteAttraction(user.id, attractionId)
       }
       return next
     })
-  }, [user])
+
+    if (!user) return
+
+    try {
+      await toggleFavoriteAttraction(user.id, attractionId)
+    } catch {
+      setFavoriteIds((prev) => {
+        const next = new Set(prev)
+        if (wasFavorited) {
+          next.add(attractionId)
+        } else {
+          next.delete(attractionId)
+        }
+        return next
+      })
+    }
+  }, [user, favoriteIds])
 
   const attractions = useMemo(() => {
     const lang = i18n.language.split('-')[0] || 'pt'

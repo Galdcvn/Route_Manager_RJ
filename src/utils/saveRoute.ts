@@ -39,7 +39,7 @@ export async function saveRoute({
       ponto_inicio_id: attractions[0]?.id ?? null,
       nome: routeNome,
       distancia_total: totalDistanceKm,
-      duracao_total: `${Math.floor(totalDurationMin)} minutes`,
+      duracao_total: `${Math.floor(totalDurationMin)} min`,
       dados_rotas: { travelTimes },
     })
     .select('id')

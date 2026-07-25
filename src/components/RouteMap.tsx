@@ -64,7 +64,7 @@ export function RouteMap({ attractions, polylinePath }: RouteMapProps) {
       zoom={12}
       style={{ width: '100%', height: '100%', minHeight: '400px' }}
       zoomControl={true}
-      attributionControl={false}
+      attributionControl={true}
     >
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
