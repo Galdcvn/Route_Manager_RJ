@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next'
+import { createPortal } from 'react-dom'
 
 type ShareModalProps = {
   open: boolean
@@ -11,13 +12,13 @@ export function ShareModal({ open, onClose, onShare, onCopyLink }: ShareModalPro
   const { t } = useTranslation()
   if (!open) return null
 
-  return (
+  return createPortal(
     <>
-      <div className="fixed inset-0 z-50 bg-black/50" onClick={onClose} />
+      <div className="fixed inset-0 z-[100] bg-black/50" onClick={onClose} />
 
-      <div className="fixed inset-x-0 bottom-0 z-50 sm:flex sm:items-center sm:justify-center">
+      <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
         <div
-          className="w-full rounded-t-2xl bg-white p-6 shadow-xl sm:mx-auto sm:max-w-sm sm:rounded-2xl"
+          className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl"
           onClick={(e) => e.stopPropagation()}
         >
           <div className="mb-5 flex items-center justify-between">
@@ -64,6 +65,7 @@ export function ShareModal({ open, onClose, onShare, onCopyLink }: ShareModalPro
           </div>
         </div>
       </div>
-    </>
+    </>,
+    document.body
   )
 }
