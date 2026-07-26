@@ -183,6 +183,9 @@
     "restaurante": "Restaurante",
     "outro": "Otro"
   },
+  "contacts": {
+    "title": "Contactos"
+  },
   "favorites": {
     "save": "Guardar en Favoritos",
     "saved": "Guardado en Favoritos",

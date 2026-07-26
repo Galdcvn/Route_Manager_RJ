@@ -35,7 +35,8 @@ export function useAttractions(): UseAttractionsResult {
             categoria_atracao ( nome ),
             endereco_atracao ( rua, bairro, cidade ),
             informacao_atracao ( descricao, horarios, idiomas ( codigo ) ),
-            imagens_atracao ( ordem, imagens ( url ) )
+            imagens_atracao ( ordem, imagens ( url ) ),
+            contato_atracao ( tipo, valor )
           `)
           .order('nome')
 
@@ -111,6 +112,7 @@ export function useAttractions(): UseAttractionsResult {
         bairro: row.endereco_atracao?.bairro,
         cidade: row.endereco_atracao?.cidade,
         imagem_url: imagem,
+        contatos: row.contato_atracao ?? [],
         localizacao: parseWKBHex(row.localizacao),
       }
     })

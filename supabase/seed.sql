@@ -148,4 +148,89 @@ BEGIN
   INSERT INTO informacao_atracao (atracao_id, idioma_id, descricao) VALUES
     ('a0000001-0000-0000-0000-000000000015', idioma_pt, 'Baía tranquila com vista para o Pão de Açúcar. Área de lazer com ciclovia e quadra de areia.');
 
+  -- ============================================================================
+  -- Contatos das atrações
+  -- ============================================================================
+
+  -- 1. Cristo Redentor
+  INSERT INTO contato_atracao (atracao_id, tipo, valor) VALUES
+    ('a0000001-0000-0000-0000-000000000001', 'telefone', '+552124983121'),
+    ('a0000001-0000-0000-0000-000000000001', 'site', 'https://corcovado.org.br'),
+    ('a0000001-0000-0000-0000-000000000001', 'instagram', '@cmn_corcovado');
+
+  -- 2. Pão de Açúcar
+  INSERT INTO contato_atracao (atracao_id, tipo, valor) VALUES
+    ('a0000001-0000-0000-0000-000000000002', 'telefone', '+552125468400'),
+    ('a0000001-0000-0000-0000-000000000002', 'site', 'https://www.bondinho.com.br'),
+    ('a0000001-0000-0000-0000-000000000002', 'instagram', '@bondinhooficial');
+
+  -- 3. Copacabana
+  INSERT INTO contato_atracao (atracao_id, tipo, valor) VALUES
+    ('a0000001-0000-0000-0000-000000000003', 'site', 'https://www.rioturismo.com.br'),
+    ('a0000001-0000-0000-0000-000000000003', 'instagram', '@copacabana_rio');
+
+  -- 4. Ipanema
+  INSERT INTO contato_atracao (atracao_id, tipo, valor) VALUES
+    ('a0000001-0000-0000-0000-000000000004', 'site', 'https://www.rioturismo.com.br'),
+    ('a0000001-0000-0000-0000-000000000004', 'instagram', '@ipanemaoficial');
+
+  -- 5. Estádio do Maracanã
+  INSERT INTO contato_atracao (atracao_id, tipo, valor) VALUES
+    ('a0000001-0000-0000-0000-000000000005', 'telefone', '+552125827272'),
+    ('a0000001-0000-0000-0000-000000000005', 'site', 'https://maracana.com.br'),
+    ('a0000001-0000-0000-0000-000000000005', 'instagram', '@maracana'),
+    ('a0000001-0000-0000-0000-000000000005', 'email', 'contato@maracana.com.br');
+
+  -- 6. Museu do Amanhã
+  INSERT INTO contato_atracao (atracao_id, tipo, valor) VALUES
+    ('a0000001-0000-0000-0000-000000000006', 'telefone', '+552140098000'),
+    ('a0000001-0000-0000-0000-000000000006', 'site', 'https://www.museudoamanha.org.br'),
+    ('a0000001-0000-0000-0000-000000000006', 'instagram', '@museudoamanha'),
+    ('a0000001-0000-0000-0000-000000000006', 'email', 'atendimento@museudoamanha.org.br');
+
+  -- 7. Arcos da Lapa
+  INSERT INTO contato_atracao (atracao_id, tipo, valor) VALUES
+    ('a0000001-0000-0000-0000-000000000007', 'instagram', '@arcoslapa');
+
+  -- 8. Escadaria Selarón
+  INSERT INTO contato_atracao (atracao_id, tipo, valor) VALUES
+    ('a0000001-0000-0000-0000-000000000008', 'instagram', '@escalariadeselaron');
+
+  -- 9. Jardim Botânico
+  INSERT INTO contato_atracao (atracao_id, tipo, valor) VALUES
+    ('a0000001-0000-0000-0000-000000000009', 'telefone', '+552139448000'),
+    ('a0000001-0000-0000-0000-000000000009', 'site', 'https://www.jbrj.gov.br'),
+    ('a0000001-0000-0000-0000-000000000009', 'instagram', '@jardimbotanico_rio'),
+    ('a0000001-0000-0000-0000-000000000009', 'email', 'jardim.botanico@ibge.gov.br');
+
+  -- 10. Santa Teresa
+  INSERT INTO contato_atracao (atracao_id, tipo, valor) VALUES
+    ('a0000001-0000-0000-0000-000000000010', 'instagram', '@santateresario'),
+    ('a0000001-0000-0000-0000-000000000010', 'whatsapp', '5521999887766');
+
+  -- 11. Mercado Municipal da Central
+  INSERT INTO contato_atracao (atracao_id, tipo, valor) VALUES
+    ('a0000001-0000-0000-0000-000000000011', 'telefone', '+552122210801'),
+    ('a0000001-0000-0000-0000-000000000011', 'site', 'https://www.mercadocentral.com.br'),
+    ('a0000001-0000-0000-0000-000000000011', 'instagram', '@mercadocentralrj');
+
+  -- 12. Pedra do Sal
+  INSERT INTO contato_atracao (atracao_id, tipo, valor) VALUES
+    ('a0000001-0000-0000-0000-000000000012', 'instagram', '@pedradosal_rio');
+
+  -- 13. Parque das Ruínas
+  INSERT INTO contato_atracao (atracao_id, tipo, valor) VALUES
+    ('a0000001-0000-0000-0000-000000000013', 'telefone', '+552122583913'),
+    ('a0000001-0000-0000-0000-000000000013', 'instagram', '@parquedasruinas');
+
+  -- 14. Corcovado
+  INSERT INTO contato_atracao (atracao_id, tipo, valor) VALUES
+    ('a0000001-0000-0000-0000-000000000014', 'telefone', '+552124983121'),
+    ('a0000001-0000-0000-0000-000000000014', 'site', 'https://www.tremdocorcovado.com.br'),
+    ('a0000001-0000-0000-0000-000000000014', 'instagram', '@tremdocorcovado');
+
+  -- 15. Praia de Botafogo
+  INSERT INTO contato_atracao (atracao_id, tipo, valor) VALUES
+    ('a0000001-0000-0000-0000-000000000015', 'site', 'https://www.rioturismo.com.br');
+
 END $$;
