@@ -7,6 +7,7 @@ import { AttractionInfoModal } from '../components/AttractionInfoModal'
 import { SearchInput } from '../components/SearchInput'
 import { Button } from '../components/Button'
 import { useAttractions } from '../hooks/useAttractions'
+import { useDebounce } from '../hooks/useDebounce'
 import { useRoute } from '../contexts/RouteContext'
 import { useToast } from '../contexts/ToastContext'
 import { haversineKm } from '../utils/distance'
@@ -23,6 +24,7 @@ export function AppPage() {
   const { toast } = useToast()
   const [infoAttraction, setInfoAttraction] = useState<Attraction | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
+  const debouncedQuery = useDebounce(searchQuery, 300)
 
   useEffect(() => {
     if (error) toast({ type: 'error', message: error })
@@ -46,18 +48,18 @@ export function AppPage() {
 
   const displayAttractions = useMemo(() => {
     if (step === 'select-main') {
-      return smartSearch(attractions, searchQuery)
+      return smartSearch(attractions, debouncedQuery)
     }
 
     if (!mainAttraction) return []
 
-    const searchResults = smartSearch(attractions, searchQuery)
+    const searchResults = smartSearch(attractions, debouncedQuery)
 
-    if (!searchQuery.trim()) {
+    if (!debouncedQuery.trim()) {
       return nearbyAttractions
     }
 
-    const filteredNearby = smartSearch(nearbyAttractions, searchQuery)
+    const filteredNearby = smartSearch(nearbyAttractions, debouncedQuery)
 
     const farSearchMatches = searchResults.filter((a) => {
       if (a.id === mainAttraction.id) return false
@@ -78,7 +80,7 @@ export function AppPage() {
     })
 
     return [...filteredNearby, ...uniqueFar]
-  }, [attractions, step, mainAttraction, nearbyAttractions, searchQuery])
+  }, [attractions, step, mainAttraction, nearbyAttractions, debouncedQuery])
 
   const handleSelectMain = (attraction: Attraction) => {
     if (mainAttraction?.id === attraction.id) {
