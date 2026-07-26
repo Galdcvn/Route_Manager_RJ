@@ -8,6 +8,7 @@ import { useRoute } from '../contexts/RouteContext'
 import { useToast } from '../contexts/ToastContext'
 import { supabase } from '../utils/supabase'
 import { toggleFavorite } from '../utils/favoriteRoute'
+import { formatInterval } from '../utils/formatInterval'
 
 interface FavoriteRoute {
   rota_id: string
@@ -111,7 +112,7 @@ export function RoutesPage() {
                   <p className="mt-0.5 text-xs text-slate-400">
                     {route.distancia_total != null && `${route.distancia_total.toFixed(1)} km`}
                     {route.distancia_total != null && route.duracao_total && ' · '}
-                    {route.duracao_total && route.duracao_total}
+                    {formatInterval(route.duracao_total)}
                     {route.distancia_total != null && ' · '}
                     {formatDate(route.criado_em)}
                   </p>

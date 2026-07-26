@@ -76,6 +76,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const { data: { user: currentUser } } = await supabase.auth.getUser()
     if (!currentUser) return { error: 'Not authenticated' }
 
+    // 1. Get all user's route IDs
+    const { data: userRoutes } = await supabase
+      .from('rotas')
+      .select('id')
+      .eq('usuario_id', currentUser.id)
+
+    const routeIds = (userRoutes ?? []).map((r) => r.id)
+
+    // 2. Delete favorites (they reference both usuario and rotas)
+    await supabase.from('rotas_favoritas').delete().eq('usuario_id', currentUser.id)
+    await supabase.from('atracoes_favoritas').delete().eq('usuario_id', currentUser.id)
+
+    // 3. Delete route compositions (rota_atracoes cascades on rotas delete, but explicit is safer)
+    if (routeIds.length > 0) {
+      await supabase.from('rota_atracoes').delete().in('rota_id', routeIds)
+      await supabase.from('rotas').delete().in('id', routeIds)
+    }
+
+    // 4. Delete usuario (now safe — no rotas reference it)
     const { error: dbError } = await supabase
       .from('usuario')
       .delete()
@@ -83,13 +102,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     if (dbError) return { error: dbError.message }
 
-    const { error: authError } = await supabase.auth.admin.deleteUser(currentUser.id)
-    if (authError) {
-      // Fallback: sign out if admin delete fails (RLS may block it)
-      await supabase.auth.signOut()
-      return { error: undefined }
-    }
-
+    // 5. Sign out (auth user remains in Supabase but all profile data is gone)
     await supabase.auth.signOut()
     return { error: undefined }
   }

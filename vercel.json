@@ -11,6 +11,10 @@
     {
       "source": "/api/osrm/cycling/:path*",
       "destination": "https://routing.openstreetmap.de/routed-bike/:path*"
+    },
+    {
+      "source": "/((?!assets/).*)",
+      "destination": "/index.html"
     }
   ]
 }
