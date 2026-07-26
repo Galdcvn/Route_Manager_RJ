@@ -29,6 +29,7 @@ export function ResultsPage() {
   const [searchParams] = useSearchParams()
   const { toast } = useToast()
 
+  const [loadingRoute, setLoadingRoute] = useState(() => !!searchParams.get('route'))
   const [calculating, setCalculating] = useState(false)
   const [error, setError] = useState(false)
   const [editingName, setEditingName] = useState(false)
@@ -73,7 +74,9 @@ export function ResultsPage() {
     const routeParam = searchParams.get('route')
     if (routeParam && !savedRouteId) {
       loadedFromUrlRef.current = true
-      loadSavedRoute(routeParam)
+      loadSavedRoute(routeParam).finally(() => setLoadingRoute(false))
+    } else {
+      setLoadingRoute(false)
     }
   }, [searchParams, savedRouteId, loadSavedRoute])
 
@@ -172,8 +175,8 @@ export function ResultsPage() {
   }, [orderedAttractions, toast, setSavedRouteId, t, savedRouteId])
 
   useEffect(() => {
-    doFetch()
-  }, [routeKey, doFetch])
+    if (!loadingRoute) doFetch()
+  }, [routeKey, doFetch, loadingRoute])
 
   useEffect(() => {
     if (!activeSavedRouteId) return
@@ -235,6 +238,10 @@ export function ResultsPage() {
         </main>
       </div>
     )
+  }
+
+  if (loadingRoute) {
+    return <RouteLoading phase="loading-map" />
   }
 
   if (calculating) {
