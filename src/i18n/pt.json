@@ -39,7 +39,19 @@
     "title": "Planeje sua rota pelos pontos turísticos do Rio de Janeiro",
     "description": "Escolha as atrações que deseja visitar e descubra a melhor rota para conhecer a cidade maravilhosa.",
     "cta": "Planejar Rota",
-    "mapAlt": "Mapa do Rio de Janeiro"
+    "mapAlt": "Mapa do Rio de Janeiro",
+    "greeting": "Olá, {{name}}!",
+    "greetingSub": "O que deseja fazer hoje?",
+    "newRoute": "Nova Rota",
+    "newRouteSub": "Planeje uma nova visita",
+    "savedRoutes": "Rotas Salvas",
+    "savedRoutesSub": "Suas rotas favoritas",
+    "viewProfile": "Ver Perfil",
+    "recent": "Recentes",
+    "recentSub": "Últimas rotas calculadas",
+    "noRoutes": "Nenhuma rota ainda",
+    "noRoutesSub": "Clique em Nova Rota para começar.",
+    "seeAll": "Ver todas"
   },
   "app": {
     "stepMain": "Escolher atração principal",

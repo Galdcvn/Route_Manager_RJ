@@ -39,7 +39,19 @@
     "title": "Planifica tu ruta por los puntos turísticos de Río de Janeiro",
     "description": "Elige los atractivos que deseas visitar y descubre la mejor ruta para conocer la hermosa ciudad.",
     "cta": "Planificar Ruta",
-    "mapAlt": "Mapa de Río de Janeiro"
+    "mapAlt": "Mapa de Río de Janeiro",
+    "greeting": "¡Hola, {{name}}!",
+    "greetingSub": "¿Qué te gustaría hacer hoy?",
+    "newRoute": "Nueva Ruta",
+    "newRouteSub": "Planifica una nueva visita",
+    "savedRoutes": "Rutas Guardadas",
+    "savedRoutesSub": "Tus rutas favoritas",
+    "viewProfile": "Ver Perfil",
+    "recent": "Recientes",
+    "recentSub": "Últimas rutas calculadas",
+    "noRoutes": "Aún no hay rutas",
+    "noRoutesSub": "Haz clic en Nueva Ruta para comenzar.",
+    "seeAll": "Ver todas"
   },
   "app": {
     "stepMain": "Elegir atractivo principal",

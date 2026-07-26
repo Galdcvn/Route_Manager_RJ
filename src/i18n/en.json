@@ -39,7 +39,19 @@
     "title": "Plan your route through Rio de Janeiro's landmarks",
     "description": "Choose the attractions you want to visit and discover the best route to explore the beautiful city.",
     "cta": "Plan Route",
-    "mapAlt": "Map of Rio de Janeiro"
+    "mapAlt": "Map of Rio de Janeiro",
+    "greeting": "Hello, {{name}}!",
+    "greetingSub": "What would you like to do today?",
+    "newRoute": "New Route",
+    "newRouteSub": "Plan a new visit",
+    "savedRoutes": "Saved Routes",
+    "savedRoutesSub": "Your favorite routes",
+    "viewProfile": "View Profile",
+    "recent": "Recent",
+    "recentSub": "Latest calculated routes",
+    "noRoutes": "No routes yet",
+    "noRoutesSub": "Click New Route to get started.",
+    "seeAll": "See all"
   },
   "app": {
     "stepMain": "Choose main attraction",
