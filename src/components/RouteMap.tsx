@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, memo } from 'react'
 import { MapContainer, TileLayer, Marker, Polyline, useMap } from 'react-leaflet'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
@@ -52,7 +52,7 @@ interface RouteMapProps {
   polylinePath?: { lat: number; lng: number }[]
 }
 
-export function RouteMap({ attractions, polylinePath }: RouteMapProps) {
+export const RouteMap = memo(function RouteMap({ attractions, polylinePath }: RouteMapProps) {
   const polylinePositions: [number, number][] =
     polylinePath && polylinePath.length > 1
       ? polylinePath.map((p) => [p.lat, p.lng])
@@ -94,4 +94,4 @@ export function RouteMap({ attractions, polylinePath }: RouteMapProps) {
       )}
     </MapContainer>
   )
-}
+})
