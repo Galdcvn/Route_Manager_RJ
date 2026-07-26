@@ -85,7 +85,6 @@
     "copyLink": "Copiar Link",
     "copyLinkSub": "Copiar link da rota para colar em qualquer lugar",
     "linkCopied": "Link copiado!",
-    "generatePdf": "Gerar PDF",
     "openMaps": "Abrir no Maps",
     "namePlaceholder": "Nome da rota (opcional)",
     "nameLabel": "Nome da rota",
@@ -95,7 +94,13 @@
     "optimalRouteName": "Rota ótima",
     "confirmNewRoute": "Criar nova rota?",
     "confirmNewRouteSub": "A rota atual será perdida.",
-    "confirmNewRouteCta": "Criar nova rota"
+    "confirmNewRouteCta": "Criar nova rota",
+    "reorder": "Reordenar",
+    "reorderTitle": "Reordenar paradas",
+    "reorderHint": "Arraste para reorganizar a ordem das paradas",
+    "saveOrder": "Salvar ordem",
+    "cancelReorder": "Cancelar",
+    "orderSaved": "Ordem salva com sucesso!"
   },
   "profile": {
     "title": "Meu Perfil",
@@ -198,6 +203,8 @@
     "subtitle": "Suas rotas salvas",
     "empty": "Nenhuma rota favorita ainda",
     "emptySub": "Crie uma rota e salve nos favoritos para encontrá-la aqui.",
+    "search": "Buscar rota...",
+    "noResults": "Nenhuma rota encontrada",
     "delete": "Remover",
     "view": "Ver"
   }

@@ -85,7 +85,6 @@
     "copyLink": "Copiar Enlace",
     "copyLinkSub": "Copiar el enlace de la ruta para pegar en cualquier lugar",
     "linkCopied": "¡Enlace copiado!",
-    "generatePdf": "Generar PDF",
     "openMaps": "Abrir en Maps",
     "namePlaceholder": "Nombre de la ruta (opcional)",
     "nameLabel": "Nombre de la ruta",
@@ -95,7 +94,13 @@
     "optimalRouteName": "Ruta óptima",
     "confirmNewRoute": "¿Crear nueva ruta?",
     "confirmNewRouteSub": "La ruta actual se perderá.",
-    "confirmNewRouteCta": "Crear nueva ruta"
+    "confirmNewRouteCta": "Crear nueva ruta",
+    "reorder": "Reordenar",
+    "reorderTitle": "Reordenar paradas",
+    "reorderHint": "Arrastra para reorganizar el orden de las paradas",
+    "saveOrder": "Guardar orden",
+    "cancelReorder": "Cancelar",
+    "orderSaved": "¡Orden guardada con éxito!"
   },
   "profile": {
     "title": "Mi Perfil",
@@ -198,6 +203,8 @@
     "subtitle": "Tus rutas guardadas",
     "empty": "Aún no hay rutas favoritas",
     "emptySub": "Crea una ruta y guárdala en favoritos para encontrarla aquí.",
+    "search": "Buscar ruta...",
+    "noResults": "No se encontraron rutas",
     "delete": "Eliminar",
     "view": "Ver"
   }

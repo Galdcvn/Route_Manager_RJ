@@ -2,19 +2,23 @@ import { useState, useEffect, useMemo, useRef, useCallback } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { createPortal } from 'react-dom'
+import { DndContext, closestCenter, PointerSensor, useSensor, useSensors } from '@dnd-kit/core'
+import type { DragEndEvent } from '@dnd-kit/core'
+import { arrayMove } from '@dnd-kit/sortable'
 import { Header } from '../components/Header'
 import { RouteMap } from '../components/RouteMap'
 import { RouteLoading } from '../components/RouteLoading'
 import { Button } from '../components/Button'
 import { useRoute } from '../contexts/RouteContext'
 import { useToast } from '../contexts/ToastContext'
-import { calculateRoute, type TravelTime } from '../utils/routeCalculator'
-import { saveRoute } from '../utils/saveRoute'
+import { calculateRoute, calculateRouteForOrder, type TravelTime } from '../utils/routeCalculator'
+import { saveRoute, updateRouteOrder } from '../utils/saveRoute'
 import { shareRoute } from '../utils/shareWhatsApp'
 import { isFavorited, toggleFavorite } from '../utils/favoriteRoute'
 import { openGoogleMaps } from '../utils/openInMaps'
 import { supabase } from '../utils/supabase'
 import { ShareModal } from '../components/ShareModal'
+import { SortableStopItem } from '../components/SortableStopItem'
 import type { SelectedAttraction } from '../types/attraction'
 
 const ICONS: Record<string, string> = {
@@ -37,6 +41,9 @@ export function ResultsPage() {
   const [savingFavorite, setSavingFavorite] = useState(false)
   const [shareModalOpen, setShareModalOpen] = useState(false)
   const [confirmNewRoute, setConfirmNewRoute] = useState(false)
+  const [reorderMode, setReorderMode] = useState(false)
+  const [reorderList, setReorderList] = useState<SelectedAttraction[]>([])
+  const [savingOrder, setSavingOrder] = useState(false)
   const fetchingRef = useRef(false)
   const routeNameRef = useRef(routeName)
   routeNameRef.current = routeName
@@ -222,6 +229,62 @@ export function ResultsPage() {
     window.history.replaceState(null, '', `/results?route=${savedRouteId}`)
   }
 
+  // ── Reorder ──
+  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }))
+
+  function handleStartReorder() {
+    setReorderList([...optimizedAttractions])
+    setReorderMode(true)
+  }
+
+  function handleCancelReorder() {
+    setReorderList([])
+    setReorderMode(false)
+  }
+
+  function handleDragEnd(event: DragEndEvent) {
+    const { active, over } = event
+    if (!over || active.id === over.id) return
+    setReorderList((prev) => {
+      const oldIndex = prev.findIndex((a) => a.id === active.id)
+      const newIndex = prev.findIndex((a) => a.id === over.id)
+      return arrayMove(prev, oldIndex, newIndex)
+    })
+  }
+
+  async function handleSaveOrder() {
+    if (!activeSavedRouteId || savingOrder) return
+    setSavingOrder(true)
+    try {
+      const reordered = reorderList.map((a, i) => ({ ...a, order: i + 1 }))
+
+      const dbOk = await updateRouteOrder(activeSavedRouteId, reordered)
+      if (!dbOk) {
+        toast({ type: 'error', message: t('common.error') })
+        return
+      }
+
+      const results = await calculateRouteForOrder(reordered)
+      const driving = results.find((r) => r.travelTimes[0].mode === 'DRIVING')
+      if (driving) {
+        setUserOptimized(reordered)
+        setUserTravelTimes(driving.travelTimes)
+        setUserPolyline(driving.polylinePath)
+        setUserTotalDistance(driving.travelTimes[0].distance)
+        setUserTotalDuration(driving.travelTimes[0].duration)
+      }
+
+      setReorderList([])
+      setReorderMode(false)
+      toast({ type: 'success', message: t('results.orderSaved') })
+    } catch (err) {
+      console.error('Reorder save error:', err)
+      toast({ type: 'error', message: t('common.error') })
+    } finally {
+      setSavingOrder(false)
+    }
+  }
+
   if (error) {
     return (
       <div className="min-h-screen bg-white">
@@ -337,22 +400,70 @@ export function ResultsPage() {
           <div className="flex flex-col gap-6">
             {optimizedAttractions.length > 0 && (
               <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                <h2 className="mb-3 text-sm font-semibold text-navy">{t('results.stopsTitle')}</h2>
-                <ol className="space-y-3">
-                  {optimizedAttractions.map((attraction, i) => (
-                    <li key={attraction.id} className="flex items-center gap-3">
-                      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-pink text-xs font-bold text-white">
-                        {i + 1}
-                      </span>
-                      <div>
-                        <p className="text-sm font-semibold text-navy">{attraction.nome}</p>
-                        {attraction.bairro && (
-                          <p className="text-xs text-slate-400">{attraction.bairro}</p>
-                        )}
-                      </div>
-                    </li>
-                  ))}
-                </ol>
+                <div className="mb-3 flex items-center justify-between">
+                  <h2 className="text-sm font-semibold text-navy">
+                    {reorderMode ? t('results.reorderTitle') : t('results.stopsTitle')}
+                  </h2>
+                  {!reorderMode && !viewingOptimal && (
+                    <button
+                      type="button"
+                      onClick={handleStartReorder}
+                      className="flex items-center gap-1.5 text-xs font-medium text-slate-400 transition hover:text-pink"
+                    >
+                      <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="9" cy="5" r="1" /><circle cx="15" cy="5" r="1" />
+                        <circle cx="9" cy="12" r="1" /><circle cx="15" cy="12" r="1" />
+                        <circle cx="9" cy="19" r="1" /><circle cx="15" cy="19" r="1" />
+                      </svg>
+                      {t('results.reorder')}
+                    </button>
+                  )}
+                </div>
+
+                {reorderMode && (
+                  <p className="mb-3 text-xs text-slate-400">{t('results.reorderHint')}</p>
+                )}
+
+                {reorderMode ? (
+                  <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+                    <ol className="space-y-2">
+                      {reorderList.map((attraction, i) => (
+                        <SortableStopItem key={attraction.id} attraction={attraction} index={i} />
+                      ))}
+                    </ol>
+                  </DndContext>
+                ) : (
+                  <ol className="space-y-3">
+                    {optimizedAttractions.map((attraction, i) => (
+                      <li key={attraction.id} className="flex items-center gap-3">
+                        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-pink text-xs font-bold text-white">
+                          {i + 1}
+                        </span>
+                        <div>
+                          <p className="text-sm font-semibold text-navy">{attraction.nome}</p>
+                          {attraction.bairro && (
+                            <p className="text-xs text-slate-400">{attraction.bairro}</p>
+                          )}
+                        </div>
+                      </li>
+                    ))}
+                  </ol>
+                )}
+
+                {reorderMode && (
+                  <div className="mt-4 flex gap-3">
+                    <Button variant="outline" radius={15} className="flex-1" onClick={handleCancelReorder} disabled={savingOrder}>
+                      {t('results.cancelReorder')}
+                    </Button>
+                    <Button variant="pink" radius={15} className="flex-1" onClick={handleSaveOrder} disabled={savingOrder}>
+                      {savingOrder ? (
+                        <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                      ) : (
+                        t('results.saveOrder')
+                      )}
+                    </Button>
+                  </div>
+                )}
               </div>
             )}
 

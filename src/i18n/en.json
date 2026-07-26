@@ -85,7 +85,6 @@
     "copyLink": "Copy Link",
     "copyLinkSub": "Copy the route link to paste anywhere",
     "linkCopied": "Link copied!",
-    "generatePdf": "Generate PDF",
     "openMaps": "Open in Maps",
     "namePlaceholder": "Route name (optional)",
     "nameLabel": "Route name",
@@ -95,7 +94,13 @@
     "optimalRouteName": "Optimal route",
     "confirmNewRoute": "Create new route?",
     "confirmNewRouteSub": "The current route will be lost.",
-    "confirmNewRouteCta": "Create new route"
+    "confirmNewRouteCta": "Create new route",
+    "reorder": "Reorder",
+    "reorderTitle": "Reorder stops",
+    "reorderHint": "Drag to reorganize the order of stops",
+    "saveOrder": "Save order",
+    "cancelReorder": "Cancel",
+    "orderSaved": "Order saved successfully!"
   },
   "profile": {
     "title": "My Profile",
@@ -198,6 +203,8 @@
     "subtitle": "Your saved routes",
     "empty": "No favorite routes yet",
     "emptySub": "Create a route and save it to favorites to find it here.",
+    "search": "Search routes...",
+    "noResults": "No routes found",
     "delete": "Remove",
     "view": "View"
   }

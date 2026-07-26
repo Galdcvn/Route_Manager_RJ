@@ -1,11 +1,13 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { Header } from '../components/Header'
 import { Button } from '../components/Button'
+import { SearchInput } from '../components/SearchInput'
 import { useAuth } from '../contexts/AuthContext'
 import { useRoute } from '../contexts/RouteContext'
 import { useToast } from '../contexts/ToastContext'
+import { useDebounce } from '../hooks/useDebounce'
 import { supabase } from '../utils/supabase'
 import { toggleFavorite } from '../utils/favoriteRoute'
 import { formatInterval } from '../utils/formatInterval'
@@ -26,6 +28,14 @@ export function RoutesPage() {
   const navigate = useNavigate()
   const [routes, setRoutes] = useState<FavoriteRoute[]>([])
   const [loading, setLoading] = useState(true)
+  const [search, setSearch] = useState('')
+  const debouncedSearch = useDebounce(search, 300)
+
+  const filteredRoutes = useMemo(() => {
+    if (!debouncedSearch.trim()) return routes
+    const q = debouncedSearch.trim().toLowerCase()
+    return routes.filter((r) => r.nome.toLowerCase().includes(q))
+  }, [routes, debouncedSearch])
 
   useEffect(() => {
     if (!user) return
@@ -91,6 +101,15 @@ export function RoutesPage() {
         <div className="mb-6 sm:mb-8">
           <h1 className="text-2xl font-bold text-navy sm:text-3xl">{t('favorites.title')}</h1>
           <p className="mt-1 text-sm text-slate-500">{t('favorites.subtitle')}</p>
+          {routes.length > 0 && (
+            <div className="mt-4">
+              <SearchInput
+                value={search}
+                onChange={setSearch}
+                placeholder={t('favorites.search')}
+              />
+            </div>
+          )}
         </div>
 
         {loading ? (
@@ -100,9 +119,13 @@ export function RoutesPage() {
             <p className="text-lg font-semibold text-navy">{t('favorites.empty')}</p>
             <p className="mt-2 text-sm text-slate-400">{t('favorites.emptySub')}</p>
           </div>
+        ) : filteredRoutes.length === 0 ? (
+          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-8 text-center">
+            <p className="text-sm text-slate-400">{t('favorites.noResults')}</p>
+          </div>
         ) : (
           <div className="flex flex-col gap-3">
-            {routes.map((route) => (
+            {filteredRoutes.map((route) => (
               <div
                 key={route.rota_id}
                 className="flex items-center justify-between rounded-2xl border border-slate-200 bg-slate-50 p-4"

@@ -66,3 +66,19 @@ export async function saveRoute({
 
   return routeData.id
 }
+
+export async function updateRouteOrder(
+  routeId: string,
+  attractions: SelectedAttraction[]
+): Promise<boolean> {
+  const updates = attractions.map((a) =>
+    supabase
+      .from('rota_atracoes')
+      .update({ ordem: a.order })
+      .eq('rota_id', routeId)
+      .eq('atracao_id', a.id)
+  )
+
+  const results = await Promise.all(updates)
+  return results.every((r) => !r.error)
+}

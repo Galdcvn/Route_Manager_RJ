@@ -363,3 +363,44 @@ export async function calculateRoute(
     optimalDifferent: optimalDifferent && optResults.length > 0,
   }
 }
+
+// ─── Route for a fixed order (no Held-Karp optimization) ────────────────
+
+export async function calculateRouteForOrder(
+  attractions: SelectedAttraction[]
+): Promise<RouteResult[]> {
+  const validAttractions = attractions
+    .filter((a) => a.localizacao.lat !== 0 || a.localizacao.lng !== 0)
+
+  if (validAttractions.length < 2) return []
+
+  const labels = getTravelLabels()
+  const coords = validAttractions
+    .map((a) => `${a.localizacao.lng},${a.localizacao.lat}`)
+    .join(';')
+
+  const MODE_CONFIG: { mode: 'DRIVING' | 'WALKING' | 'BICYCLE'; label: string; proxyPath: string; osrmProfile: string }[] = [
+    { mode: 'DRIVING', label: labels.DRIVING, proxyPath: 'driving', osrmProfile: 'driving' },
+    { mode: 'WALKING', label: labels.WALKING, proxyPath: 'foot', osrmProfile: 'foot' },
+    { mode: 'BICYCLE', label: labels.BICYCLE, proxyPath: 'cycling', osrmProfile: 'cycling' },
+  ]
+
+  const osrmTasks = MODE_CONFIG.map((cfg) =>
+    fetchOSRMRoute(coords, cfg.proxyPath, cfg.osrmProfile)
+  )
+
+  const settled = await Promise.allSettled(osrmTasks)
+
+  return settled.map((result, i) => {
+    if (result.status !== 'fulfilled') {
+      return {
+        travelTimes: [{ mode: MODE_CONFIG[i].mode, label: MODE_CONFIG[i].label, distance: '-', duration: '-' }],
+        polylinePath: [],
+        totalDistanceKm: 0,
+        totalDurationMin: 0,
+        optimizedOrder: validAttractions,
+      }
+    }
+    return buildRouteResult(result.value, MODE_CONFIG[i].mode, MODE_CONFIG[i].label, validAttractions)
+  })
+}
