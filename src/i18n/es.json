@@ -92,7 +92,10 @@
     "optimalBanner": "¡Encontramos una ruta mejor, comenzando desde otro punto de partida!",
     "viewOptimal": "Ver ruta optimizada",
     "backToOriginal": "Volver a la ruta original",
-    "optimalRouteName": "Ruta óptima"
+    "optimalRouteName": "Ruta óptima",
+    "confirmNewRoute": "¿Crear nueva ruta?",
+    "confirmNewRouteSub": "La ruta actual se perderá.",
+    "confirmNewRouteCta": "Crear nueva ruta"
   },
   "profile": {
     "title": "Mi Perfil",

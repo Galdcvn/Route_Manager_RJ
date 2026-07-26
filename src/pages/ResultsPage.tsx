@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo, useRef, useCallback } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { createPortal } from 'react-dom'
 import { Header } from '../components/Header'
 import { RouteMap } from '../components/RouteMap'
 import { RouteLoading } from '../components/RouteLoading'
@@ -35,6 +36,7 @@ export function ResultsPage() {
   const [editingName, setEditingName] = useState(false)
   const [savingFavorite, setSavingFavorite] = useState(false)
   const [shareModalOpen, setShareModalOpen] = useState(false)
+  const [confirmNewRoute, setConfirmNewRoute] = useState(false)
   const fetchingRef = useRef(false)
   const routeNameRef = useRef(routeName)
   routeNameRef.current = routeName
@@ -379,7 +381,7 @@ export function ResultsPage() {
                 variant="pink"
                 radius={15}
                 className="flex-1"
-                onClick={() => { resetFlow(); navigate('/app') }}
+                onClick={() => setConfirmNewRoute(true)}
               >
                 {t('results.newRoute')}
               </Button>
@@ -430,6 +432,32 @@ export function ResultsPage() {
         onShare={() => shareRoute(optimizedAttractions, travelTimes, activeSavedRouteId)}
         onCopyLink={handleCopyLink}
       />
+
+      {confirmNewRoute && createPortal(
+        <>
+          <div className="fixed inset-0 z-[9999] bg-black/50" onClick={() => setConfirmNewRoute(false)} />
+          <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+            <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl" onClick={(e) => e.stopPropagation()}>
+              <h3 className="text-lg font-bold text-navy">{t('results.confirmNewRoute')}</h3>
+              <p className="mt-2 text-sm text-slate-500">{t('results.confirmNewRouteSub')}</p>
+              <div className="mt-5 flex gap-3">
+                <Button variant="outline" radius={15} className="flex-1" onClick={() => setConfirmNewRoute(false)}>
+                  {t('common.back')}
+                </Button>
+                <Button
+                  variant="pink"
+                  radius={15}
+                  className="flex-1"
+                  onClick={() => { setConfirmNewRoute(false); resetFlow(); navigate('/app') }}
+                >
+                  {t('results.confirmNewRouteCta')}
+                </Button>
+              </div>
+            </div>
+          </div>
+        </>,
+        document.body
+      )}
     </div>
   )
 }
