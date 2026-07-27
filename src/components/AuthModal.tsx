@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import { AuthForm } from './AuthForm'
+import { useFocusTrap } from '../hooks/useFocusTrap'
 
 type AuthModalProps = {
   open: boolean
@@ -8,6 +9,7 @@ type AuthModalProps = {
 
 export function AuthModal({ open, onClose }: AuthModalProps) {
   const { t } = useTranslation()
+  const panelRef = useFocusTrap<HTMLDivElement>(open, onClose)
 
   if (!open) return null
 
@@ -16,7 +18,7 @@ export function AuthModal({ open, onClose }: AuthModalProps) {
       <div className="fixed inset-0 z-50 bg-black/50" onClick={onClose} />
 
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-        <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl sm:p-8">
+        <div ref={panelRef} role="dialog" aria-modal="true" className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl dark:bg-slate-800 sm:p-8">
           <div className="mb-6 flex items-center justify-between">
             <h2 className="text-xl font-bold text-navy">{t('common.appName')}</h2>
             <button

@@ -53,6 +53,8 @@ export function useToast() {
 function Toast({ message, type, onClose }: { message: string; type: ToastType; onClose: () => void }) {
   return (
     <div
+      role="alert"
+      aria-live="assertive"
       className={`pointer-events-auto flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-white shadow-lg animate-slide-in ${
         type === 'success' ? 'bg-lime' : 'bg-red-500'
       }`}

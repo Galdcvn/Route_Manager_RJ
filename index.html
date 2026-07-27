@@ -4,12 +4,28 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/src/assets/Logo.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Planeje a melhor rota pelos pontos turísticos do Rio de Janeiro. Escolha as atrações e descubra o caminho mais eficiente." />
+    <meta property="og:title" content="Route Manager RJ" />
+    <meta property="og:description" content="Planeje a melhor rota pelos pontos turísticos do Rio de Janeiro." />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="/src/assets/Logo.svg" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Route Manager RJ" />
+    <meta name="twitter:description" content="Planeje a melhor rota pelos pontos turísticos do Rio de Janeiro." />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
     <title>Route Manager RJ</title>
   </head>
   <body>
+    <script>
+      (function() {
+        var t = localStorage.getItem('theme');
+        if (t === 'dark' || (!t && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+          document.documentElement.classList.add('dark');
+        }
+      })();
+    </script>
     <div id="app"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

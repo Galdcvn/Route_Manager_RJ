@@ -287,7 +287,7 @@ export function ResultsPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-white dark:bg-slate-900">
         <Header />
         <main className="mx-auto max-w-6xl px-4 py-16 text-center sm:px-6">
           <p className="text-lg font-bold text-navy">{t('results.calcError')}</p>
@@ -314,7 +314,7 @@ export function ResultsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white dark:bg-slate-900">
       <Header />
 
       <main className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-8">

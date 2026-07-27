@@ -3,11 +3,11 @@ import { categoryEmoji } from '../utils/categoryEmoji'
 
 type AttractionCardProps = {
   name: string
-  category?: string
-  image?: string
+  category?: string | null
+  image?: string | null
   selected?: boolean
   favorited?: boolean
-  bairro?: string
+  bairro?: string | null
   onClick?: () => void
   onInfoClick?: () => void
   onFavoriteClick?: () => void
@@ -55,6 +55,7 @@ export function AttractionCard({
       {onFavoriteClick && (
         <button
           type="button"
+          aria-label={favorited ? t('favorites.remove') : t('favorites.save')}
           onClick={(e) => {
             e.stopPropagation()
             onFavoriteClick()
@@ -67,7 +68,7 @@ export function AttractionCard({
 
       <div className="flex h-28 items-center justify-center bg-slate-100 sm:h-36">
         {image ? (
-          <img src={image} alt={name} className="h-full w-full object-cover" />
+          <img src={image} alt={name} className="h-full w-full object-cover" onError={(e) => { e.currentTarget.style.display = 'none' }} />
         ) : (
           <span className="text-4xl">{categoryEmoji[category ?? 'outro'] ?? '📍'}</span>
         )}

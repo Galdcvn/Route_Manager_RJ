@@ -4,7 +4,11 @@ import { parseWKBHex } from '../utils/parseWKB'
 import { getFavoriteIds, toggleFavoriteAttraction } from '../utils/favoriteAttraction'
 import { useAuth } from '../contexts/AuthContext'
 import type { Attraction } from '../types/attraction'
+import type { AtracaoRow } from '../types/supabase'
 import i18n from '../i18n'
+
+const CACHE_KEY = 'attractions_cache'
+const CACHE_TTL = 60 * 60 * 1000 // 1 hour
 
 interface UseAttractionsResult {
   attractions: Attraction[]
@@ -16,7 +20,17 @@ interface UseAttractionsResult {
 
 export function useAttractions(): UseAttractionsResult {
   const { user } = useAuth()
-  const [rawData, setRawData] = useState<any[]>([])
+  const [rawData, setRawData] = useState<AtracaoRow[]>(() => {
+    try {
+      const cached = localStorage.getItem(CACHE_KEY)
+      if (!cached) return []
+      const { data, timestamp } = JSON.parse(cached)
+      if (Date.now() - timestamp > CACHE_TTL) return []
+      return data
+    } catch {
+      return []
+    }
+  })
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [favoriteIds, setFavoriteIds] = useState<Set<string>>(new Set())
@@ -41,14 +55,18 @@ export function useAttractions(): UseAttractionsResult {
           .order('nome')
 
         if (dbError) throw dbError
-        if (!cancelled) setRawData(data ?? [])
+        if (!cancelled) {
+          setRawData(data ?? [])
+          localStorage.setItem(CACHE_KEY, JSON.stringify({ data: data ?? [], timestamp: Date.now() }))
+        }
 
         if (user && !cancelled) {
           const favs = await getFavoriteIds(user.id)
           if (!cancelled) setFavoriteIds(favs)
         }
-      } catch (err: any) {
-        if (!cancelled) setError(err.message ?? i18n.t('attractions.fetchError'))
+      } catch (err) {
+        const message = err instanceof Error ? err.message : i18n.t('attractions.fetchError')
+        if (!cancelled) setError(message)
       } finally {
         if (!cancelled) setLoading(false)
       }
@@ -91,26 +109,26 @@ export function useAttractions(): UseAttractionsResult {
   const attractions = useMemo(() => {
     const lang = i18n.language.split('-')[0] || 'pt'
 
-    const mapped = rawData.map((row: any) => {
+    const mapped = rawData.map((row) => {
       const info = row.informacao_atracao?.find(
-        (i: any) => i.idiomas?.codigo === lang
+        (i) => i.idiomas?.[0]?.codigo === lang
       ) ?? row.informacao_atracao?.find(
-        (i: any) => i.idiomas?.codigo === 'pt'
+        (i) => i.idiomas?.[0]?.codigo === 'pt'
       )
 
       const imagem = row.imagens_atracao
-        ?.sort((a: any, b: any) => a.ordem - b.ordem)[0]
-        ?.imagens?.url
+        ?.sort((a, b) => (a.ordem ?? 0) - (b.ordem ?? 0))[0]
+        ?.imagens?.[0]?.url
 
       return {
         id: row.id,
         nome: row.nome,
-        categoria: row.categoria_atracao?.nome ?? 'outro',
+        categoria: row.categoria_atracao?.[0]?.nome ?? 'outro',
         descricao: info?.descricao,
         horarios: info?.horarios,
-        rua: row.endereco_atracao?.rua,
-        bairro: row.endereco_atracao?.bairro,
-        cidade: row.endereco_atracao?.cidade,
+        rua: row.endereco_atracao?.[0]?.rua,
+        bairro: row.endereco_atracao?.[0]?.bairro,
+        cidade: row.endereco_atracao?.[0]?.cidade,
         imagem_url: imagem,
         contatos: row.contato_atracao ?? [],
         localizacao: parseWKBHex(row.localizacao),

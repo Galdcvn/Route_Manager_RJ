@@ -72,7 +72,6 @@
   "results": {
     "routeTitle": "Rota: {{count}} parada",
     "routeTitle_plural": "Rota: {{count}} paradas",
-    "noSelection": "Nenhuma atração selecionada",
     "stopsTitle": "Paradas na ordem da rota",
     "calcError": "Erro ao calcular rota",
     "calcErrorSub": "Verifique sua conexão e tente novamente.",
@@ -176,9 +175,7 @@
     "es": "Español"
   },
   "attractions": {
-    "fetchError": "Erro ao buscar atrações",
-    "favorite": "Favoritar",
-    "unfavorite": "Desfavoritar"
+    "fetchError": "Erro ao buscar atrações"
   },
   "categories": {
     "monumento": "Monumento",

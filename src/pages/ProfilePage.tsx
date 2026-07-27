@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { Header } from '../components/Header'
 import { Button } from '../components/Button'
+import { AvatarImg } from '../components/AvatarImg'
 import { useAuth } from '../contexts/AuthContext'
 import { useToast } from '../contexts/ToastContext'
 import { supabase } from '../utils/supabase'
@@ -132,7 +133,7 @@ export function ProfilePage() {
   const displayImage = avatarPreview || avatarUrl
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white dark:bg-slate-900">
       <Header />
 
       <main className="mx-auto max-w-2xl px-4 py-6 sm:px-6 sm:py-8">
@@ -149,9 +150,10 @@ export function ProfilePage() {
               className="group relative h-16 w-16 shrink-0 overflow-hidden rounded-full bg-navy"
             >
               {displayImage ? (
-                <img
+                <AvatarImg
                   src={displayImage}
                   alt={t('profile.avatarAlt')}
+                  fallback={nome.charAt(0)?.toUpperCase() || email.charAt(0)?.toUpperCase()}
                   className="h-16 w-16 rounded-full object-cover"
                 />
               ) : (

@@ -72,7 +72,6 @@
   "results": {
     "routeTitle": "Route: {{count}} stop",
     "routeTitle_plural": "Route: {{count}} stops",
-    "noSelection": "No attraction selected",
     "stopsTitle": "Stops in route order",
     "calcError": "Error calculating route",
     "calcErrorSub": "Check your connection and try again.",
@@ -176,9 +175,7 @@
     "es": "Español"
   },
   "attractions": {
-    "fetchError": "Error fetching attractions",
-    "favorite": "Favorite",
-    "unfavorite": "Unfavorite"
+    "fetchError": "Error fetching attractions"
   },
   "categories": {
     "monumento": "Monument",

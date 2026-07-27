@@ -6,7 +6,7 @@ export async function getFavoriteIds(userId: string): Promise<Set<string>> {
     .select('atracao_id')
     .eq('usuario_id', userId)
 
-  return new Set(data?.map((r: any) => r.atracao_id) ?? [])
+  return new Set(data?.map((r) => r.atracao_id) ?? [])
 }
 
 export async function toggleFavoriteAttraction(

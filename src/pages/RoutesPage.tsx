@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { Header } from '../components/Header'
 import { Button } from '../components/Button'
 import { SearchInput } from '../components/SearchInput'
+import { RouteSkeleton } from '../components/RouteSkeleton'
 import { useAuth } from '../contexts/AuthContext'
 import { useRoute } from '../contexts/RouteContext'
 import { useToast } from '../contexts/ToastContext'
@@ -11,10 +12,11 @@ import { useDebounce } from '../hooks/useDebounce'
 import { supabase } from '../utils/supabase'
 import { toggleFavorite } from '../utils/favoriteRoute'
 import { formatInterval } from '../utils/formatInterval'
+import type { RotaFavoritaJoin } from '../types/supabase'
 
 interface FavoriteRoute {
   rota_id: string
-  nome: string
+  nome: string | null
   distancia_total: number | null
   duracao_total: string | null
   criado_em: string
@@ -34,7 +36,7 @@ export function RoutesPage() {
   const filteredRoutes = useMemo(() => {
     if (!debouncedSearch.trim()) return routes
     const q = debouncedSearch.trim().toLowerCase()
-    return routes.filter((r) => r.nome.toLowerCase().includes(q))
+    return routes.filter((r) => r.nome?.toLowerCase().includes(q) ?? false)
   }, [routes, debouncedSearch])
 
   useEffect(() => {
@@ -52,14 +54,14 @@ export function RoutesPage() {
         return
       }
 
-      const mapped: FavoriteRoute[] = (data ?? [])
-        .filter((row: any) => row.rotas)
-        .map((row: any) => ({
+      const mapped: FavoriteRoute[] = ((data ?? []) as RotaFavoritaJoin[])
+        .filter((row) => row.rotas && row.rotas.length > 0)
+        .map((row) => ({
           rota_id: row.rota_id,
-          nome: row.rotas.nome,
-          distancia_total: row.rotas.distancia_total,
-          duracao_total: row.rotas.duracao_total,
-          criado_em: row.rotas.criado_em,
+          nome: row.rotas![0].nome,
+          distancia_total: row.rotas![0].distancia_total,
+          duracao_total: row.rotas![0].duracao_total,
+          criado_em: row.rotas![0].criado_em,
         }))
         .sort((a, b) => new Date(b.criado_em).getTime() - new Date(a.criado_em).getTime())
 
@@ -94,12 +96,12 @@ export function RoutesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white dark:bg-slate-900">
       <Header />
 
       <main className="mx-auto max-w-2xl px-4 py-6 sm:px-6 sm:py-8">
         <div className="mb-6 sm:mb-8">
-          <h1 className="text-2xl font-bold text-navy sm:text-3xl">{t('favorites.title')}</h1>
+          <h1 className="text-2xl font-bold text-navy dark:text-slate-100 sm:text-3xl">{t('favorites.title')}</h1>
           <p className="mt-1 text-sm text-slate-500">{t('favorites.subtitle')}</p>
           {routes.length > 0 && (
             <div className="mt-4">
@@ -113,14 +115,14 @@ export function RoutesPage() {
         </div>
 
         {loading ? (
-          <p className="text-sm text-slate-400">{t('common.loading')}</p>
+          <RouteSkeleton />
         ) : routes.length === 0 ? (
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-8 text-center">
-            <p className="text-lg font-semibold text-navy">{t('favorites.empty')}</p>
+          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-8 text-center dark:border-slate-700 dark:bg-slate-800">
+            <p className="text-lg font-semibold text-navy dark:text-slate-100">{t('favorites.empty')}</p>
             <p className="mt-2 text-sm text-slate-400">{t('favorites.emptySub')}</p>
           </div>
         ) : filteredRoutes.length === 0 ? (
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-8 text-center">
+          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-8 text-center dark:border-slate-700 dark:bg-slate-800">
             <p className="text-sm text-slate-400">{t('favorites.noResults')}</p>
           </div>
         ) : (
@@ -128,10 +130,10 @@ export function RoutesPage() {
             {filteredRoutes.map((route) => (
               <div
                 key={route.rota_id}
-                className="flex items-center justify-between rounded-2xl border border-slate-200 bg-slate-50 p-4"
+                className="flex items-center justify-between rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-800"
               >
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-semibold text-navy">{route.nome}</p>
+                  <p className="truncate text-sm font-semibold text-navy dark:text-slate-100">{route.nome}</p>
                   <p className="mt-0.5 text-xs text-slate-400">
                     {route.distancia_total != null && `${route.distancia_total.toFixed(1)} km`}
                     {route.distancia_total != null && route.duracao_total && ' · '}

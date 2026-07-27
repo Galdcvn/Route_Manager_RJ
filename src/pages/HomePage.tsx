@@ -7,10 +7,11 @@ import { useRoute } from '../contexts/RouteContext'
 import { useToast } from '../contexts/ToastContext'
 import { supabase } from '../utils/supabase'
 import { formatInterval } from '../utils/formatInterval'
+import type { RotaFavoritaJoin, DbRota } from '../types/supabase'
 
 interface DashboardRoute {
   id: string
-  nome: string
+  nome: string | null
   distancia_total: number | null
   duracao_total: string | null
   criado_em: string
@@ -46,17 +47,17 @@ export function HomePage() {
             .limit(5),
         ])
 
-        const favs: DashboardRoute[] = (favsRes.data ?? [])
-          .filter((row: any) => row.rotas)
-          .map((row: any) => ({
+        const favs: DashboardRoute[] = ((favsRes.data ?? []) as RotaFavoritaJoin[])
+          .filter((row) => row.rotas && row.rotas.length > 0)
+          .map((row) => ({
             id: row.rota_id,
-            nome: row.rotas.nome,
-            distancia_total: row.rotas.distancia_total,
-            duracao_total: row.rotas.duracao_total,
-            criado_em: row.rotas.criado_em,
+            nome: row.rotas![0].nome,
+            distancia_total: row.rotas![0].distancia_total,
+            duracao_total: row.rotas![0].duracao_total,
+            criado_em: row.rotas![0].criado_em,
           }))
 
-        const recent: DashboardRoute[] = (recentRes.data ?? []).map((row: any) => ({
+        const recent: DashboardRoute[] = ((recentRes.data ?? []) as DbRota[]).map((row) => ({
           id: row.id,
           nome: row.nome,
           distancia_total: row.distancia_total,
@@ -96,7 +97,7 @@ export function HomePage() {
   const displayName = user?.user_metadata?.full_name?.split(' ')[0] || t('common.user')
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white dark:bg-slate-900">
       <Header />
 
       <main className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-8">

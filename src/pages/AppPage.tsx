@@ -108,7 +108,7 @@ export function AppPage() {
   const canProceedStep2 = selected.length >= 1
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white dark:bg-slate-900">
       <Header />
 
       <main className="mx-auto max-w-6xl px-4 py-6 pb-28 sm:px-6 sm:py-8">

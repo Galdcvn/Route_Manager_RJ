@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import type { Attraction } from '../types/attraction'
 import { categoryEmoji } from '../utils/categoryEmoji'
+import { useFocusTrap } from '../hooks/useFocusTrap'
 
 type AttractionInfoModalProps = {
   open: boolean
@@ -10,6 +11,7 @@ type AttractionInfoModalProps = {
 
 export function AttractionInfoModal({ open, onClose, attraction }: AttractionInfoModalProps) {
   const { t } = useTranslation()
+  const panelRef = useFocusTrap<HTMLDivElement>(open, onClose)
   if (!open || !attraction) return null
 
   const endereco = [attraction.rua, attraction.bairro, attraction.cidade]
@@ -21,7 +23,7 @@ export function AttractionInfoModal({ open, onClose, attraction }: AttractionInf
       <div className="fixed inset-0 z-50 bg-black/50" onClick={onClose} />
 
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-        <div className="w-full max-w-lg max-h-[85vh] overflow-y-auto rounded-2xl bg-white p-6 shadow-xl sm:p-8">
+        <div ref={panelRef} role="dialog" aria-modal="true" className="w-full max-w-lg max-h-[85vh] overflow-y-auto rounded-2xl bg-white p-6 shadow-xl dark:bg-slate-800 sm:p-8">
           {/* Header */}
           <div className="mb-4 flex items-start justify-between">
             <div className="flex items-center gap-3">
@@ -50,6 +52,7 @@ export function AttractionInfoModal({ open, onClose, attraction }: AttractionInf
                 src={attraction.imagem_url}
                 alt={attraction.nome}
                 className="h-48 w-full object-cover"
+                onError={(e) => { e.currentTarget.style.display = 'none' }}
               />
             </div>
           )}

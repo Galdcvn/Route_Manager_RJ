@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:is(.dark *));
+
 @theme {
   --color-sky: #4CA3FF;
   --color-lime: #8BC34A;
@@ -7,12 +9,15 @@
   --color-orange: #FF9800;
   --color-pink: #EB6092;
   --color-navy: #0F3B64;
-  --color-cyan: #4AB6D9;
 }
 
 :root {
   color-scheme: light;
   font-family: 'Montserrat', sans-serif;
+}
+
+.dark {
+  color-scheme: dark;
 }
 
 body {
@@ -22,6 +27,12 @@ body {
   color: #102235;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.dark body {
+  background: #0f172a;
+  color: #e2e8f0;
 }
 
 ::selection {

@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useCallback, type ReactNode } from 'react'
 import type { Attraction, SelectedAttraction } from '../types/attraction'
+import type { RotaRow, RotaAtracaoRow, AtracaoRow } from '../types/supabase'
 import { supabase } from '../utils/supabase'
 import { parseWKBHex } from '../utils/parseWKB'
 import i18n from '../i18n'
@@ -61,25 +62,28 @@ export function RouteProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const loadSavedRoute = useCallback(async (routeId: string): Promise<boolean> => {
-    const { data: route, error: routeError } = await supabase
-      .from('rotas')
-      .select('ponto_inicio_id, nome')
-      .eq('id', routeId)
-      .single()
-
-    if (routeError || !route) return false
-
     const lang = i18n.language.split('-')[0] || 'pt'
 
-    const { data: pivot, error: pivotError } = await supabase
-      .from('rota_atracoes')
-      .select('atracao_id, ordem')
-      .eq('rota_id', routeId)
-      .order('ordem')
+    const [routeResult, pivotResult] = await Promise.all([
+      supabase
+        .from('rotas')
+        .select('ponto_inicio_id, nome')
+        .eq('id', routeId)
+        .single<RotaRow>(),
+      supabase
+        .from('rota_atracoes')
+        .select('atracao_id, ordem')
+        .eq('rota_id', routeId)
+        .order('ordem'),
+    ])
 
+    const { data: route, error: routeError } = routeResult
+    const { data: pivot, error: pivotError } = pivotResult
+
+    if (routeError || !route) return false
     if (pivotError || !pivot) return false
 
-    const attractionIds = pivot.map((r: any) => r.atracao_id)
+    const attractionIds = (pivot as RotaAtracaoRow[]).map((r) => r.atracao_id)
 
     const { data: atracoes, error: atracoesError } = await supabase
       .from('atracoes')
@@ -97,28 +101,28 @@ export function RouteProvider({ children }: { children: ReactNode }) {
 
     if (atracoesError || !atracoes) return false
 
-    const mapped: SelectedAttraction[] = atracoes.map((row: any) => {
+    const mapped: SelectedAttraction[] = (atracoes as AtracaoRow[]).map((row) => {
       const info = row.informacao_atracao?.find(
-        (i: any) => i.idiomas?.codigo === lang
+        (i) => i.idiomas?.[0]?.codigo === lang
       ) ?? row.informacao_atracao?.find(
-        (i: any) => i.idiomas?.codigo === 'pt'
+        (i) => i.idiomas?.[0]?.codigo === 'pt'
       )
 
       const imagem = row.imagens_atracao
-        ?.sort((a: any, b: any) => a.ordem - b.ordem)[0]
-        ?.imagens?.url
+        ?.sort((a, b) => (a.ordem ?? 0) - (b.ordem ?? 0))[0]
+        ?.imagens?.[0]?.url
 
-      const pivotRow = pivot.find((p: any) => p.atracao_id === row.id)
+      const pivotRow = (pivot as RotaAtracaoRow[]).find((p) => p.atracao_id === row.id)
 
       return {
         id: row.id,
         nome: row.nome,
-        categoria: row.categoria_atracao?.nome ?? 'outro',
+        categoria: row.categoria_atracao?.[0]?.nome ?? 'outro',
         descricao: info?.descricao,
         horarios: info?.horarios,
-        rua: row.endereco_atracao?.rua,
-        bairro: row.endereco_atracao?.bairro,
-        cidade: row.endereco_atracao?.cidade,
+        rua: row.endereco_atracao?.[0]?.rua,
+        bairro: row.endereco_atracao?.[0]?.bairro,
+        cidade: row.endereco_atracao?.[0]?.cidade,
         imagem_url: imagem,
         contatos: row.contato_atracao ?? [],
         localizacao: parseWKBHex(row.localizacao),

@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next'
 import { useAuth } from '../contexts/AuthContext'
 import { useRoute } from '../contexts/RouteContext'
 import { AuthModal } from './AuthModal'
+import { AvatarImg } from './AvatarImg'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 
@@ -26,7 +27,7 @@ export function MenuDrawer({ open, onClose }: MenuDrawerProps) {
       )}
 
       <div
-        className={`fixed top-0 left-0 z-50 flex h-full w-64 flex-col bg-white shadow-xl transition-transform duration-300 sm:w-72 ${
+        className={`fixed top-0 left-0 z-50 flex h-full w-64 flex-col bg-white shadow-xl transition-transform duration-300 dark:bg-slate-900 sm:w-72 ${
           open ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
@@ -46,11 +47,12 @@ export function MenuDrawer({ open, onClose }: MenuDrawerProps) {
         <nav className="flex flex-col gap-1 p-4">
           {user ? (
             <>
-              <div className="flex items-center gap-3 rounded-xl bg-slate-50 px-4 py-3">
+              <div className="flex items-center gap-3 rounded-xl bg-slate-50 px-4 py-3 dark:bg-slate-800">
                 {user.user_metadata?.avatar_url ? (
-                  <img
+                  <AvatarImg
                     src={user.user_metadata.avatar_url}
                     alt=""
+                    fallback={user.user_metadata?.full_name?.charAt(0)?.toUpperCase() || user.email?.charAt(0)?.toUpperCase() || ''}
                     className="h-10 w-10 rounded-full object-cover"
                   />
                 ) : (
@@ -59,7 +61,7 @@ export function MenuDrawer({ open, onClose }: MenuDrawerProps) {
                   </div>
                 )}
                 <div className="min-w-0">
-                  <p className="truncate text-sm font-semibold text-navy">
+                  <p className="truncate text-sm font-semibold text-navy dark:text-slate-100">
                     {user.user_metadata?.full_name || t('common.user')}
                   </p>
                   <p className="truncate text-xs text-slate-400">{user.email}</p>
@@ -71,7 +73,7 @@ export function MenuDrawer({ open, onClose }: MenuDrawerProps) {
               <Link
                 to="/profile"
                 onClick={onClose}
-                className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-navy transition hover:bg-slate-50"
+                className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-navy transition hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-800"
               >
                 <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
@@ -83,7 +85,7 @@ export function MenuDrawer({ open, onClose }: MenuDrawerProps) {
               <Link
                 to="/rotas"
                 onClick={onClose}
-                className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-navy transition hover:bg-slate-50"
+                className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-navy transition hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-800"
               >
                 <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l5.447 2.724A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
@@ -94,7 +96,7 @@ export function MenuDrawer({ open, onClose }: MenuDrawerProps) {
               <Link
                 to="/app"
                 onClick={() => { resetFlow(); onClose() }}
-                className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-navy transition hover:bg-slate-50"
+                className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-navy transition hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-800"
               >
                 <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -107,7 +109,7 @@ export function MenuDrawer({ open, onClose }: MenuDrawerProps) {
 
               <button
                 onClick={() => { signOut(); onClose() }}
-                className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-red-500 transition hover:bg-red-50"
+                className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-red-500 transition hover:bg-red-50 dark:hover:bg-red-900/20"
               >
                 <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9" />

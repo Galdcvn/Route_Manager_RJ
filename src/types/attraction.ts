@@ -7,12 +7,12 @@ export interface Attraction {
   id: string
   nome: string
   categoria: string
-  descricao?: string
-  horarios?: string
-  rua?: string
-  bairro?: string
-  cidade?: string
-  imagem_url?: string
+  descricao?: string | null
+  horarios?: string | null
+  rua?: string | null
+  bairro?: string | null
+  cidade?: string | null
+  imagem_url?: string | null
   contatos?: Contato[]
   localizacao: {
     lat: number

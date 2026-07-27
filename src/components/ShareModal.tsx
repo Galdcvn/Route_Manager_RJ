@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import { createPortal } from 'react-dom'
+import { useFocusTrap } from '../hooks/useFocusTrap'
 
 type ShareModalProps = {
   open: boolean
@@ -10,6 +11,7 @@ type ShareModalProps = {
 
 export function ShareModal({ open, onClose, onShare, onCopyLink }: ShareModalProps) {
   const { t } = useTranslation()
+  const panelRef = useFocusTrap<HTMLDivElement>(open, onClose)
   if (!open) return null
 
   return createPortal(
@@ -18,7 +20,10 @@ export function ShareModal({ open, onClose, onShare, onCopyLink }: ShareModalPro
 
       <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
         <div
-          className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl"
+          ref={panelRef}
+          role="dialog"
+          aria-modal="true"
+          className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl dark:bg-slate-800"
           onClick={(e) => e.stopPropagation()}
         >
           <div className="mb-5 flex items-center justify-between">
