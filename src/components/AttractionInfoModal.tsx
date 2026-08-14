@@ -29,15 +29,15 @@ export function AttractionInfoModal({ open, onClose, attraction }: AttractionInf
             <div className="flex items-center gap-3">
               <span className="text-3xl">{categoryEmoji[attraction.categoria] ?? '📍'}</span>
               <div>
-                <h2 className="text-lg font-bold text-navy">{attraction.nome}</h2>
-                <span className="inline-block rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium capitalize text-slate-500">
+                <h2 className="text-lg font-bold text-navy dark:text-slate-100">{attraction.nome}</h2>
+                <span className="inline-block rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium capitalize text-slate-500 dark:bg-slate-700 dark:text-slate-300">
                   {t('categories.' + (attraction.categoria ?? 'outro'))}
                 </span>
               </div>
             </div>
             <button
               onClick={onClose}
-              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-slate-400 transition hover:bg-slate-100 hover:text-navy"
+              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-slate-400 transition hover:bg-slate-100 hover:text-navy dark:hover:bg-slate-700 dark:hover:text-slate-100"
             >
               <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M18 6L6 18M6 6l12 12" />
@@ -59,7 +59,7 @@ export function AttractionInfoModal({ open, onClose, attraction }: AttractionInf
 
           {/* Endereço */}
           {endereco && (
-            <div className="mb-3 flex items-start gap-2 text-sm text-slate-600">
+            <div className="mb-3 flex items-start gap-2 text-sm text-slate-600 dark:text-slate-300">
               <svg className="mt-0.5 h-4 w-4 shrink-0 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                 <circle cx="12" cy="11" r="3" />
@@ -70,7 +70,7 @@ export function AttractionInfoModal({ open, onClose, attraction }: AttractionInf
 
           {/* Horários */}
           {attraction.horarios && (
-            <div className="mb-3 flex items-start gap-2 text-sm text-slate-600">
+            <div className="mb-3 flex items-start gap-2 text-sm text-slate-600 dark:text-slate-300">
               <svg className="mt-0.5 h-4 w-4 shrink-0 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <circle cx="12" cy="12" r="10" />
                 <path d="M12 6v6l4 2" />
@@ -81,15 +81,15 @@ export function AttractionInfoModal({ open, onClose, attraction }: AttractionInf
 
           {/* Descrição */}
           {attraction.descricao && (
-            <div className="mt-4 rounded-xl bg-slate-50 p-4">
-              <p className="text-sm leading-relaxed text-slate-600">{attraction.descricao}</p>
+            <div className="mt-4 rounded-xl bg-slate-50 p-4 dark:bg-slate-700/50">
+              <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-300">{attraction.descricao}</p>
             </div>
           )}
 
           {/* Contatos */}
           {attraction.contatos && attraction.contatos.length > 0 && (
             <div className="mt-4">
-              <h3 className="mb-2 text-sm font-semibold text-navy">{t('contacts.title')}</h3>
+              <h3 className="mb-2 text-sm font-semibold text-navy dark:text-slate-100">{t('contacts.title')}</h3>
               <div className="flex flex-col gap-2">
                 {attraction.contatos.map((contato, i) => {
                   const href = contato.tipo === 'telefone' || contato.tipo === 'whatsapp'
@@ -111,7 +111,7 @@ export function AttractionInfoModal({ open, onClose, attraction }: AttractionInf
                     : <><circle cx="12" cy="12" r="10" /><line x1="2" y1="12" x2="22" y2="12" /><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z" /></>
 
                   const content = (
-                    <div className="flex items-center gap-2 text-sm text-slate-600">
+                    <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
                       <svg className="mt-0.5 h-4 w-4 shrink-0 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         {icon}
                       </svg>

@@ -31,10 +31,10 @@ export function AttractionCard({
       tabIndex={0}
       onClick={onClick}
       onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') onClick?.() }}
-      className={`relative flex w-40 shrink-0 flex-col overflow-hidden rounded-2xl border-2 text-left transition sm:w-48 lg:w-full ${
+      className={`relative flex w-40 shrink-0 flex-col overflow-hidden rounded-2xl border-2 bg-white text-left transition dark:bg-slate-800 sm:w-48 lg:w-full ${
         selected
           ? 'border-pink shadow-lg shadow-pink/20'
-          : 'border-slate-200 hover:border-slate-300 hover:shadow-md'
+          : 'border-slate-200 hover:border-slate-300 hover:shadow-md dark:border-slate-700 dark:hover:border-slate-600'
       }`}
     >
       {/* Botão info */}
@@ -66,7 +66,7 @@ export function AttractionCard({
         </button>
       )}
 
-      <div className="flex h-28 items-center justify-center bg-slate-100 sm:h-36">
+      <div className="flex h-28 items-center justify-center bg-slate-100 dark:bg-slate-700 sm:h-36">
         {image ? (
           <img src={image} alt={name} className="h-full w-full object-cover" onError={(e) => { e.currentTarget.style.display = 'none' }} />
         ) : (
@@ -75,11 +75,11 @@ export function AttractionCard({
       </div>
       <div className="p-3">
         {category && (
-          <span className="mb-1 inline-block rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-medium capitalize text-slate-500">
+          <span className="mb-1 inline-block rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-medium capitalize text-slate-500 dark:bg-slate-700 dark:text-slate-300">
             {t('categories.' + (category ?? 'outro'))}
           </span>
         )}
-        <p className={`text-sm font-semibold ${selected ? 'text-pink' : 'text-navy'}`}>
+        <p className={`text-sm font-semibold ${selected ? 'text-pink' : 'text-navy dark:text-slate-100'}`}>
           {name}
         </p>
         {bairro && (

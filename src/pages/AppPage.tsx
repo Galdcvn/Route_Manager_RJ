@@ -133,20 +133,20 @@ export function AppPage() {
           </ol>
         </nav>
 
-        <div className="mb-4 rounded-2xl border border-slate-200 bg-slate-50 p-4 sm:mb-6 sm:p-6">
+        <div className="mb-4 rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-800 sm:mb-6 sm:p-6">
           {step === 'select-main' ? (
             <>
-              <h1 className="text-xl font-bold text-navy sm:text-2xl">{t('app.chooseMain')}</h1>
-              <p className="mt-1 text-sm text-slate-500">
+              <h1 className="text-xl font-bold text-navy dark:text-slate-100 sm:text-2xl">{t('app.chooseMain')}</h1>
+              <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
                 {t('app.chooseMainSub')}
               </p>
             </>
           ) : (
             <>
-              <h1 className="text-xl font-bold text-navy sm:text-2xl">
+              <h1 className="text-xl font-bold text-navy dark:text-slate-100 sm:text-2xl">
                 {t('app.nearbyTitle', { name: mainAttraction?.nome })}
               </h1>
-              <p className="mt-1 text-sm text-slate-500">
+              <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
                 {t('app.nearbySub', { radius: RADIUS_KM })}
               </p>
               {selected.length > 0 && (
@@ -161,7 +161,7 @@ export function AppPage() {
             value={routeName}
             onChange={(e) => setRouteName(e.target.value)}
             placeholder={t('results.namePlaceholder')}
-            className="mt-3 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-navy outline-none transition placeholder:text-slate-400 focus:border-pink focus:ring-2 focus:ring-pink/20"
+            className="mt-3 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-navy outline-none transition placeholder:text-slate-400 focus:border-pink focus:ring-2 focus:ring-pink/20 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"
           />
         </div>
 
@@ -180,7 +180,7 @@ export function AppPage() {
         )}
 
         {!loading && !error && displayAttractions.length === 0 && searchQuery.trim() && (
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-500">
+          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400">
             {t('app.noResults', { query: searchQuery })}
           </div>
         )}
@@ -222,7 +222,7 @@ export function AppPage() {
         )}
       </main>
 
-      <div className="fixed bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/95 backdrop-blur-sm">
+      <div className="fixed bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white/95 backdrop-blur-sm dark:border-slate-700 dark:bg-slate-900/95">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6">
           {step === 'select-main' ? (
             <>
