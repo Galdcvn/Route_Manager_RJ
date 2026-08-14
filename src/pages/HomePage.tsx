@@ -52,14 +52,18 @@ export function HomePage() {
       ])
 
       const favs: DashboardRoute[] = ((favsRes.data ?? []) as RotaFavoritaJoin[])
-        .filter((row) => row.rotas && row.rotas.length > 0)
-        .map((row) => ({
-          id: row.rota_id,
-          nome: row.rotas![0].nome,
-          distancia_total: row.rotas![0].distancia_total,
-          duracao_total: row.rotas![0].duracao_total,
-          criado_em: row.rotas![0].criado_em,
-        }))
+        .map((row) => {
+          const rota = Array.isArray(row.rotas) ? row.rotas[0] : row.rotas
+          if (!rota) return null
+          return {
+            id: row.rota_id,
+            nome: rota.nome,
+            distancia_total: rota.distancia_total,
+            duracao_total: rota.duracao_total,
+            criado_em: rota.criado_em,
+          }
+        })
+        .filter((r): r is DashboardRoute => r !== null)
 
       const recent: DashboardRoute[] = ((recentRes.data ?? []) as DbRota[]).map((row) => ({
         id: row.id,

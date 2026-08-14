@@ -55,14 +55,18 @@ export function RoutesPage() {
       if (error) throw error
 
       const mapped: FavoriteRoute[] = ((data ?? []) as RotaFavoritaJoin[])
-        .filter((row) => row.rotas && row.rotas.length > 0)
-        .map((row) => ({
-          rota_id: row.rota_id,
-          nome: row.rotas![0].nome,
-          distancia_total: row.rotas![0].distancia_total,
-          duracao_total: row.rotas![0].duracao_total,
-          criado_em: row.rotas![0].criado_em,
-        }))
+        .map((row) => {
+          const rota = Array.isArray(row.rotas) ? row.rotas[0] : row.rotas
+          if (!rota) return null
+          return {
+            rota_id: row.rota_id,
+            nome: rota.nome,
+            distancia_total: rota.distancia_total,
+            duracao_total: rota.duracao_total,
+            criado_em: rota.criado_em,
+          }
+        })
+        .filter((r): r is FavoriteRoute => r !== null)
         .sort((a, b) => new Date(b.criado_em).getTime() - new Date(a.criado_em).getTime())
 
       setRoutes(mapped)

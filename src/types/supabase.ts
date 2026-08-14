@@ -95,7 +95,7 @@ export interface RotaAtracaoRow {
 
 export interface RotaFavoritaJoin {
   rota_id: string
-  rotas: DbRota[] | null
+  rotas: DbRota | DbRota[] | null
 }
 
 export interface RotasRow {
