@@ -34,10 +34,10 @@ export function RouteLoading({ phase = 'calculating' }: RouteLoadingProps) {
   }, [steps])
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white/95 backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white/95 backdrop-blur-sm dark:bg-slate-900/95">
       <div className="flex flex-col items-center gap-6">
         <div className="relative h-16 w-16">
-          <div className="absolute inset-0 rounded-full border-4 border-slate-200" />
+          <div className="absolute inset-0 rounded-full border-4 border-slate-200 dark:border-slate-700" />
           <div className="absolute inset-0 animate-spin rounded-full border-4 border-pink border-t-transparent" />
           <div
             className="absolute inset-2 animate-spin rounded-full border-4 border-sky border-b-transparent"
@@ -46,7 +46,7 @@ export function RouteLoading({ phase = 'calculating' }: RouteLoadingProps) {
         </div>
 
         <div className="text-center">
-          <h2 className="text-lg font-bold text-navy">
+          <h2 className="text-lg font-bold text-navy dark:text-slate-100">
             {phase === 'loading-map' ? t('loading.loadingMapTitle') : t('loading.calculatingTitle')}
           </h2>
           <p className="mt-1 text-sm text-slate-400 transition-all duration-300">
@@ -54,7 +54,7 @@ export function RouteLoading({ phase = 'calculating' }: RouteLoadingProps) {
           </p>
         </div>
 
-        <div className="h-1.5 w-48 overflow-hidden rounded-full bg-slate-200">
+        <div className="h-1.5 w-48 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-700">
           <div
             className="h-full rounded-full bg-gradient-to-r from-pink to-sky transition-all duration-700"
             style={{ width: `${((currentStep + 1) / steps.length) * 100}%` }}

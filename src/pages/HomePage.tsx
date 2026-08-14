@@ -113,7 +113,7 @@ export function HomePage() {
       <main className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-8">
         {/* ── Saudação ── */}
         <div className="mb-6 sm:mb-8">
-          <h1 className="text-2xl font-bold text-navy sm:text-3xl">
+          <h1 className="text-2xl font-bold text-navy dark:text-slate-100 sm:text-3xl">
             {t('home.greeting', { name: displayName })}
           </h1>
           <p className="mt-1 text-sm text-slate-500">{t('home.greetingSub')}</p>
@@ -140,7 +140,7 @@ export function HomePage() {
                   <path d="M12 5v14M5 12h14" />
                 </svg>
               </div>
-              <p className="text-sm font-bold text-navy sm:text-base">{t('home.newRoute')}</p>
+              <p className="text-sm font-bold text-navy dark:text-slate-100 sm:text-base">{t('home.newRoute')}</p>
               <p className="mt-0.5 text-xs text-slate-400 sm:text-sm">{t('home.newRouteSub')}</p>
             </div>
           </Link>
@@ -152,20 +152,20 @@ export function HomePage() {
                   <path d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l5.447 2.724A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
                 </svg>
               </div>
-              <p className="text-sm font-bold text-navy sm:text-base">{t('home.savedRoutes')}</p>
+              <p className="text-sm font-bold text-navy dark:text-slate-100 sm:text-base">{t('home.savedRoutes')}</p>
               <p className="mt-0.5 text-xs text-slate-400 sm:text-sm">{t('home.savedRoutesSub')}</p>
             </div>
           </Link>
 
           <Link to="/profile" className="group col-span-2 sm:col-span-1">
-            <div className="rounded-2xl border-2 border-slate-200 bg-slate-50 p-4 transition hover:border-slate-300 hover:bg-slate-100 sm:p-5">
-              <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100 text-slate-500 transition group-hover:bg-slate-200 group-hover:text-navy sm:h-12 sm:w-12">
+            <div className="rounded-2xl border-2 border-slate-200 bg-slate-50 p-4 transition hover:border-slate-300 hover:bg-slate-100 dark:border-slate-700 dark:bg-slate-800 dark:hover:border-slate-600 dark:hover:bg-slate-700 sm:p-5">
+              <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100 text-slate-500 transition group-hover:bg-slate-200 group-hover:text-navy dark:bg-slate-700 dark:text-slate-300 dark:group-hover:bg-slate-600 dark:group-hover:text-slate-100 sm:h-12 sm:w-12">
                 <svg className="h-5 w-5 sm:h-6 sm:w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
                   <circle cx="12" cy="7" r="4" />
                 </svg>
               </div>
-              <p className="text-sm font-bold text-navy sm:text-base">{t('home.viewProfile')}</p>
+              <p className="text-sm font-bold text-navy dark:text-slate-100 sm:text-base">{t('home.viewProfile')}</p>
               <p className="mt-0.5 text-xs text-slate-400 sm:text-sm">{user?.email}</p>
             </div>
           </Link>
@@ -174,7 +174,7 @@ export function HomePage() {
         {/* ── Rotas Favoritas ── */}
         <section className="mb-8">
           <div className="mb-3 flex items-center justify-between">
-            <h2 className="text-lg font-bold text-navy">{t('home.savedRoutes')}</h2>
+            <h2 className="text-lg font-bold text-navy dark:text-slate-100">{t('home.savedRoutes')}</h2>
             {favoriteRoutes.length > 0 && (
               <Link to="/rotas" className="text-sm font-medium text-pink transition hover:text-pink/80">
                 {t('home.seeAll')}
@@ -186,7 +186,7 @@ export function HomePage() {
               <div className="h-6 w-6 animate-spin rounded-full border-4 border-pink border-t-transparent" />
             </div>
           ) : favoriteRoutes.length === 0 ? (
-            <div className="rounded-2xl border border-slate-200 bg-slate-50 p-6 text-center">
+            <div className="rounded-2xl border border-slate-200 bg-slate-50 p-6 text-center dark:border-slate-700 dark:bg-slate-800">
               <p className="text-sm text-slate-400">{t('home.noRoutes')}</p>
               <p className="mt-1 text-xs text-slate-300">{t('home.noRoutesSub')}</p>
             </div>
@@ -196,9 +196,9 @@ export function HomePage() {
                 <button
                   key={route.id}
                   onClick={() => handleOpenRoute(route.id)}
-                  className="min-w-[200px] flex-shrink-0 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-left transition hover:border-pink/30 hover:bg-pink/5 sm:min-w-0 sm:p-5"
+                  className="min-w-[200px] flex-shrink-0 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-left transition hover:border-pink/30 hover:bg-pink/5 dark:border-slate-700 dark:bg-slate-800 dark:hover:border-slate-600 dark:hover:bg-slate-700 sm:min-w-0 sm:p-5"
                 >
-                  <p className="truncate text-sm font-semibold text-navy">{route.nome}</p>
+                  <p className="truncate text-sm font-semibold text-navy dark:text-slate-100">{route.nome}</p>
                   <p className="mt-1 text-xs text-slate-400">
                     {route.distancia_total != null && `${route.distancia_total.toFixed(1)} km`}
                     {route.distancia_total != null && route.duracao_total && ' · '}
@@ -214,14 +214,14 @@ export function HomePage() {
         {/* ── Rotas Recentes ── */}
         <section className="mb-8">
           <div className="mb-3 flex items-center justify-between">
-            <h2 className="text-lg font-bold text-navy">{t('home.recent')}</h2>
+            <h2 className="text-lg font-bold text-navy dark:text-slate-100">{t('home.recent')}</h2>
           </div>
           {loading ? (
             <div className="flex justify-center py-8">
               <div className="h-6 w-6 animate-spin rounded-full border-4 border-pink border-t-transparent" />
             </div>
           ) : recentRoutes.length === 0 ? (
-            <div className="rounded-2xl border border-slate-200 bg-slate-50 p-6 text-center">
+            <div className="rounded-2xl border border-slate-200 bg-slate-50 p-6 text-center dark:border-slate-700 dark:bg-slate-800">
               <p className="text-sm text-slate-400">{t('home.noRoutes')}</p>
               <p className="mt-1 text-xs text-slate-300">{t('home.noRoutesSub')}</p>
             </div>
@@ -231,9 +231,9 @@ export function HomePage() {
                 <button
                   key={route.id}
                   onClick={() => handleOpenRoute(route.id)}
-                  className="min-w-[200px] flex-shrink-0 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-left transition hover:border-pink/30 hover:bg-pink/5 sm:min-w-0 sm:p-5"
+                  className="min-w-[200px] flex-shrink-0 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-left transition hover:border-pink/30 hover:bg-pink/5 dark:border-slate-700 dark:bg-slate-800 dark:hover:border-slate-600 dark:hover:bg-slate-700 sm:min-w-0 sm:p-5"
                 >
-                  <p className="truncate text-sm font-semibold text-navy">{route.nome}</p>
+                  <p className="truncate text-sm font-semibold text-navy dark:text-slate-100">{route.nome}</p>
                   <p className="mt-1 text-xs text-slate-400">
                     {route.distancia_total != null && `${route.distancia_total.toFixed(1)} km`}
                     {route.distancia_total != null && route.duracao_total && ' · '}

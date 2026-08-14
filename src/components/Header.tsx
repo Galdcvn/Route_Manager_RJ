@@ -55,7 +55,7 @@ export function Header() {
           <div className="relative" ref={langRef}>
             <button
               onClick={() => setLangOpen(!langOpen)}
-              className="flex h-9 w-9 items-center justify-center rounded-full text-navy transition hover:bg-slate-100"
+              className="flex h-9 w-9 items-center justify-center rounded-full text-navy transition hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-700"
               aria-label="Language"
               aria-haspopup="menu"
               aria-expanded={langOpen}

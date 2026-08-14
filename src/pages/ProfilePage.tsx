@@ -138,11 +138,11 @@ export function ProfilePage() {
 
       <main className="mx-auto max-w-2xl px-4 py-6 sm:px-6 sm:py-8">
         <div className="mb-6 sm:mb-8">
-          <h1 className="text-2xl font-bold text-navy sm:text-3xl">{t('profile.title')}</h1>
+          <h1 className="text-2xl font-bold text-navy dark:text-slate-100 sm:text-3xl">{t('profile.title')}</h1>
           <p className="mt-1 text-sm text-slate-500">{t('profile.subtitle')}</p>
         </div>
 
-        <div className="rounded-2xl border border-slate-200 bg-slate-50 p-6 sm:p-8">
+        <div className="rounded-2xl border border-slate-200 bg-slate-50 p-6 dark:border-slate-700 dark:bg-slate-800 sm:p-8">
           <div className="mb-6 flex items-center gap-4">
             <button
               type="button"
@@ -176,33 +176,33 @@ export function ProfilePage() {
               />
             </button>
             <div>
-              <p className="text-lg font-semibold text-navy">{nome || t('common.user')}</p>
+              <p className="text-lg font-semibold text-navy dark:text-slate-100">{nome || t('common.user')}</p>
               <p className="text-sm text-slate-400">{email}</p>
               <p className="mt-1 text-xs text-slate-400">{t('profile.avatarHint')}</p>
             </div>
           </div>
 
-          <div className="h-px bg-slate-200" />
+          <div className="h-px bg-slate-200 dark:bg-slate-700" />
 
           <form onSubmit={handleSave} className="mt-6 flex flex-col gap-4">
             <div>
-              <label className="mb-1 block text-xs font-medium text-slate-500">{t('profile.fullNameLabel')}</label>
+              <label className="mb-1 block text-xs font-medium text-slate-500 dark:text-slate-400">{t('profile.fullNameLabel')}</label>
               <input
                 type="text"
                 value={nome}
                 onChange={(e) => setNome(e.target.value)}
                 placeholder={t('profile.namePlaceholder')}
-                className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-navy outline-none transition focus:border-sky focus:ring-2 focus:ring-sky/20"
+                className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-navy outline-none transition focus:border-sky focus:ring-2 focus:ring-sky/20 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
               />
             </div>
 
             <div>
-              <label className="mb-1 block text-xs font-medium text-slate-500">{t('profile.emailLabel')}</label>
+              <label className="mb-1 block text-xs font-medium text-slate-500 dark:text-slate-400">{t('profile.emailLabel')}</label>
               <input
                 type="email"
                 value={email}
                 disabled
-                className="w-full rounded-xl border border-slate-200 bg-slate-100 px-4 py-3 text-sm text-slate-400"
+                className="w-full rounded-xl border border-slate-200 bg-slate-100 px-4 py-3 text-sm text-slate-400 dark:border-slate-700 dark:bg-slate-800/60"
               />
               <p className="mt-1 text-xs text-slate-400">{t('auth.emailCantChange')}</p>
             </div>
@@ -215,9 +215,9 @@ export function ProfilePage() {
           </form>
         </div>
 
-        <div className="mt-8 rounded-2xl border border-red-200 bg-red-50 p-6 sm:p-8">
-          <h2 className="text-lg font-bold text-red-700">{t('profile.deleteAccount')}</h2>
-          <p className="mt-1 text-sm text-red-600">{t('profile.deleteAccountWarning')}</p>
+        <div className="mt-8 rounded-2xl border border-red-200 bg-red-50 p-6 dark:border-red-800 dark:bg-red-900/20 sm:p-8">
+          <h2 className="text-lg font-bold text-red-700 dark:text-red-400">{t('profile.deleteAccount')}</h2>
+          <p className="mt-1 text-sm text-red-600 dark:text-red-400">{t('profile.deleteAccountWarning')}</p>
 
           {!showDeleteConfirm ? (
             <Button
@@ -230,13 +230,13 @@ export function ProfilePage() {
             </Button>
           ) : (
             <div className="mt-4 flex flex-col gap-3">
-              <p className="text-xs text-red-600">{t('profile.deleteAccountConfirm')}</p>
+              <p className="text-xs text-red-600 dark:text-red-400">{t('profile.deleteAccountConfirm')}</p>
               <input
                 type="text"
                 value={deleteInput}
                 onChange={(e) => setDeleteInput(e.target.value)}
                 placeholder={t('profile.deleteInputPlaceholder')}
-                className="w-full rounded-xl border border-red-300 bg-white px-4 py-3 text-sm text-navy outline-none transition focus:border-red-500 focus:ring-2 focus:ring-red/20"
+                className="w-full rounded-xl border border-red-300 bg-white px-4 py-3 text-sm text-navy outline-none transition focus:border-red-500 focus:ring-2 focus:ring-red/20 dark:border-red-800 dark:bg-slate-800 dark:text-slate-100"
               />
               <div className="flex gap-3">
                 <Button

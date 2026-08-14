@@ -32,10 +32,10 @@ export function MenuDrawer({ open, onClose }: MenuDrawerProps) {
         }`}
       >
         <div className="flex items-center justify-between border-b border-slate-100 px-5 py-4">
-          <p className="text-sm font-bold text-navy">{t('menu.title')}</p>
+          <p className="text-sm font-bold text-navy dark:text-slate-100">{t('menu.title')}</p>
           <button
             onClick={onClose}
-            className="flex h-8 w-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-slate-100 hover:text-navy"
+            className="flex h-8 w-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-slate-100 hover:text-navy dark:hover:bg-slate-800 dark:hover:text-slate-100"
             aria-label={t('menu.closeMenu')}
           >
             <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -68,7 +68,7 @@ export function MenuDrawer({ open, onClose }: MenuDrawerProps) {
                 </div>
               </div>
 
-              <div className="my-2 h-px bg-slate-100" />
+              <div className="my-2 h-px bg-slate-100 dark:bg-slate-800" />
 
               <Link
                 to="/profile"
@@ -105,7 +105,7 @@ export function MenuDrawer({ open, onClose }: MenuDrawerProps) {
                 {t('menu.planRoute')}
               </Link>
 
-              <div className="my-2 h-px bg-slate-100" />
+              <div className="my-2 h-px bg-slate-100 dark:bg-slate-800" />
 
               <button
                 onClick={() => { signOut(); onClose() }}

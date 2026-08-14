@@ -293,7 +293,7 @@ export function ResultsPage() {
       <div className="min-h-screen bg-white dark:bg-slate-900">
         <Header />
         <main className="mx-auto max-w-6xl px-4 py-16 text-center sm:px-6">
-          <p className="text-lg font-bold text-navy">{t('results.calcError')}</p>
+          <p className="text-lg font-bold text-navy dark:text-slate-100">{t('results.calcError')}</p>
           <p className="mt-2 text-sm text-slate-500">{t('results.calcErrorSub')}</p>
           <div className="mt-6 flex justify-center gap-3">
             <Button variant="pink" radius={15} onClick={() => navigate('/app')}>
@@ -322,7 +322,7 @@ export function ResultsPage() {
 
       <main className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-8">
         {/* ── Route header ── */}
-        <div className="mb-4 rounded-2xl border border-slate-200 bg-slate-50 p-4 sm:mb-6 sm:p-6">
+        <div className="mb-4 rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-800 sm:mb-6 sm:p-6">
           <div className="flex items-start justify-between">
             <div className="min-w-0 flex-1">
               {editingName ? (
@@ -337,15 +337,15 @@ export function ResultsPage() {
                     if (e.key === 'Escape') { setRouteName(routeName); setEditingName(false) }
                   }}
                   placeholder={t('results.routeTitle', { count: optimizedAttractions.length })}
-                  className="w-full rounded-lg border-2 border-pink bg-white px-2 py-0.5 text-2xl font-bold text-navy outline-none ring-2 ring-pink/20 sm:text-3xl"
+                  className="w-full rounded-lg border-2 border-pink bg-white px-2 py-0.5 text-2xl font-bold text-navy outline-none ring-2 ring-pink/20 dark:bg-slate-800 dark:text-slate-100 sm:text-3xl"
                 />
               ) : (
                 <button
                   type="button"
                   onClick={() => setEditingName(true)}
-                  className="group flex items-center gap-2 rounded-lg py-0.5 text-left transition hover:bg-slate-100"
+                  className="group flex items-center gap-2 rounded-lg py-0.5 text-left transition hover:bg-slate-100 dark:hover:bg-slate-700"
                 >
-                  <span className="text-2xl font-bold text-navy sm:text-3xl">
+                  <span className="text-2xl font-bold text-navy dark:text-slate-100 sm:text-3xl">
                     {routeName || t('results.routeTitle', { count: optimizedAttractions.length })}
                   </span>
                   <svg
@@ -385,7 +385,7 @@ export function ResultsPage() {
           <div className="mb-4 flex items-center gap-3 rounded-2xl border border-mustard/30 bg-mustard/10 p-4 sm:mb-6">
             <span className="text-2xl">💡</span>
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-medium text-navy">{t('results.optimalBanner')}</p>
+              <p className="text-sm font-medium text-navy dark:text-slate-100">{t('results.optimalBanner')}</p>
             </div>
             <Button variant="mustard" radius={15} onClick={handleViewOptimal}>
               {t('results.viewOptimal')}
@@ -394,7 +394,7 @@ export function ResultsPage() {
         )}
 
         <div className="grid gap-6 lg:grid-cols-2 lg:gap-8">
-          <div className="overflow-hidden rounded-2xl border border-slate-200 bg-slate-50">
+          <div className="overflow-hidden rounded-2xl border border-slate-200 bg-slate-50 dark:border-slate-700 dark:bg-slate-800">
             <div className="h-64 sm:h-80 lg:h-full lg:min-h-[400px]">
               <RouteMap attractions={optimizedAttractions} polylinePath={polylinePath} />
             </div>
@@ -402,9 +402,9 @@ export function ResultsPage() {
 
           <div className="flex flex-col gap-6">
             {optimizedAttractions.length > 0 && (
-              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-800">
                 <div className="mb-3 flex items-center justify-between">
-                  <h2 className="text-sm font-semibold text-navy">
+                  <h2 className="text-sm font-semibold text-navy dark:text-slate-100">
                     {reorderMode ? t('results.reorderTitle') : t('results.stopsTitle')}
                   </h2>
                   {!reorderMode && !viewingOptimal && (
@@ -443,7 +443,7 @@ export function ResultsPage() {
                           {i + 1}
                         </span>
                         <div>
-                          <p className="text-sm font-semibold text-navy">{attraction.nome}</p>
+                          <p className="text-sm font-semibold text-navy dark:text-slate-100">{attraction.nome}</p>
                           {attraction.bairro && (
                             <p className="text-xs text-slate-400">{attraction.bairro}</p>
                           )}
@@ -474,7 +474,7 @@ export function ResultsPage() {
               {travelTimes.map((t2) => (
                 <div
                   key={t2.mode}
-                  className="flex flex-col items-center rounded-xl border border-slate-200 p-3"
+                  className="flex flex-col items-center rounded-xl border border-slate-200 p-3 dark:border-slate-700"
                 >
                   <svg
                     className="mb-2 h-5 w-5 text-slate-400"
@@ -484,7 +484,7 @@ export function ResultsPage() {
                     <path d={ICONS[t2.mode]} />
                   </svg>
                   <p className="text-xs font-medium text-slate-500">{t2.label}</p>
-                  <p className="text-sm font-bold text-navy">{t2.duration}</p>
+                  <p className="text-sm font-bold text-navy dark:text-slate-100">{t2.duration}</p>
                   <p className="text-xs text-slate-400">{t2.distance}</p>
                 </div>
               ))}
@@ -551,8 +551,8 @@ export function ResultsPage() {
         <>
           <div className="fixed inset-0 z-[9999] bg-black/50" onClick={() => setConfirmNewRoute(false)} />
           <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
-            <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl" onClick={(e) => e.stopPropagation()}>
-              <h3 className="text-lg font-bold text-navy">{t('results.confirmNewRoute')}</h3>
+            <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl dark:bg-slate-800" onClick={(e) => e.stopPropagation()}>
+              <h3 className="text-lg font-bold text-navy dark:text-slate-100">{t('results.confirmNewRoute')}</h3>
               <p className="mt-2 text-sm text-slate-500">{t('results.confirmNewRouteSub')}</p>
               <div className="mt-5 flex gap-3">
                 <Button variant="outline" radius={15} className="flex-1" onClick={() => setConfirmNewRoute(false)}>

@@ -26,7 +26,7 @@ export function SearchInput({ value, onChange, placeholder }: SearchInputProps) 
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder ?? t('search.placeholder')}
-        className="w-full rounded-xl border border-slate-200 bg-slate-50 py-3 pl-10 pr-4 text-sm text-navy outline-none transition placeholder:text-slate-400 focus:border-pink focus:ring-2 focus:ring-pink/20"
+        className="w-full rounded-xl border border-slate-200 bg-slate-50 py-3 pl-10 pr-4 text-sm text-navy outline-none transition placeholder:text-slate-400 focus:border-pink focus:ring-2 focus:ring-pink/20 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:placeholder:text-slate-500"
       />
       {value && (
         <button
