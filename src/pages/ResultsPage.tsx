@@ -394,7 +394,7 @@ export function ResultsPage() {
         )}
 
         <div className="grid gap-6 lg:grid-cols-2 lg:gap-8">
-          <div className="overflow-hidden rounded-2xl border border-slate-200 bg-slate-50 dark:border-slate-700 dark:bg-slate-800">
+          <div className="relative z-0 overflow-hidden rounded-2xl border border-slate-200 bg-slate-50 dark:border-slate-700 dark:bg-slate-800">
             <div className="h-64 sm:h-80 lg:h-full lg:min-h-[400px]">
               <RouteMap attractions={optimizedAttractions} polylinePath={polylinePath} />
             </div>

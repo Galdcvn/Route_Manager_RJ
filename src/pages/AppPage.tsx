@@ -192,7 +192,7 @@ export function AppPage() {
         )}
 
         {!loading && !error && displayAttractions.length > 0 && (
-          <div className="mb-8 flex gap-4 overflow-x-auto pb-4 sm:mb-10 sm:gap-5 sm:pb-2 lg:grid lg:grid-cols-3 lg:overflow-visible">
+          <div className="mb-8 grid grid-cols-2 gap-4 sm:mb-10 sm:grid-cols-3 sm:gap-5">
             {displayAttractions.map((attraction) => {
               const isMain = mainAttraction?.id === attraction.id
               const isSelected = selected.some((s) => s.id === attraction.id)

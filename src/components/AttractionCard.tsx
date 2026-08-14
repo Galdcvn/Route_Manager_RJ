@@ -31,7 +31,7 @@ export function AttractionCard({
       tabIndex={0}
       onClick={onClick}
       onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') onClick?.() }}
-      className={`relative flex w-40 shrink-0 flex-col overflow-hidden rounded-2xl border-2 bg-white text-left transition dark:bg-slate-800 sm:w-48 lg:w-full ${
+      className={`relative flex w-full flex-col overflow-hidden rounded-2xl border-2 bg-white text-left transition dark:bg-slate-800 ${
         selected
           ? 'border-pink shadow-lg shadow-pink/20'
           : 'border-slate-200 hover:border-slate-300 hover:shadow-md dark:border-slate-700 dark:hover:border-slate-600'
