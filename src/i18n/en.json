@@ -51,7 +51,8 @@
     "recentSub": "Latest calculated routes",
     "noRoutes": "No routes yet",
     "noRoutesSub": "Click New Route to get started.",
-    "seeAll": "See all"
+    "seeAll": "See all",
+    "loadError": "Could not load your routes"
   },
   "app": {
     "stepMain": "Choose main attraction",
@@ -202,6 +203,7 @@
     "emptySub": "Create a route and save it to favorites to find it here.",
     "search": "Search routes...",
     "noResults": "No routes found",
+    "loadError": "Could not load your routes",
     "delete": "Remove",
     "view": "View"
   }

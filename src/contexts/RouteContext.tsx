@@ -62,7 +62,7 @@ export function RouteProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const loadSavedRoute = useCallback(async (routeId: string): Promise<boolean> => {
-    const lang = i18n.language.split('-')[0] || 'pt'
+    const lang = i18n.language?.split('-')[0] || 'pt'
 
     const [routeResult, pivotResult] = await Promise.all([
       supabase

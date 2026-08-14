@@ -107,7 +107,7 @@ export function useAttractions(): UseAttractionsResult {
   }, [user, favoriteIds])
 
   const attractions = useMemo(() => {
-    const lang = i18n.language.split('-')[0] || 'pt'
+    const lang = i18n.language?.split('-')[0] || 'pt'
 
     const mapped = rawData.map((row) => {
       const info = row.informacao_atracao?.find(

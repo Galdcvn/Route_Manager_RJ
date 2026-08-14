@@ -26,16 +26,18 @@ export async function toggleFavorite(routeId: string): Promise<boolean> {
     .maybeSingle()
 
   if (existing) {
-    await supabase
+    const { error } = await supabase
       .from('rotas_favoritas')
       .delete()
       .eq('usuario_id', user.id)
       .eq('rota_id', routeId)
+    if (error) throw error
     return false
   }
 
-  await supabase
+  const { error } = await supabase
     .from('rotas_favoritas')
     .insert({ usuario_id: user.id, rota_id: routeId })
+  if (error) throw error
   return true
 }

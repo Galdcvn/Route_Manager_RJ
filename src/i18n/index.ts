@@ -8,7 +8,8 @@ const bundles: Record<string, () => Promise<{ default: object }>> = {
   es: () => import('./es.json'),
 }
 
-async function loadBundle(lng: string) {
+async function loadBundle(lng?: string) {
+  if (!lng) return
   const key = lng.split('-')[0]
   const loader = bundles[key]
   if (!loader) return
@@ -32,8 +33,9 @@ i18n
       lookupLocalStorage: 'i18n_lang',
     },
   })
-
-loadBundle(i18n.language)
+  .then(() => {
+    if (i18n.language) loadBundle(i18n.language)
+  })
 
 i18n.on('languageChanged', (lng) => {
   document.documentElement.setAttribute('lang', lng)

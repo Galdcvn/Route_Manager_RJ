@@ -199,6 +199,9 @@ export function ResultsPage() {
       const result = await toggleFavorite(activeSavedRouteId)
       setFavorited(result)
       toast({ type: 'success', message: t(result ? 'favorites.saved' : 'favorites.removed') })
+    } catch (err) {
+      console.error('Favorite toggle error:', err)
+      toast({ type: 'error', message: t('common.error') })
     } finally {
       setSavingFavorite(false)
     }

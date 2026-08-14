@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { Header } from '../components/Header'
@@ -30,6 +30,7 @@ export function RoutesPage() {
   const navigate = useNavigate()
   const [routes, setRoutes] = useState<FavoriteRoute[]>([])
   const [loading, setLoading] = useState(true)
+  const [fetchError, setFetchError] = useState<string | null>(null)
   const [search, setSearch] = useState('')
   const debouncedSearch = useDebounce(search, 300)
 
@@ -39,20 +40,19 @@ export function RoutesPage() {
     return routes.filter((r) => r.nome?.toLowerCase().includes(q) ?? false)
   }, [routes, debouncedSearch])
 
-  useEffect(() => {
+  const loadFavorites = useCallback(async () => {
     if (!user) return
 
-    async function fetchFavorites() {
+    setLoading(true)
+    setFetchError(null)
+
+    try {
       const { data, error } = await supabase
         .from('rotas_favoritas')
         .select('rota_id, rotas ( nome, distancia_total, duracao_total, criado_em )')
-        .eq('usuario_id', user!.id)
+        .eq('usuario_id', user.id)
 
-      if (error) {
-        console.error(error)
-        setLoading(false)
-        return
-      }
+      if (error) throw error
 
       const mapped: FavoriteRoute[] = ((data ?? []) as RotaFavoritaJoin[])
         .filter((row) => row.rotas && row.rotas.length > 0)
@@ -66,16 +66,28 @@ export function RoutesPage() {
         .sort((a, b) => new Date(b.criado_em).getTime() - new Date(a.criado_em).getTime())
 
       setRoutes(mapped)
+    } catch (err) {
+      console.error(err)
+      setFetchError(err instanceof Error ? err.message : String(err))
+    } finally {
       setLoading(false)
     }
-
-    fetchFavorites()
   }, [user])
 
+  useEffect(() => {
+    loadFavorites()
+  }, [loadFavorites])
+
   async function handleRemove(routeId: string) {
-    await toggleFavorite(routeId)
-    setRoutes((prev) => prev.filter((r) => r.rota_id !== routeId))
-    toast({ type: 'success', message: t('favorites.removed') })
+    try {
+      const stillFavorited = await toggleFavorite(routeId)
+      if (stillFavorited) return
+      setRoutes((prev) => prev.filter((r) => r.rota_id !== routeId))
+      toast({ type: 'success', message: t('favorites.removed') })
+    } catch (err) {
+      console.error('Remove favorite error:', err)
+      toast({ type: 'error', message: t('common.error') })
+    }
   }
 
   async function handleView(routeId: string) {
@@ -116,6 +128,14 @@ export function RoutesPage() {
 
         {loading ? (
           <RouteSkeleton />
+        ) : fetchError ? (
+          <div className="rounded-2xl border border-red-200 bg-red-50 p-8 text-center dark:border-red-800 dark:bg-red-900/20">
+            <p className="text-sm font-semibold text-red-700 dark:text-red-400">{t('favorites.loadError')}</p>
+            <p className="mt-1 text-xs text-red-500/80">{fetchError}</p>
+            <Button variant="outline" radius={15} className="mt-4 border-red-300 text-red-700 hover:bg-red-100" onClick={loadFavorites}>
+              {t('common.retry')}
+            </Button>
+          </div>
         ) : routes.length === 0 ? (
           <div className="rounded-2xl border border-slate-200 bg-slate-50 p-8 text-center dark:border-slate-700 dark:bg-slate-800">
             <p className="text-lg font-semibold text-navy dark:text-slate-100">{t('favorites.empty')}</p>

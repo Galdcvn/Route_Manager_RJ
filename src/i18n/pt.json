@@ -51,7 +51,8 @@
     "recentSub": "Últimas rotas calculadas",
     "noRoutes": "Nenhuma rota ainda",
     "noRoutesSub": "Clique em Nova Rota para começar.",
-    "seeAll": "Ver todas"
+    "seeAll": "Ver todas",
+    "loadError": "Não foi possível carregar suas rotas"
   },
   "app": {
     "stepMain": "Escolher atração principal",
@@ -202,6 +203,7 @@
     "emptySub": "Crie uma rota e salve nos favoritos para encontrá-la aqui.",
     "search": "Buscar rota...",
     "noResults": "Nenhuma rota encontrada",
+    "loadError": "Não foi possível carregar suas rotas",
     "delete": "Remover",
     "view": "Ver"
   }

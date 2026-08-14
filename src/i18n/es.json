@@ -51,7 +51,8 @@
     "recentSub": "Últimas rutas calculadas",
     "noRoutes": "Aún no hay rutas",
     "noRoutesSub": "Haz clic en Nueva Ruta para comenzar.",
-    "seeAll": "Ver todas"
+    "seeAll": "Ver todas",
+    "loadError": "No se pudieron cargar tus rutas"
   },
   "app": {
     "stepMain": "Elegir atractivo principal",
@@ -202,6 +203,7 @@
     "emptySub": "Crea una ruta y guárdala en favoritos para encontrarla aquí.",
     "search": "Buscar ruta...",
     "noResults": "No se encontraron rutas",
+    "loadError": "No se pudieron cargar tus rutas",
     "delete": "Eliminar",
     "view": "Ver"
   }

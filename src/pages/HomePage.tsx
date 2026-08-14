@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { Header } from '../components/Header'
+import { Button } from '../components/Button'
 import { useAuth } from '../contexts/AuthContext'
 import { useRoute } from '../contexts/RouteContext'
 import { useToast } from '../contexts/ToastContext'
@@ -26,56 +27,61 @@ export function HomePage() {
   const [favoriteRoutes, setFavoriteRoutes] = useState<DashboardRoute[]>([])
   const [recentRoutes, setRecentRoutes] = useState<DashboardRoute[]>([])
   const [loading, setLoading] = useState(true)
+  const [fetchError, setFetchError] = useState<string | null>(null)
 
-  useEffect(() => {
+  const loadDashboard = useCallback(async () => {
     if (!user) return
 
-    async function fetchDashboard() {
-      try {
-        const [favsRes, recentRes] = await Promise.all([
-          supabase
-            .from('rotas_favoritas')
-            .select('rota_id, rotas ( id, nome, distancia_total, duracao_total, criado_em )')
-            .eq('usuario_id', user!.id)
-            .order('criado_em', { ascending: false })
-            .limit(5),
-          supabase
-            .from('rotas')
-            .select('id, nome, distancia_total, duracao_total, criado_em')
-            .eq('usuario_id', user!.id)
-            .order('criado_em', { ascending: false })
-            .limit(5),
-        ])
+    setLoading(true)
+    setFetchError(null)
 
-        const favs: DashboardRoute[] = ((favsRes.data ?? []) as RotaFavoritaJoin[])
-          .filter((row) => row.rotas && row.rotas.length > 0)
-          .map((row) => ({
-            id: row.rota_id,
-            nome: row.rotas![0].nome,
-            distancia_total: row.rotas![0].distancia_total,
-            duracao_total: row.rotas![0].duracao_total,
-            criado_em: row.rotas![0].criado_em,
-          }))
+    try {
+      const [favsRes, recentRes] = await Promise.all([
+        supabase
+          .from('rotas_favoritas')
+          .select('rota_id, rotas ( id, nome, distancia_total, duracao_total, criado_em )')
+          .eq('usuario_id', user.id)
+          .order('criado_em', { ascending: false })
+          .limit(5),
+        supabase
+          .from('rotas')
+          .select('id, nome, distancia_total, duracao_total, criado_em')
+          .eq('usuario_id', user.id)
+          .order('criado_em', { ascending: false })
+          .limit(5),
+      ])
 
-        const recent: DashboardRoute[] = ((recentRes.data ?? []) as DbRota[]).map((row) => ({
-          id: row.id,
-          nome: row.nome,
-          distancia_total: row.distancia_total,
-          duracao_total: row.duracao_total,
-          criado_em: row.criado_em,
+      const favs: DashboardRoute[] = ((favsRes.data ?? []) as RotaFavoritaJoin[])
+        .filter((row) => row.rotas && row.rotas.length > 0)
+        .map((row) => ({
+          id: row.rota_id,
+          nome: row.rotas![0].nome,
+          distancia_total: row.rotas![0].distancia_total,
+          duracao_total: row.rotas![0].duracao_total,
+          criado_em: row.rotas![0].criado_em,
         }))
 
-        setFavoriteRoutes(favs)
-        setRecentRoutes(recent)
-      } catch (err) {
-        console.error('Dashboard fetch error:', err)
-      } finally {
-        setLoading(false)
-      }
-    }
+      const recent: DashboardRoute[] = ((recentRes.data ?? []) as DbRota[]).map((row) => ({
+        id: row.id,
+        nome: row.nome,
+        distancia_total: row.distancia_total,
+        duracao_total: row.duracao_total,
+        criado_em: row.criado_em,
+      }))
 
-    fetchDashboard()
+      setFavoriteRoutes(favs)
+      setRecentRoutes(recent)
+    } catch (err) {
+      console.error('Dashboard fetch error:', err)
+      setFetchError(err instanceof Error ? err.message : String(err))
+    } finally {
+      setLoading(false)
+    }
   }, [user])
+
+  useEffect(() => {
+    loadDashboard()
+  }, [loadDashboard])
 
   function formatDate(iso: string) {
     return new Date(iso).toLocaleDateString(undefined, {
@@ -108,6 +114,18 @@ export function HomePage() {
           </h1>
           <p className="mt-1 text-sm text-slate-500">{t('home.greetingSub')}</p>
         </div>
+
+        {fetchError && (
+          <div className="mb-6 flex items-center gap-3 rounded-2xl border border-red-200 bg-red-50 p-4 sm:mb-8">
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-semibold text-red-700">{t('home.loadError')}</p>
+              <p className="mt-0.5 text-xs text-red-500/80">{fetchError}</p>
+            </div>
+            <Button variant="outline" radius={15} className="shrink-0 border-red-300 text-red-700 hover:bg-red-100" onClick={loadDashboard}>
+              {t('common.retry')}
+            </Button>
+          </div>
+        )}
 
         {/* ── Cards de ação rápida ── */}
         <div className="mb-8 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3">
