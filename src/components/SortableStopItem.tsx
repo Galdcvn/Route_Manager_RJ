@@ -28,13 +28,13 @@ export function SortableStopItem({ attraction, index }: SortableStopItemProps) {
     <li
       ref={setNodeRef}
       style={style}
-      className={`flex items-center gap-3 rounded-xl border border-slate-200 bg-white p-3 transition ${
+      className={`flex items-center gap-3 rounded-xl border border-slate-200 bg-white p-3 transition dark:border-slate-700 dark:bg-slate-800 ${
         isDragging ? 'shadow-lg ring-2 ring-pink/20' : ''
       }`}
     >
       <button
         type="button"
-        className="flex h-7 w-7 shrink-0 cursor-grab items-center justify-center rounded-full bg-slate-100 text-slate-400 transition hover:bg-slate-200 hover:text-slate-600 active:cursor-grabbing"
+        className="flex h-7 w-7 shrink-0 cursor-grab items-center justify-center rounded-full bg-slate-100 text-slate-400 transition hover:bg-slate-200 hover:text-slate-600 active:cursor-grabbing dark:bg-slate-700 dark:text-slate-400 dark:hover:bg-slate-600 dark:hover:text-slate-300"
         {...attributes}
         {...listeners}
       >
@@ -51,7 +51,7 @@ export function SortableStopItem({ attraction, index }: SortableStopItemProps) {
         {index + 1}
       </span>
       <div className="min-w-0 flex-1">
-        <p className="truncate text-sm font-semibold text-navy">{attraction.nome}</p>
+        <p className="truncate text-sm font-semibold text-navy dark:text-slate-100">{attraction.nome}</p>
         {attraction.bairro && (
           <p className="truncate text-xs text-slate-400">{attraction.bairro}</p>
         )}
