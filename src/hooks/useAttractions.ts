@@ -110,10 +110,13 @@ export function useAttractions(): UseAttractionsResult {
     const lang = i18n.language?.split('-')[0] || 'pt'
 
     const mapped = rawData.map((row) => {
+      const getIdiomaCodigo = (idiomas: any): string | undefined =>
+        Array.isArray(idiomas) ? idiomas[0]?.codigo : idiomas?.codigo
+
       const info = row.informacao_atracao?.find(
-        (i) => i.idiomas?.[0]?.codigo === lang
+        (i) => getIdiomaCodigo(i.idiomas) === lang
       ) ?? row.informacao_atracao?.find(
-        (i) => i.idiomas?.[0]?.codigo === 'pt'
+        (i) => getIdiomaCodigo(i.idiomas) === 'pt'
       )
 
       const imagem = row.imagens_atracao
